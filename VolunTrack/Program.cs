@@ -46,6 +46,22 @@ builder.Services.AddScoped<IRegistrationService, RegistrationService>();
 
 var app = builder.Build();
 
+try
+{
+    using var scope = app.Services.CreateScope();
+    await DbSeeder.SeedAsync(scope.ServiceProvider, app.Configuration);
+}
+catch (Exception ex)
+{
+    var logger = app.Services.GetRequiredService<ILogger<Program>>();
+    logger.LogError(ex, "An error occurred while seeding the database.");
+
+    if (app.Environment.IsDevelopment())
+    {
+        throw;
+    }
+}
+
 // Configure the HTTP request pipeline.
 if (!app.Environment.IsDevelopment())
 {
