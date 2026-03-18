@@ -23,14 +23,10 @@ namespace VolunTrack.Services
             if (string.IsNullOrEmpty(dto.Password) || dto.Password.Length < 6)
                 return RegistrationResponse.InvalidPassword();
 
-
-            if (!string.IsNullOrEmpty(dto.Email))
-            {
-                var emailExists = await _userRepository.ExistsByEmailAsync(dto.Email);
-                if (emailExists)
-                    return RegistrationResponse.EmailAlreadyExists();
-            }
-
+            var emailExists = await _userRepository.ExistsByEmailAsync(dto.Email);
+            if (emailExists)
+                return RegistrationResponse.EmailAlreadyExists();
+            
             var user = new User
             {
                 Login = dto.Login,
@@ -45,7 +41,7 @@ namespace VolunTrack.Services
 
             await _userRepository.AddAsync(user);
 
-            if (dto.CategoryIds?.Any() == true)
+            if (dto.CategoryIds.Count != 0)
             {
                 var userCategories = dto.CategoryIds.Select(categoryId => new UserCategory
                 {
