@@ -1,12 +1,63 @@
 ﻿using VolunTrack.DTO;
+using VolunTrack.Enums;
+using VolunTrack.Models;
+using VolunTrack.Repositories;
 
 namespace VolunTrack.Services
 {
-    public class RegistrationService : IRegistrationService
+    public class RegistrationService(
+        IUserRepository userRepository,
+        IPasswordHasher passwordHasher) : IRegistrationService
     {
-        public Task<RegistrationResponse> RegisterAsync(RegisterDto dto)
+        private readonly IUserRepository _userRepository = userRepository;
+        private readonly IPasswordHasher _passwordHasher = passwordHasher;
+
+        public async Task<RegistrationResponse> RegisterAsync(RegisterDto dto)
         {
-            throw new NotImplementedException();
+            if (string.IsNullOrEmpty(dto.Login) || dto.Login.Length < 3)
+                return RegistrationResponse.InvalidLogin();
+
+            if (await _userRepository.ExistsByLoginAsync(dto.Login))
+                return RegistrationResponse.LoginTaken();
+
+            if (string.IsNullOrEmpty(dto.Password) || dto.Password.Length < 6)
+                return RegistrationResponse.InvalidPassword();
+
+
+            if (!string.IsNullOrEmpty(dto.Email))
+            {
+                var emailExists = await _userRepository.ExistsByEmailAsync(dto.Email);
+                if (emailExists)
+                    return RegistrationResponse.EmailAlreadyExists();
+            }
+
+            var user = new User
+            {
+                Login = dto.Login,
+                FullName = dto.FullName,
+                Phone = dto.Phone,
+                Email = dto.Email,
+                PasswordHash = _passwordHasher.HashPassword(dto.Password),
+                Role = UserRole.Volunteer,
+                IsActive = true,
+                CreatedAtUtc = DateTime.UtcNow
+            };
+
+            await _userRepository.AddAsync(user);
+
+            if (dto.CategoryIds?.Any() == true)
+            {
+                var userCategories = dto.CategoryIds.Select(categoryId => new UserCategory
+                {
+                    UserId = user.Id,
+                    CategoryId = categoryId
+                }).ToList();
+
+                await _userRepository.AddUserCategoriesAsync(userCategories);
+            }
+
+            return RegistrationResponse.Success(UserDto.FromEntity(user)
+            );
         }
     }
 }

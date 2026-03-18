@@ -1,6 +1,8 @@
 using Microsoft.EntityFrameworkCore;
 using VolunTrack.Data;
 using VolunTrack.Models;
+using VolunTrack.Repositories;
+using VolunTrack.Services;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -34,6 +36,13 @@ builder.Services.AddDbContext<ApplicationDbContext>(options =>
         options.EnableSensitiveDataLogging();
     }
 });
+
+// Add services and repositories
+builder.Services.AddScoped<IUserRepository, UserRepository>();
+
+builder.Services.AddScoped<IPasswordHasher, PasswordHasher>();
+
+builder.Services.AddScoped<IRegistrationService, RegistrationService>();
 
 var app = builder.Build();
 

@@ -20,6 +20,7 @@ namespace VolunTrack.Repositories
         Task<bool> ExistsByEmailAsync(string email);
 
         Task AddAsync(User user);
+        Task AddUserCategoriesAsync(IEnumerable<UserCategory> userCategories);
         Task UpdateAsync(User user);
         Task RemoveAsync(User user);
     }

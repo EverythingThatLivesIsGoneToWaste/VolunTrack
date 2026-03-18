@@ -1,5 +1,6 @@
 ﻿using System.ComponentModel.DataAnnotations;
 using VolunTrack.Enums;
+using VolunTrack.Models;
 
 namespace VolunTrack.DTO
 {
@@ -16,5 +17,20 @@ namespace VolunTrack.DTO
 
         [Required]
         public List<CategoryDto> Categories { get; set; } = [];
+
+        public static UserDto FromEntity(User user)
+        {
+            return new UserDto
+            {
+                Id = user.Id,
+                Login = user.Login,
+                FullName = user.FullName,
+                Phone = user.Phone,
+                Email = user.Email,
+                Role = user.Role,
+                IsActive = user.IsActive,
+                CreatedAtUtc = user.CreatedAtUtc
+            };
+        }
     }
 }

@@ -77,6 +77,11 @@ namespace VolunTrack.Repositories
             await _context.SaveChangesAsync();
         }
 
+        public async Task AddUserCategoriesAsync(IEnumerable<UserCategory> userCategories)
+        {
+            await _context.UserCategories.AddRangeAsync(userCategories);
+            await _context.SaveChangesAsync();
+        }
         public async Task UpdateAsync(User user)
         {
             _context.Users.Update(user);
