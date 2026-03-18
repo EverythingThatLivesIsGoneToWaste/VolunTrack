@@ -24,6 +24,14 @@ namespace VolunTrack.Repositories
             return await _context.Users.FirstOrDefaultAsync(u => u.Login == login);
         }
 
+        public async Task<List<Category>> GetUserCategoriesAsync(int userId)
+        {
+            return await _context.UserCategories
+                .Where(uc => uc.UserId == userId)
+                .Select(uc => uc.Category)
+                .ToListAsync();
+        }
+
         public async Task<List<User>> SearchAsync(
             string? searchTerm = null, 
             UserRole? role = null, 

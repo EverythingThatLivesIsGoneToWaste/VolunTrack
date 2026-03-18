@@ -1,10 +1,11 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
-using VolunTrack.Data;
-using VolunTrack.Repositories;
-using VolunTrack.Models;
 using Testcontainers.PostgreSql;
+using VolunTrack.Data;
+using VolunTrack.Models;
+using VolunTrack.Repositories;
+using VolunTrack.Services;
 
 namespace VolunTrack.Tests.Fixtures;
 
@@ -69,6 +70,10 @@ public class PostgreSqlContainerFixture : IAsyncLifetime
 
         // Registering dependencies (must match main project)
         services.AddScoped<IUserRepository, UserRepository>();
+
+        services.AddScoped<IPasswordHasher, PasswordHasher>();
+
+        services.AddScoped<IRegistrationService, RegistrationService>();
 
         return services.BuildServiceProvider();
     }

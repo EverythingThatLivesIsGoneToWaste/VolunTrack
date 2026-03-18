@@ -7,6 +7,7 @@ namespace VolunTrack.Repositories
     {
         Task<User?> GetByIdAsync(int id);
         Task<User?> GetByLoginAsync(string login);
+        Task<List<Category>> GetUserCategoriesAsync(int id);
 
         Task<List<User>> SearchAsync(
             string? searchTerm = null,
