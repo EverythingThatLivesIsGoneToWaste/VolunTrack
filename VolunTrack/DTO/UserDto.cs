@@ -50,7 +50,7 @@ namespace VolunTrack.DTO
             return role switch
             {
                 UserRole.Volunteer => "Волонтёр",
-                UserRole.EventCoordinator => "Координатор мероприятия",
+                UserRole.EventCoordinator => "Координатор мероприятий",
                 UserRole.RegionCoordinator => "Региональный координатор",
                 UserRole.Administrator => "Администратор",
                 _ => "Неизвестно"
