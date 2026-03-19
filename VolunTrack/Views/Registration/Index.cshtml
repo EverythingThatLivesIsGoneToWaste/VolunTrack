@@ -4,10 +4,15 @@
     ViewData["Title"] = "Регистрация";
 }
 
+@section Styles {
+    <link rel="stylesheet" href="~/css/registration.css" asp-append-version="true">
+}
+
 @model RegisterDto
 
 <form id="registerForm" method="post" asp-controller="Registration" asp-action="Index">
 
+    <h1>Зарегистрироваться<br>как волонтёр</h1>
     <div class="input-group">
         <label for="inputLogin">Придумайте логин</label>
         <input type="text" id="inputLogin" asp-for="Login" maxlength="50">
@@ -39,10 +44,13 @@
     </div>
 
     <div class="input-group" id="categories-selection">
+        <p>Выберите, чем вы интересуетесь/в чем имеете навыки</p>
+        <div class="categories-container" id="categories-container">
 
+        </div>
     </div>
 
-    <button type="submit" id="RegisterButton" class="submit-button">Зарегистрироваться</button>
+    <button type="submit" id="RegisterButton" class="submit-button">Регистрация</button>
 </form>
 
 <div id="serverErrorSummary" asp-validation-summary="ModelOnly" class="text-danger"></div>
