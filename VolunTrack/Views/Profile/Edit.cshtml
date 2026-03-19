@@ -1,0 +1,61 @@
+﻿@model VolunTrack.Models.ViewModels.ProfileEditViewModel
+
+@{
+    ViewData["Title"] = "Edit";
+}
+
+@section Styles {
+    <link rel="stylesheet" href="~/css/profile-edit.css" asp-append-version="true">
+}
+
+<div id="currentUserData"
+     data-fullname="@Model.CurrentUser.FullName"
+     data-phone="@Model.CurrentUser.Phone"
+     data-email="@Model.CurrentUser.Email"
+     style="display: none;">
+</div>
+
+<form id="editProfileForm" method="post" asp-controller="Profile" asp-action="Edit">
+    <h1>Изменение профиля</h1>
+    <div class="input-group">
+        <label>Новое имя</label>
+        <input asp-for="EditDto.FullName" name="FullName" maxlength="200" />
+    </div>
+
+    <div class="input-group">
+        <label>Новый номер телефона</label>
+        <input asp-for="EditDto.Phone" name="Phone" maxlength="20" />
+    </div>
+
+    <div class="input-group">
+        <label>Новый адрес электронной почты</label>
+        <input asp-for="EditDto.Email" name="Email" maxlength="100" />
+    </div>
+
+    <div class="input-group">
+        <label>Новый пароль (оставьте пустым, если не хотите менять)</label>
+        <input asp-for="EditDto.NewPassword" name="NewPassword" />
+    </div>
+
+    <div id="password-fields" style="display: none;">
+        <div class="input-group">
+            <label>Подтвердите пароль</label>
+            <input asp-for="EditDto.ConfirmPassword" name="ConfirmPassword" />
+        </div>
+
+        <div class="input-group">
+            <label>Текущий пароль</label>
+            <input asp-for="EditDto.CurrentPassword" name="CurrentPassword" />
+        </div>
+    </div>
+
+    <button type="submit" class="submit-button">Сохранить</button>
+</form>
+
+<div id="serverErrorSummary" asp-validation-summary="ModelOnly" class="text-danger"></div>
+
+<div id="clientErrorSummary" class="text-danger" style="display: none"></div>
+
+@section Scripts {
+    <script src="~/js/profile-edit.js" asp-append-version="true"></script>
+}

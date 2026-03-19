@@ -1,0 +1,64 @@
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
+using System.Security.Claims;
+using VolunTrack.DTO;
+using VolunTrack.Repositories;
+using VolunTrack.Services;
+using VolunTrack.Models.ViewModels;
+
+namespace VolunTrack.Controllers
+{
+    public class ProfileController : Controller
+    {
+        private readonly IProfileService _profileService;
+        private readonly ILogger<LoginController> _logger;
+        private readonly IUserRepository _userRepository;
+
+        public ProfileController(
+            IProfileService profileService,
+            ILogger<LoginController> logger,
+            IUserRepository userRepository) 
+        {
+            _profileService = profileService;
+            _logger = logger;
+            _userRepository = userRepository;
+        }
+
+        [Authorize]
+        [HttpGet]
+        public async Task<IActionResult> Edit()
+        {
+            var userId = int.Parse(User.FindFirstValue(ClaimTypes.NameIdentifier)!);
+            var user = await _userRepository.GetByIdAsync(userId);
+
+            var viewModel = new ProfileEditViewModel
+            {
+                EditDto = new UserEditDto(),
+                CurrentUser = UserDto.FromEntity(user)
+            };
+
+            return View(viewModel);
+        }
+
+        [Authorize]
+        [HttpPost]
+        public async Task<IActionResult> Edit(UserEditDto dto)
+        {
+            if (!ModelState.IsValid)
+                return View(dto);
+
+            var userId = int.Parse(User.FindFirstValue(ClaimTypes.NameIdentifier)!);
+
+            var result = await _profileService.UpdateProfileAsync(userId, dto);
+
+            if (result.IsSuccess)
+            {
+                TempData["SuccessMessage"] = result.Message;
+                return RedirectToAction("Index", "Dashboard");
+            }
+
+            ModelState.AddModelError(string.Empty, result.Message);
+            return View(dto);
+        }
+    }
+}
