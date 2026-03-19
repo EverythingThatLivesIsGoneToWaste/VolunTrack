@@ -13,6 +13,7 @@ namespace VolunTrack.Tests.Integration
     [Collection("PostgreSql")]
     public class RegistrationServiceTests : IAsyncLifetime
     {
+        private readonly CategoryFixture _categoryFixture;
         private readonly UserFixture _userFixture;
         private readonly PostgreSqlContainerFixture _containerFixture;
 
@@ -25,6 +26,7 @@ namespace VolunTrack.Tests.Integration
         private List<User> _testUsers = null!;
 
         public RegistrationServiceTests(PostgreSqlContainerFixture containerFixture) {
+            _categoryFixture = new CategoryFixture();
             _userFixture = new UserFixture();
             _containerFixture = containerFixture;
 
@@ -40,6 +42,7 @@ namespace VolunTrack.Tests.Integration
             await _dbContext.Database.EnsureDeletedAsync();
             await _dbContext.Database.MigrateAsync();
 
+            await _categoryFixture.SeedAsync(_dbContext);
             await _userFixture.SeedAsync(_dbContext);
 
             _testUsers = _userFixture.GetCopyOfTestUsers();
