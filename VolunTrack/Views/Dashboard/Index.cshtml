@@ -1,0 +1,18 @@
+﻿@{
+    ViewData["Title"] = "Dashboard";
+}
+
+@section Styles {
+    <link rel="stylesheet" href="~/css/dashboard.css" asp-append-version="true">
+}
+
+<div class="user-info-card">
+    <h3>@Model.CurrentUser.FullName</h3>
+    <p>@Model.CurrentUser.Email</p>
+    <p>Роль: @Model.CurrentUser.Role</p>
+    <a asp-controller="Profile" asp-action="Edit">Редактировать профиль</a>
+</div>
+
+@section Scripts {
+    <script src="~/js/dashboard.js" asp-append-version="true"></script>
+}

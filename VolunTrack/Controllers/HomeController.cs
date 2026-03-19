@@ -1,6 +1,4 @@
-using System.Diagnostics;
 using Microsoft.AspNetCore.Mvc;
-using VolunTrack.Models;
 
 namespace VolunTrack.Controllers
 {
@@ -8,18 +6,10 @@ namespace VolunTrack.Controllers
     {
         public IActionResult Index()
         {
-            return View();
-        }
+            if (User.Identity?.IsAuthenticated == true)
+                return RedirectToAction("Index", "Dashboard");
 
-        public IActionResult Privacy()
-        {
-            return View();
-        }
-
-        [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
-        public IActionResult Error()
-        {
-            return View();
+            return RedirectToAction("Index", "Login");
         }
     }
 }
