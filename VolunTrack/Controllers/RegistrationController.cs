@@ -39,7 +39,7 @@ namespace VolunTrack.Controllers
                 if (response.IsSuccess)
                 {
                     _logger.LogInformation("User {Login} registered", response.User!.Login);
-                    return RedirectToAction("Login", "Auth");
+                    return RedirectToAction("Index", "Login");
                 }
 
                 ModelState.AddModelError(string.Empty, response.Message);
