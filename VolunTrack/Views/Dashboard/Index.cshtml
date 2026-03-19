@@ -1,4 +1,6 @@
-﻿@{
+﻿@using VolunTrack.DTO;
+
+@{
     ViewData["Title"] = "Dashboard";
 }
 
@@ -6,12 +8,26 @@
     <link rel="stylesheet" href="~/css/dashboard.css" asp-append-version="true">
 }
 
-<div class="user-info-card">
-    <h3>@Model.CurrentUser.FullName</h3>
-    <p>@Model.CurrentUser.Email</p>
-    <p>Роль: @Model.CurrentUser.Role</p>
-    <a asp-controller="Profile" asp-action="Edit">Редактировать профиль</a>
+<div class="dashboard-grid">
+    <div class="user-section">
+        <div class="user-info-card">
+            <img src="@UserDto.GetAvatarByRole(Model.CurrentUser.Role)"
+                 alt="Avatar"
+                 class="user-avatar" />
+            <div class="user-info">
+                <h1>@Model.CurrentUser.FullName</h1>
+                <p>@Model.CurrentUser.Email</p>
+                <p>Роль: @UserDto.GetRoleName(Model.CurrentUser.Role)</p>
+                <a asp-controller="Profile" asp-action="Edit">Редактировать профиль</a>
+            </div>
+        </div>
+    </div>
+
+    <div class="events-section">
+
+    </div>
 </div>
+
 
 @section Scripts {
     <script src="~/js/dashboard.js" asp-append-version="true"></script>

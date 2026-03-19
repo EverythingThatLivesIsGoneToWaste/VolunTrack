@@ -32,5 +32,29 @@ namespace VolunTrack.DTO
                 CreatedAtUtc = user.CreatedAtUtc
             };
         }
+
+        public static string GetAvatarByRole(UserRole role)
+        {
+            return role switch
+            {
+                UserRole.Volunteer => "/images/avatars/volunteer.png",
+                UserRole.EventCoordinator => "/images/avatars/coordinator.png",
+                UserRole.RegionCoordinator => "/images/avatars/region-coordinator.png",
+                UserRole.Administrator => "/images/avatars/administrator.png",
+                _ => "/images/avatars/default.png"
+            };
+        }
+
+        public static string GetRoleName(UserRole role)
+        {
+            return role switch
+            {
+                UserRole.Volunteer => "Волонтёр",
+                UserRole.EventCoordinator => "Координатор мероприятия",
+                UserRole.RegionCoordinator => "Региональный координатор",
+                UserRole.Administrator => "Администратор",
+                _ => "Неизвестно"
+            };
+        }
     }
 }
