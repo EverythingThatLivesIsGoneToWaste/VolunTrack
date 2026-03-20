@@ -11,6 +11,7 @@ namespace VolunTrack.Repositories
         Task<List<Event>> GetByCoordinatorIdAsync(int coordinatorId);
 
         Task AddAsync(Event @event);
+        Task AddEventCategoriesAsync(IEnumerable<EventCategory> eventCategories);
         Task UpdateAsync(Event @event);
         Task DeleteAsync(Event @event);
     }

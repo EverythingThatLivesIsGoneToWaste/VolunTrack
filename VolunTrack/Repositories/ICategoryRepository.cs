@@ -6,5 +6,7 @@ namespace VolunTrack.Repositories
     {
         Task<List<Category>> GetAllActiveAsync();
         Task<List<Category>> GetAllAsync();
+
+        Task<List<Category>> GetByIdsAsync(List<int> ids);
     }
 }

@@ -18,5 +18,12 @@ namespace VolunTrack.Repositories
 
         public async Task<List<Category>> GetAllAsync() =>
             await _context.Categories.ToListAsync();
+
+        public async Task<List<Category>> GetByIdsAsync(List<int> ids)
+        {
+            return await _context.Categories
+                .Where(c => ids.Contains(c.Id))
+                .ToListAsync();
+        }
     }
 }

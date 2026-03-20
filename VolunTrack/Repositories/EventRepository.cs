@@ -61,6 +61,13 @@ namespace VolunTrack.Repositories
             await _context.Events.AddAsync(@event);
             await _context.SaveChangesAsync();
         }
+
+        public async Task AddEventCategoriesAsync(IEnumerable<EventCategory> eventCategories)
+        {
+            await _context.EventCategories.AddRangeAsync(eventCategories);
+            await _context.SaveChangesAsync();
+        }
+
         public async Task UpdateAsync(Event @event)
         {
             _context.Events.Update(@event);
