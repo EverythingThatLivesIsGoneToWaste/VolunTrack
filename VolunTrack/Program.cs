@@ -43,6 +43,8 @@ builder.Services.AddHttpContextAccessor();
 // Add services and repositories
 builder.Services.AddScoped<IUserRepository, UserRepository>();
 builder.Services.AddScoped<ICategoryRepository, CategoryRepository>();
+builder.Services.AddScoped<IEventRepository, EventRepository>();
+builder.Services.AddScoped<IParticipationRepository, ParticipationRepository>();
 
 builder.Services.AddScoped<IPasswordHasher, PasswordHasher>();
 
