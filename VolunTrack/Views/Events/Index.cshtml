@@ -1,0 +1,31 @@
+﻿@{
+    ViewData["Title"] = "Список событий";
+}
+
+@section Styles {
+    <link rel="stylesheet" href="~/css/events.css" asp-append-version="true">
+}
+
+<div class="events-header">
+    @if (User.IsInRole("EventCoordinator"))
+    {
+        <h1>Мои события</h1>
+    }
+    else if (User.IsInRole("RegionCoordinator") || User.IsInRole("Administrator"))
+    {
+        <h1>Все события</h1>
+    }
+
+    @if (User.IsInRole("EventCoordinator") || User.IsInRole("Administrator"))
+    {
+        <a asp-action="Add" class="RedirectToCreate">Создать событие</a>
+    }
+    <div class="last-updated">Обновлено: <span id="last-updated"></span></div>
+</div>
+
+<div class="events-list" id="events-list">
+</div>
+
+@section Scripts {
+    <script src="~/js/events.js" asp-append-version="true"></script>
+}

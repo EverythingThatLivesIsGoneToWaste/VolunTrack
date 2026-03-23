@@ -6,26 +6,33 @@ using VolunTrack.Services;
 
 namespace VolunTrack.Controllers
 {
-    public class EventController : Controller
+    public class EventsController : Controller
     {
         private readonly IEventService _eventService;
-        private readonly ILogger<EventController> _logger;
+        private readonly ILogger<EventsController> _logger;
 
-        public EventController(
+        public EventsController(
             IEventService eventService,
-            ILogger<EventController> logger)
+            ILogger<EventsController> logger)
         {
             _eventService = eventService;
             _logger = logger;
         }
 
-        [Authorize(Roles = "EventCoordinator")]
+        [Authorize(Roles = "EventCoordinator,RegionCoordinator,Administrator")]
+        [HttpGet]
         public IActionResult Index()
         {
             return View();
         }
 
-        [Authorize(Roles = "EventCoordinator")]
+        [Authorize(Roles = "EventCoordinator,Administrator")]
+        [HttpGet]
+        public IActionResult Add()
+        {
+            return View();
+        }
+
         [HttpPost]
         public async Task<IActionResult> Add(CreateEventDto model)
         {
@@ -37,7 +44,7 @@ namespace VolunTrack.Controllers
 
             await _eventService.AddAsync(model);
 
-            return RedirectToAction("Index", "Dashboard");
+            return RedirectToAction("Index", "Events");
         }
     }
 }
