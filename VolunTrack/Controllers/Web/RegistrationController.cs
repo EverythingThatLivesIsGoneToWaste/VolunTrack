@@ -3,7 +3,7 @@ using Microsoft.AspNetCore.Mvc;
 using VolunTrack.DTO;
 using VolunTrack.Services;
 
-namespace VolunTrack.Controllers
+namespace VolunTrack.Controllers.Web
 {
     public class RegistrationController : Controller
     {

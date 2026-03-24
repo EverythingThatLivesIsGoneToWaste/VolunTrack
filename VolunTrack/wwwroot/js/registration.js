@@ -72,36 +72,3 @@ function validateForm(e) {
         clientErrorDiv.style.display = "none";
     }
 };
-
-async function loadCategories() {
-    try {
-        const response = await fetch('/api/categories');
-        const categories = await response.json();
-
-        const container = document.getElementById("categories-container");
-        container.innerHTML = '';
-
-        categories.forEach(cat => {
-            const div = document.createElement('div');
-            div.className = 'category-item';
-            div.innerHTML = `
-                <div class="checkbox-wrapper">
-                    <div class="round">
-                        <input type="checkbox" 
-                               name="CategoryIds" 
-                               value="${cat.id}" 
-                               id="cat_${cat.id}">
-                        <label for="cat_${cat.id}"></label>
-                    </div>
-                </div>
-                <label for="cat_${cat.id}" 
-                       style="background-color: #${cat.colorRgb.toString(16).padStart(6, '0')}40; border-left: 5px solid #${cat.colorRgb.toString(16).padStart(6, '0')};">
-                    ${cat.name}
-                </label>
-            `;
-            container.appendChild(div);
-        });
-    } catch (error) {
-        console.error('Failed to load categories:', error);
-    }
-}

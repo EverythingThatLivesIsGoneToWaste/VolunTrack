@@ -35,6 +35,22 @@ form input {
     font-size: 24px;
 }
 
+.input-group-period {
+    display: flex;
+    gap: 20px;
+    justify-content: space-between;
+}
+
+.date-group {
+    display: flex;
+    flex-direction: column;
+    width: 42%;
+}
+
+.input-group-period input {
+    border: 2px solid rgb(118, 118, 118)
+}
+
 .input-group {
     display: flex;
     flex-wrap: nowrap;
@@ -78,25 +94,18 @@ form input {
     display: flex;
     align-self: center;
     gap: 12px;
-
     padding-inline: 10px;
-
     max-width: 100%;
     overflow: hidden;
-
     overflow-x: auto;
-
     scrollbar-width: none;
     -ms-overflow-style: none;
-
     scroll-behavior: smooth;
 }
 
 .categories-container {
-    mask-image: 
-        linear-gradient(to right, transparent, black 10px, black 90%, transparent);
-    -webkit-mask-image: 
-        linear-gradient(to right, transparent, black 10px, black 90%, transparent);
+    mask-image: linear-gradient(to right, transparent, black 10px, black 90%, transparent);
+    -webkit-mask-image: linear-gradient(to right, transparent, black 10px, black 90%, transparent);
 }
 
 .categories-container::-webkit-scrollbar {

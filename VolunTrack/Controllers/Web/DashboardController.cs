@@ -6,7 +6,7 @@ using VolunTrack.Models.ViewModels;
 using VolunTrack.Repositories;
 using VolunTrack.Services;
 
-namespace VolunTrack.Controllers
+namespace VolunTrack.Controllers.Web
 {
     public class DashboardController : Controller
     {

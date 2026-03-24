@@ -2,7 +2,7 @@
 using VolunTrack.DTO;
 using VolunTrack.Repositories;
 
-namespace VolunTrack.Controllers
+namespace VolunTrack.Controllers.Api
 {
     [Route("api/categories")]
     [ApiController]

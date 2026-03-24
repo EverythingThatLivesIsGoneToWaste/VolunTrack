@@ -6,7 +6,7 @@ using VolunTrack.Repositories;
 using VolunTrack.Services;
 using VolunTrack.Models.ViewModels;
 
-namespace VolunTrack.Controllers
+namespace VolunTrack.Controllers.Web
 {
     public class ProfileController : Controller
     {

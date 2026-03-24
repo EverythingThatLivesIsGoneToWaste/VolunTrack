@@ -1,6 +1,6 @@
 using Microsoft.AspNetCore.Mvc;
 
-namespace VolunTrack.Controllers
+namespace VolunTrack.Controllers.Web
 {
     public class HomeController : Controller
     {

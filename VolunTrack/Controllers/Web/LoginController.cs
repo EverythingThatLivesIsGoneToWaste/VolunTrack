@@ -4,7 +4,7 @@ using VolunTrack.DTO;
 using VolunTrack.Exceptions;
 using VolunTrack.Services;
 
-namespace VolunTrack.Controllers
+namespace VolunTrack.Controllers.Web
 {
     public class LoginController : Controller
     {

@@ -20,11 +20,10 @@
     {
         <a asp-action="Add" class="RedirectToCreate">Создать событие</a>
     }
-    <div class="last-updated">Обновлено: <span id="last-updated"></span></div>
+    <div class="last-updated-datetime">Обновлено: <span id="last-updated-datetime"></span></div>
 </div>
 
-<div class="events-list" id="events-list">
-</div>
+<div class="events-container" id="events-container"></div>
 
 @section Scripts {
     <script src="~/js/events.js" asp-append-version="true"></script>

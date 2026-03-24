@@ -4,7 +4,7 @@ using System.Security.Claims;
 using VolunTrack.DTO;
 using VolunTrack.Services;
 
-namespace VolunTrack.Controllers
+namespace VolunTrack.Controllers.Web
 {
     public class EventsController : Controller
     {
@@ -44,6 +44,7 @@ namespace VolunTrack.Controllers
 
             await _eventService.AddAsync(model);
 
+            _logger.LogInformation("User {Id} successfully created event {Name}", model.CreatedByUserId, model.Name);
             return RedirectToAction("Index", "Events");
         }
     }

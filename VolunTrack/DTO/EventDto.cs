@@ -30,18 +30,14 @@ namespace VolunTrack.DTO
                 SkillsRequired = @event.SkillsRequired,
                 Status = @event.Status,
                 ParticipantsCount = @event.Participations?.Count ?? 0,
-                MaxParticipants = @event.EstimatedParticipantsCount
-            };
-
-            if (categories != null)
-            {
-                dto.Categories = [..categories.Select(c => new CategoryDto
+                MaxParticipants = @event.EstimatedParticipantsCount,
+                Categories = @event.EventCategories?.Select(ec => new CategoryDto
                 {
-                    Id = c.Id,
-                    Name = c.Name,
-                    ColorRgb = c.ColorRgb
-                })];
-            }
+                    Id = ec.Category.Id,
+                    Name = ec.Category.Name,
+                    ColorRgb = ec.Category.ColorRgb
+                }).ToList() ?? []
+            };
 
             return dto;
         }
