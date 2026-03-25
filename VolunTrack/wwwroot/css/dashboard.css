@@ -32,6 +32,10 @@
     border: 1px solid #333;
 }
 
+.events-container {
+    height: 80vh;
+}
+
 .events-footer {
     color: #333;
     font-weight: 500;

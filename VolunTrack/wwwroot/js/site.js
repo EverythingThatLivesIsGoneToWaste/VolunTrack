@@ -30,13 +30,13 @@
                     div.innerHTML = `
                 <div class="event-header">
                     <h3 class="event-name">${escapeHtml(e.name)}</h3>
-                    <span class="event-status ${e.status}">${getStatusText(e.status)}</span>
+                    <span class="event-status ${e.status}">Статус: ${getStatusText(e.status)}</span>
                 </div>
         
                 <p class="event-description">${escapeHtml(e.description)}</p>
         
                 <div class="event-details">
-                    <div class="event-place">${escapeHtml(e.place)}</div>
+                    <div class="event-place">Место проведения: ${escapeHtml(e.place)}</div>
                     <div class="event-datetime">${startDate} — ${endDate}</div>
                     ${e.skillsRequired ? `<div class="event-skills">Требуются: ${escapeHtml(e.skillsRequired)}</div>` : ''}
                 </div>

@@ -7,19 +7,22 @@
 }
 
 <div class="events-header">
-    @if (User.IsInRole("EventCoordinator"))
-    {
-        <h1>Мои события</h1>
-    }
-    else if (User.IsInRole("RegionCoordinator") || User.IsInRole("Administrator"))
-    {
-        <h1>Все события</h1>
-    }
+    <div class="events-header-top">
+            @if (User.IsInRole("EventCoordinator"))
+            {
+                <h1>Мои события</h1>
+            }
+            else if (User.IsInRole("RegionCoordinator") || User.IsInRole("Administrator"))
+            {
+                <h1>Все события</h1>
+            }
 
-    @if (User.IsInRole("EventCoordinator") || User.IsInRole("Administrator"))
-    {
-        <a asp-action="Add" class="RedirectToCreate">Создать событие</a>
-    }
+        @if (User.IsInRole("EventCoordinator") || User.IsInRole("Administrator"))
+        {
+            <a asp-action="Add" class="btn-create-event">Создать событие</a>
+        }
+    </div>
+
     <div class="last-updated-datetime">Обновлено: <span id="last-updated-datetime"></span></div>
 </div>
 

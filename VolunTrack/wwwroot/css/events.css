@@ -1,1 +1,97 @@
-﻿
+﻿.btn-create-event {
+    font-size: 24px;
+    color: white;
+    padding: 10px 30px;
+    border-radius: 16px;
+    border: 0;
+    background-color: rgb(179, 17, 49);
+    transition: all 200ms ease-in-out;
+    text-decoration: none;
+}
+
+.btn-create-event:hover {
+    background-color: rgb(140, 17, 49);
+}
+
+.last-updated-datetime {
+    margin-bottom: 1rem;
+}
+
+.events-container {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+    padding-inline-end: 30px;
+    overflow: hidden;
+    overflow-y: auto;
+    height: 70vh;
+
+    mask-image: linear-gradient(to bottom, 
+    transparent 0%, 
+    black 20px, 
+    black calc(100% - 30px), 
+    transparent 100%);
+    -webkit-mask-image: linear-gradient(to bottom, 
+    transparent 0%, 
+    black 20px,  
+    black calc(100% - 30px), 
+    transparent 100%);
+}
+
+.event-item {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    font-size: 20px;
+    background-color: #eeeeee;
+    border-radius: 30px;
+    padding: 20px
+}
+
+.event-header h3, .event-item p {
+    margin: 0;
+}
+
+.events-header-top {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.event-details, .event-description {
+    background-color: white;
+    border-radius: 16px;
+    padding: 10px;
+}
+
+.event-categories {
+    display: flex;
+    gap: 20px;
+}
+
+.category-badge {
+    padding: 4px 16px;
+    color: #333;
+    font-weight: 500;
+    font-size: 20px;
+}
+
+.join-button {
+    font-size: 22px;
+    color: white;
+    padding: 6px 20px;
+    border-radius: 16px;
+    border: 0;
+    background-color: rgb(179, 17, 49);
+    transition: all 200ms ease-in-out;
+}
+
+.join-button:hover {
+    background-color: rgb(140, 17, 49);
+}
+
+.event-footer {
+    display: flex;
+    justify-content: space-between;
+    align-items: end;
+}
