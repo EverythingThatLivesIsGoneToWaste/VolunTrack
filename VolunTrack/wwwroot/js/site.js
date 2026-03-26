@@ -189,6 +189,7 @@ async function changeEventStatus() {
             
             statusSpan.textContent = `Статус: ${getStatusText(newStatus)}`;
             statusSpan.className = `event-status ${newStatus.toLowerCase()}`;
+            statusSpan.dataset.status = `${newStatus}`;
 
             showToast("Статус события обновлён", "success");
         } else {
