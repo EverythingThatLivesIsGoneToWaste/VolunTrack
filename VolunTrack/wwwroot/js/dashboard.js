@@ -7,7 +7,6 @@
 });
 
 document.body.addEventListener("click", async (e) => {
-    console.log(`clicking`);
     const button = e.target.closest(".join-button");
     if (button) {
         const eventId = button.dataset.eventId;
