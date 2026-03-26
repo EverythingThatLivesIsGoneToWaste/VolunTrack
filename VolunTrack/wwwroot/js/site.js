@@ -208,3 +208,27 @@ function showToast(message, type) {
     document.body.appendChild(toast);
     setTimeout(() => toast.remove(), 3000);
 }
+
+async function joinEvent(eventId) {
+    console.log(`attempting to join event ${eventId}`);
+    try {
+        const response = await fetch('/api/participations', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ eventId: eventId })
+        });
+
+        const result = await response.json();
+
+        if (response.ok) {
+            showToast(result.message, "success");
+            const button = document.querySelector(`.join-button[data-event-id="${eventId}"]`);
+            button.textContent = "Вы записаны";
+            button.disabled = true;
+        } else {
+            showToast(result.message, "error");
+        }
+    } catch (error) {
+        showToast("Ошибка соединения", "error");
+    }
+}
