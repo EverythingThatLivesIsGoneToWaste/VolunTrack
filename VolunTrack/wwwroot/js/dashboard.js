@@ -4,6 +4,12 @@
     document.querySelectorAll(".confirm-button").forEach(button => {
         button.addEventListener("click", changeEventStatus);
     });
+
+    document.querySelectorAll(".event-status-select").forEach(select => {
+        select.addEventListener("change", (e) => {
+            showToast("Изменения не сохранены", "alert")
+        });
+    });
 });
 
 document.body.addEventListener("click", async (e) => {
