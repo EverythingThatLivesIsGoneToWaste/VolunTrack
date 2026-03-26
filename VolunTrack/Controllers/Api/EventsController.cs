@@ -1,10 +1,12 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System.Security.Claims;
-using VolunTrack.Models;
-using VolunTrack.Enums;
-using VolunTrack.Repositories;
 using VolunTrack.DTO;
+using VolunTrack.Enums;
+using VolunTrack.Exceptions;
+using VolunTrack.Models;
+using VolunTrack.Repositories;
+using VolunTrack.Services;
 
 namespace VolunTrack.Controllers.Api
 {
@@ -13,10 +15,17 @@ namespace VolunTrack.Controllers.Api
     public class EventsController : ControllerBase
     {
         private readonly IEventRepository _eventRepository;
+        private readonly IEventService _eventService;
+        private readonly ILogger<EventsController> _logger;
 
-        public EventsController(IEventRepository eventRepository)
+        public EventsController(
+            IEventRepository eventRepository,
+            IEventService eventService,
+            ILogger<EventsController> logger)
         {
             _eventRepository = eventRepository;
+            _eventService = eventService;
+            _logger = logger;
         }
 
         [Authorize]
@@ -46,6 +55,35 @@ namespace VolunTrack.Controllers.Api
             }
 
             return Ok(events.Select(e => EventDto.FromEntity(e)));
+        }
+
+        [Authorize(Roles = "EventCoordinator,Administrator")]
+        [HttpPatch("{eventId}/status")]
+        public async Task<IActionResult> ChangeEventStatus(int eventId, [FromBody] EventStatus newStatus)
+        {
+            try
+            {
+                var userId = int.Parse(User.FindFirstValue(ClaimTypes.NameIdentifier)!);
+                var userRole = User.FindFirstValue(ClaimTypes.Role)!;
+
+                var result = await _eventService.UpdateStatusAsync(eventId, newStatus, userId, userRole);
+                return Ok(result);
+            }
+            catch (NotFoundException ex)
+            {
+                _logger.LogError(ex, "Event does not exist");
+                return NotFound(new { message = ex.Message });
+            }
+            catch (Exceptions.UnauthorizedAccessException ex)
+            {
+                _logger.LogError(ex, "Unauthorized attempt to change event status");
+                return Forbid();
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error changing event status");
+                return StatusCode(500, new { message = "Internal server error" });
+            }
         }
     }
 }

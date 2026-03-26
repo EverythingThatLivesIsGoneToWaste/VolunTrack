@@ -1,5 +1,6 @@
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.EntityFrameworkCore;
+using System.Text.Json.Serialization;
 using VolunTrack.Data;
 using VolunTrack.Models;
 using VolunTrack.Repositories;
@@ -57,6 +58,13 @@ builder.Services.AddScoped<IEventService, EventService>();
 builder.Services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme)
     .AddCookie(options => options.LoginPath = "/Login");
 builder.Services.AddAuthorization();
+
+// Setup enum to string json converter
+builder.Services.AddControllers()
+    .AddJsonOptions(options =>
+    {
+        options.JsonSerializerOptions.Converters.Add(new JsonStringEnumConverter());
+    });
 
 var app = builder.Build();
 

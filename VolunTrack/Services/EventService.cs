@@ -1,5 +1,4 @@
-﻿using System.Security.Claims;
-using VolunTrack.DTO;
+﻿using VolunTrack.DTO;
 using VolunTrack.Enums;
 using VolunTrack.Exceptions;
 using VolunTrack.Models;
@@ -53,6 +52,23 @@ namespace VolunTrack.Services
             await _eventRepository.AddEventCategoriesAsync(eventCategories);
 
             return EventDto.FromEntity(eventEntity, categories);
+        }
+
+        public async Task<EventDto> UpdateStatusAsync(int eventId, EventStatus newStatus, int userId, string userRole)
+        {
+            var eventEntity = await _eventRepository.GetByIdAsync(eventId)
+                ?? throw new NotFoundException($"Event {eventId} not found");
+
+            var isAdmin = userRole == nameof(UserRole.Administrator);
+            var isCreator = eventEntity.CreatedByUserId == userId;
+
+            if (!isCreator && !isAdmin)
+                throw new Exceptions.UnauthorizedAccessException("You don't have permission to change this event status");
+
+            eventEntity.Status = newStatus;
+            await _eventRepository.UpdateAsync(eventEntity);
+
+            return EventDto.FromEntity(eventEntity);
         }
     }
 }

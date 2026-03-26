@@ -13,6 +13,7 @@ namespace VolunTrack.DTO
         public DateTime EndDateTime { get; set; }
         public string SkillsRequired { get; set; } = string.Empty;
         public EventStatus Status { get; set; }
+        public int? CreatedByUserId { get; set; }
         public int ParticipantsCount { get; set; }
         public int MaxParticipants { get; set; }
         public List<CategoryDto> Categories { get; set; } = [];
@@ -29,6 +30,7 @@ namespace VolunTrack.DTO
                 EndDateTime = @event.EndDateTime,
                 SkillsRequired = @event.SkillsRequired,
                 Status = @event.Status,
+                CreatedByUserId = @event.CreatedByUserId,
                 ParticipantsCount = @event.Participations?.Count ?? 0,
                 MaxParticipants = @event.EstimatedParticipantsCount,
                 Categories = @event.EventCategories?.Select(ec => new CategoryDto

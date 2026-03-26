@@ -19,6 +19,14 @@
             const startDate = new Date(e.startDateTime).toLocaleString();
             const endDate = new Date(e.endDateTime).toLocaleString();
 
+            let buttonHtml = '';
+            const isUpcoming = new Date(e.startDateTime) > new Date();
+            if (isUpcoming) {
+                buttonHtml = `<button class="join-button" data-event-id="${e.id}">Записаться</button>`;
+            } else {
+                buttonHtml = `<span class="event-closed">Завершено</span>`;
+            }
+
             const categoriesHtml = e.categories?.map(cat =>
                 `<span class="category-badge" style="
                 background-color: #${cat.colorRgb.toString(16).padStart(6, '0')}40; 
@@ -27,9 +35,31 @@
                 </span>`
                     ).join('') || '';
 
-                    div.innerHTML = `
+            const isAdmin = window.userRole === 'Administrator';
+            const isCoordinator = window.userRole === 'EventCoordinator';
+            const isCreator = e.createdByUserId === window.currentUserId;
+
+            let statusSelectHtml = '';
+            if (isAdmin || (isCoordinator && isCreator)) {
+                statusSelectHtml = `
+                    <div class="status-select-section">
+                        <select class="event-status-select" data-event-id="${e.id}">
+                            <option value="Draft" ${e.status === 'Draft' ? 'selected' : ''}>Черновик</option>
+                            <option value="Published" ${e.status === 'Published' ? 'selected' : ''}>Опубликовано</option>
+                            <option value="Cancelled" ${e.status === 'Cancelled' ? 'selected' : ''}>Отменено</option>
+                        </select>
+                        <button class="confirm-button"><img src="/images/ui/buttons/checkmark.png"></button>
+                    </div>
+                `;
+            }
+
+            div.innerHTML = `
                 <div class="event-header">
-                    <h3 class="event-name">${escapeHtml(e.name)}</h3>
+                    <div class="header-top-section">
+                        <h3 class="event-name">${escapeHtml(e.name)}</h3>
+                        ${statusSelectHtml}
+                    </div>
+                    
                     <span class="event-status ${e.status}">Статус: ${getStatusText(e.status)}</span>
                 </div>
         
@@ -47,7 +77,7 @@
         
                 <div class="event-footer">
                     <span class="event-participants">Участников: ${e.participantsCount || 0}</span>
-                    <button class="join-button" data-event-id="${e.id}">Записаться</button>
+                    ${buttonHtml}
                 </div>
             `;
 
@@ -76,11 +106,11 @@ function escapeHtml(str) {
 
 function getStatusText(status) {
     const classMap = {
-        0: 'Черновик',
-        1: 'Опубликовано',
-        2: 'Идёт',
-        3: 'Завершено',
-        4: 'Отменено'
+        Draft: 'Черновик',
+        Published: 'Опубликовано',
+        InProgress: 'Идёт',
+        Completed: 'Завершено',
+        Cancelled: 'Отменено'
     };
     return classMap[status] || 'unknown';
 }
@@ -129,4 +159,44 @@ async function loadCategories() {
 
         console.error('Failed to load categories:', error);
     }
+}
+
+async function changeEventStatus() {
+    const button = event.currentTarget;
+    const eventItem = button.closest(".event-item");
+    const select = eventItem.querySelector(".event-status-select");
+    const eventId = select.dataset.eventId;
+    const newStatus = select.value;
+
+    try {
+        const response = await fetch(`/api/events/${eventId}/status`, {
+            method: 'PATCH',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(newStatus)
+        });
+
+        if (response.ok) {
+            const statusSpan = eventItem.querySelector(".event-status");
+            statusSpan.textContent = `Статус: ${getStatusText(newStatus)}`;
+            statusSpan.className = `event-status ${newStatus.toLowerCase()}`;
+
+            showToast("Статус события обновлён", "success");
+        } else {
+            const error = await response.json();
+            showToast("Ошибка обновления статуса", "error");
+        }
+    } catch (error) {
+        console.error('Failed to update event status:', error);
+        showToast("Ошибка соединения", "error");
+    }
+}
+
+function showToast(message, type) {
+    const toast = document.createElement('div');
+    toast.className = `toast toast-${type} show`;
+    toast.textContent = message;
+    document.body.appendChild(toast);
+    setTimeout(() => toast.remove(), 3000);
 }

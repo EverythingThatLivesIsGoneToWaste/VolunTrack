@@ -21,6 +21,7 @@
     display: flex;
     flex-direction: column;
     gap: 20px;
+    padding-top: 10px;
     padding-inline-end: 30px;
     overflow: hidden;
     overflow-y: auto;
@@ -45,17 +46,65 @@
     font-size: 20px;
     background-color: #eeeeee;
     border-radius: 30px;
-    padding: 20px
-}
-
-.event-header h3, .event-item p {
-    margin: 0;
+    padding: 20px;
+    transition: all 200ms ease-in-out;
 }
 
 .events-header-top {
     display: flex;
     justify-content: space-between;
     align-items: center;
+}
+
+.header-top-section {
+    display: flex;
+    justify-content: space-between;
+}
+.status-select-section {
+    display: flex;
+    gap: 20px;
+    align-items: center;
+}
+
+.event-header h3, .event-item p {
+    margin: 0;
+}
+
+.event-status-select {
+    width: min-content;
+    border: 0;
+    border-inline-end: 2px solid rgb(179, 17, 49);
+    cursor: pointer;
+}
+
+.event-status-select:focus {
+    outline: none;
+}
+
+.event-status-select option:hover {
+    background-color: lightgray;
+    border: 0;
+}
+
+.confirm-button {
+    height: 50px;
+    width: 50px;
+    border: 0;
+    padding: 8px 5px;
+    border-radius: 12px;
+    background-color: rgb(179, 17, 49);
+    transition: all 200ms ease-in-out;
+}
+
+.confirm-button:hover {
+    background-color: rgb(140, 17, 49);
+}
+
+.confirm-button img {
+    width: 90%;
+    height: 90%;
+    object-fit: cover;
+    overflow: hidden;
 }
 
 .event-details, .event-description {
@@ -95,3 +144,4 @@
     justify-content: space-between;
     align-items: end;
 }
+

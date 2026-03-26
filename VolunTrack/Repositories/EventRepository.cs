@@ -1,5 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using VolunTrack.Data;
+using VolunTrack.Enums;
 using VolunTrack.Models;
 
 namespace VolunTrack.Repositories
@@ -36,7 +37,7 @@ namespace VolunTrack.Repositories
                 .Include(e => e.EventCategories)
                     .ThenInclude(ec => ec.Category)
                 .Include(e => e.EventPhotos)
-                .Where(e => e.StartDateTime > DateTime.UtcNow)
+                .Where(e => e.StartDateTime > DateTime.UtcNow && e.Status == EventStatus.Published)
                 .ToListAsync();
         }
 

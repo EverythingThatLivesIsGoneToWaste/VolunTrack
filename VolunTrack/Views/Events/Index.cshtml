@@ -1,4 +1,6 @@
-﻿@{
+﻿@using System.Security.Claims
+
+@{
     ViewData["Title"] = "Список событий";
 }
 
@@ -27,6 +29,11 @@
 </div>
 
 <div class="events-container" id="events-container"></div>
+
+<script>
+    window.currentUserId = '@User.FindFirstValue(ClaimTypes.NameIdentifier)';
+    window.userRole = '@User.FindFirstValue(ClaimTypes.Role)';
+</script>
 
 @section Scripts {
     <script src="~/js/events.js" asp-append-version="true"></script>

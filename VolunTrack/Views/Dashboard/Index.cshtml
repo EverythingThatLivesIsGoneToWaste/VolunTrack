@@ -1,4 +1,5 @@
-﻿@using VolunTrack.DTO;
+﻿@using System.Security.Claims
+@using VolunTrack.DTO;
 
 @{
     ViewData["Title"] = "Главная";
@@ -33,6 +34,11 @@
         <div class="events-container" id="events-container"></div>
     </div>
 </div>
+
+<script>
+    window.currentUserId = '@User.FindFirstValue(ClaimTypes.NameIdentifier)';
+    window.userRole = '@User.FindFirstValue(ClaimTypes.Role)';
+</script>
 
 @section Scripts {
     <script src="~/js/dashboard.js" asp-append-version="true"></script>
