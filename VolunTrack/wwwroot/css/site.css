@@ -72,6 +72,10 @@ form h1 {
     background-color: #4caf50;
 }
 
+.toast-alert {
+    background-color: #eac54b;
+}
+
 .toast-error {
     background-color: #f44336;
 }

@@ -60,7 +60,7 @@
                         ${statusSelectHtml}
                     </div>
                     
-                    <span class="event-status ${e.status}">Статус: ${getStatusText(e.status)}</span>
+                    <span class="event-status" data-status="${e.status}">Статус: ${getStatusText(e.status)}</span>
                 </div>
         
                 <p class="event-description">${escapeHtml(e.description)}</p>
@@ -168,6 +168,14 @@ async function changeEventStatus() {
     const eventId = select.dataset.eventId;
     const newStatus = select.value;
 
+    const statusSpan = eventItem.querySelector(".event-status");
+
+    const currentStatus = statusSpan.dataset.status;
+    if (newStatus === currentStatus) {
+        showToast("Статус уже установлен", "alert");
+        return;
+    }
+
     try {
         const response = await fetch(`/api/events/${eventId}/status`, {
             method: 'PATCH',
@@ -178,7 +186,7 @@ async function changeEventStatus() {
         });
 
         if (response.ok) {
-            const statusSpan = eventItem.querySelector(".event-status");
+            
             statusSpan.textContent = `Статус: ${getStatusText(newStatus)}`;
             statusSpan.className = `event-status ${newStatus.toLowerCase()}`;
 
