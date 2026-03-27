@@ -44,6 +44,16 @@
             const isCreator = e.createdByUserId === window.currentUserId;
 
             let statusSelectHtml = '';
+            let templateHtml = '';
+
+            if (isAdmin || (isCoordinator && isCreator)) {
+                templateHtml = `
+                    <button class="template-button" data-event-id="${e.id}" title="Нажмите, чтобы использовать как шаблон">
+                        <img src="/images/ui/buttons/template.png">
+                    </button>
+                `;
+            }
+
             if (isAdmin || (isCoordinator && isCreator)) {
                 statusSelectHtml = `
                     <div class="status-select-section">
@@ -53,6 +63,7 @@
                             <option value="Cancelled" ${e.status === 'Cancelled' ? 'selected' : ''}>Отменено</option>
                         </select>
                         <button class="confirm-button"><img src="/images/ui/buttons/checkmark.png"></button>
+                        ${templateHtml}
                     </div>
                 `;
             }
@@ -235,5 +246,18 @@ async function joinEvent(eventId) {
         }
     } catch (error) {
         showToast("Ошибка соединения", "error");
+    }
+}
+
+async function useAsTemplate(eventId) {
+    try {
+        const response = await fetch(`/api/events/${eventId}/template`);
+        const eventData = await response.json();
+
+        sessionStorage.setItem('templateEvent', JSON.stringify(eventData));
+
+        window.location.href = '/events/add?template=true';
+    } catch (error) {
+        showToast("Ошибка загрузки шаблона", "error");
     }
 }

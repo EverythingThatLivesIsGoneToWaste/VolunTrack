@@ -1,5 +1,7 @@
 ﻿document.addEventListener("DOMContentLoaded", async function () {
     await loadCategories();
+
+    loadTemplate()
 });
 
 document.getElementById("createEventForm").addEventListener("submit", validateForm);
@@ -64,3 +66,23 @@ function validateForm(e) {
         clientErrorDiv.style.display = "none";
     }
 };
+
+function loadTemplate() {
+    const template = sessionStorage.getItem('templateEvent');
+    if (template && window.location.search.includes('template=true')) {
+        const eventData = JSON.parse(template);
+        document.getElementById("inputName").value = eventData.name || '';
+        document.getElementById("inputDescription").value = eventData.description || '';
+        document.getElementById("inputPlace").value = eventData.place || '';
+        document.getElementById("inputSkills").value = eventData.skillsRequired || '';
+
+        if (eventData.categoryIds) {
+            eventData.categoryIds.forEach(catId => {
+                const checkbox = document.querySelector(`input[name="CategoryIds"][value="${catId}"]`);
+                if (checkbox) checkbox.checked = true;
+            });
+        }
+
+        sessionStorage.removeItem('templateEvent');
+    }
+}

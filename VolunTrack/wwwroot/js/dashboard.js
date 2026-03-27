@@ -19,3 +19,11 @@ document.body.addEventListener("click", async (e) => {
         await joinEvent(eventId);
     }
 });
+
+document.body.addEventListener("click", async (e) => {
+    const templateButton = e.target.closest(".template-button");
+    if (templateButton) {
+        const eventId = templateButton.dataset.eventId;
+        await useAsTemplate(eventId);
+    }
+});

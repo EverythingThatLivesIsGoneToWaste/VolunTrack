@@ -78,5 +78,25 @@ namespace VolunTrack.Controllers.Api
                 return StatusCode(500, new { message = "Internal server error" });
             }
         }
+
+        [Authorize(Roles = "EventCoordinator,Administrator")]
+        [HttpGet("{eventId}/template")]
+        public async Task<IActionResult> GetEventTemplate(int eventId)
+        {
+            var eventEntity = await _eventRepository.GetByIdAsync(eventId);
+            if (eventEntity == null)
+                return NotFound();
+
+            var template = new CreateEventDto
+            {
+                Name = eventEntity.Name,
+                Description = eventEntity.Description,
+                Place = eventEntity.Place,
+                SkillsRequired = eventEntity.SkillsRequired,
+                CategoryIds = [..eventEntity.EventCategories.Select(ec => ec.CategoryId)]
+            };
+
+            return Ok(template);
+        }
     }
 }

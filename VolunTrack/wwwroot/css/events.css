@@ -66,6 +66,26 @@
     align-items: center;
 }
 
+.template-button {
+    border: 0;
+    width: 50px;
+    height: 50px;
+    padding: 4px 5px;
+    border-radius: 12px;
+    background-color: rgb(179, 17, 49);
+    transition: all 200ms ease-in-out;
+}
+
+.template-button:hover {
+    background-color: rgb(140, 17, 49);
+}
+
+.template-button img {
+    height: 100%;
+    object-fit: cover;
+    overflow: hidden;
+}
+
 .event-header h3, .event-item p {
     margin: 0;
 }
