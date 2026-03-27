@@ -16,6 +16,7 @@ namespace VolunTrack.DTO
         public int? CreatedByUserId { get; set; }
         public int ParticipantsCount { get; set; }
         public int MaxParticipants { get; set; }
+        public bool IsJoined { get; set; }
         public List<CategoryDto> Categories { get; set; } = [];
 
         public static EventDto FromEntity(Event @event, List<Category>? categories = null)
@@ -33,6 +34,7 @@ namespace VolunTrack.DTO
                 CreatedByUserId = @event.CreatedByUserId,
                 ParticipantsCount = @event.Participations?.Count ?? 0,
                 MaxParticipants = @event.EstimatedParticipantsCount,
+                IsJoined = false,
                 Categories = @event.EventCategories?.Select(ec => new CategoryDto
                 {
                     Id = ec.Category.Id,

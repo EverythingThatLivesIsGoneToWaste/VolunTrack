@@ -10,13 +10,16 @@ namespace VolunTrack.Services
     {
         private readonly IEventRepository _eventRepository;
         private readonly ICategoryRepository _categoryRepository;
+        private readonly IParticipationRepository _participationRepository;
 
         public EventService(
             IEventRepository eventRepository, 
-            ICategoryRepository categoryRepository)
+            ICategoryRepository categoryRepository,
+            IParticipationRepository participationRepository)
         {
             _eventRepository = eventRepository;
             _categoryRepository = categoryRepository;
+            _participationRepository = participationRepository;
         }
 
         public async Task<EventDto> AddAsync(CreateEventDto model)
@@ -69,6 +72,37 @@ namespace VolunTrack.Services
             await _eventRepository.UpdateAsync(eventEntity);
 
             return EventDto.FromEntity(eventEntity);
+        }
+
+        public async Task<List<EventDto>> GetEventsAsync(string type, int userId, string userRole)
+        {
+            List<Event> events;
+
+            if (type == "upcoming")
+            {
+                events = await _eventRepository.GetUpcomingAsync();
+            }
+            else
+            {
+                if (userRole == nameof(UserRole.EventCoordinator))
+                {
+                    events = await _eventRepository.GetByCoordinatorIdAsync(userId);
+                }
+                else
+                {
+                    events = await _eventRepository.GetAllAsync();
+                }
+            }
+
+            var eventDtos = new List<EventDto>();
+            foreach (var e in events)
+            {
+                var dto = EventDto.FromEntity(e);
+                dto.IsJoined = await _participationRepository.ExistsAsync(userId, e.Id);
+                eventDtos.Add(dto);
+            }
+
+            return eventDtos;
         }
     }
 }

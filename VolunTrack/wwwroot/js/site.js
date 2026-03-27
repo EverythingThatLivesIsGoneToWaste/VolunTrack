@@ -22,7 +22,11 @@
             let buttonHtml = '';
             const isUpcoming = new Date(e.startDateTime) > new Date();
             if (isUpcoming) {
-                buttonHtml = `<button class="join-button" data-event-id="${e.id}">Записаться</button>`;
+                if (e.isJoined) {
+                    buttonHtml = `<button class="join-button joined" data-event-id="${e.id}" disabled>Вы записаны</button>`;
+                } else {
+                    buttonHtml = `<button class="join-button" data-event-id="${e.id}">Записаться</button>`;
+                }
             } else {
                 buttonHtml = `<span class="event-closed">Завершено</span>`;
             }

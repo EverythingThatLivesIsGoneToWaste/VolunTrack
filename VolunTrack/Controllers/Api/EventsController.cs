@@ -32,8 +32,11 @@ namespace VolunTrack.Controllers.Api
         [HttpGet("upcoming")]
         public async Task<IActionResult> GetUpcoming()
         {
-            var events = await _eventRepository.GetUpcomingAsync();
-            return Ok(events.Select(e => EventDto.FromEntity(e)));
+            var userId = int.Parse(User.FindFirstValue(ClaimTypes.NameIdentifier)!);
+            var userRole = User.FindFirstValue(ClaimTypes.Role)!;
+
+            var events = await _eventService.GetEventsAsync("upcoming", userId, userRole);
+            return Ok(events);
         }
 
         [Authorize(Roles = "EventCoordinator,RegionCoordinator,Administrator")]
@@ -41,20 +44,10 @@ namespace VolunTrack.Controllers.Api
         public async Task<IActionResult> GetMyEvents()
         {
             var userId = int.Parse(User.FindFirstValue(ClaimTypes.NameIdentifier)!);
-            var userRole = Enum.Parse<UserRole>(User.FindFirstValue(ClaimTypes.Role)!);
+            var userRole = User.FindFirstValue(ClaimTypes.Role)!;
 
-            List<Event> events;
-
-            if (userRole == UserRole.EventCoordinator)
-            {
-                events = await _eventRepository.GetByCoordinatorIdAsync(userId);
-            }
-            else
-            {
-                events = await _eventRepository.GetAllAsync();
-            }
-
-            return Ok(events.Select(e => EventDto.FromEntity(e)));
+            var events = await _eventService.GetEventsAsync("my", userId, userRole);
+            return Ok(events);
         }
 
         [Authorize(Roles = "EventCoordinator,Administrator")]
