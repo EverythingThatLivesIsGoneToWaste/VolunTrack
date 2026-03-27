@@ -72,12 +72,14 @@ public class PostgreSqlContainerFixture : IAsyncLifetime
         services.AddScoped<IUserRepository, UserRepository>();
         services.AddScoped<IEventRepository, EventRepository>();
         services.AddScoped<IParticipationRepository, ParticipationRepository>();
+        services.AddScoped<ICategoryRepository, CategoryRepository>();
 
         services.AddScoped<IPasswordHasher, PasswordHasher>();
 
         services.AddScoped<IRegistrationService, RegistrationService>();
         services.AddScoped<ILoginService, LoginService>();
         services.AddScoped<IParticipationService, ParticipationService>();
+        services.AddScoped<IEventService, EventService>();
 
         return services.BuildServiceProvider();
     }
