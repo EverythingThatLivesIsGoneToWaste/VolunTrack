@@ -57,6 +57,22 @@ namespace VolunTrack.Tests.Fixtures
                     Role = UserRole.RegionCoordinator,
                     IsActive = false,
                     CreatedAtUtc = new DateTime(2026, 5, 7, 21, 9, 49).ToUniversalTime()
+                },
+                new User()
+                {
+                    Id = 5,
+                    Login = "admin",
+                    FullName = "System Administrator",
+                    Phone = "+7(999)999-99-99",
+                    Email = "admin@admin.com",
+                    PasswordHash = BCrypt.Net.BCrypt.EnhancedHashPassword(
+                        "strongpassword",
+                        HashType.SHA512,
+                        workFactor: 12
+                    ),
+                    Role = UserRole.Administrator,
+                    IsActive = false,
+                    CreatedAtUtc = new DateTime(2026, 3, 24, 8, 56, 29).ToUniversalTime()
                 }
             ];
 

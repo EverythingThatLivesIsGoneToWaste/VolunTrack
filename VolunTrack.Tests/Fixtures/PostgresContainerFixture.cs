@@ -70,11 +70,14 @@ public class PostgreSqlContainerFixture : IAsyncLifetime
 
         // Registering dependencies (must match main project)
         services.AddScoped<IUserRepository, UserRepository>();
+        services.AddScoped<IEventRepository, EventRepository>();
+        services.AddScoped<IParticipationRepository, ParticipationRepository>();
 
         services.AddScoped<IPasswordHasher, PasswordHasher>();
 
         services.AddScoped<IRegistrationService, RegistrationService>();
         services.AddScoped<ILoginService, LoginService>();
+        services.AddScoped<IParticipationService, ParticipationService>();
 
         return services.BuildServiceProvider();
     }
