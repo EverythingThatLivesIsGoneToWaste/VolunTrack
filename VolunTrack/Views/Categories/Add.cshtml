@@ -1,1 +1,40 @@
-﻿
+﻿@using VolunTrack.DTO;
+
+@{
+    ViewData["Title"] = "Категория";
+}
+
+@section Styles {
+    <link rel="stylesheet" href="~/css/add-category.css" asp-append-version="true">
+    }
+
+@model CreateCategoryDto
+
+    <form id="createCategoryForm" method="post" asp-controller="Categories" asp-action="Add">
+    <h1>Создать новую категорию</h1>
+
+    <div class="input-group">
+        <label for="inputName">Как она будет называться?</label>
+        <input type="text" id="inputName" asp-for="Name" maxlength="80">
+    </div>
+
+    <div class="input-group">
+        <label for="inputDescription">Кратко опишите ее</label>
+        <input type="text" id="inputDescription" asp-for="Description" maxlength="200">
+    </div>
+
+    <div class="input-group">
+        <label for="inputColor">Выберите цвет ее отображения</label>
+        <input type="color" id="inputColor" asp-for="ColorRgb">
+    </div>
+
+    <button type="submit" id="CreateCategoryButton" class="submit-button">Подтвердить</button>
+</form>
+
+<div id="serverErrorSummary" asp-validation-summary="ModelOnly" class="text-danger"></div>
+
+<div id="clientErrorSummary" class="text-danger" style="display: none"></div>
+
+@section Scripts {
+    <script src="~/js/add-category.js" asp-append-version="true"></script>
+}

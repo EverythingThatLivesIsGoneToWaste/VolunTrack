@@ -1,1 +1,40 @@
-﻿
+﻿@using System.Security.Claims
+
+@{
+    ViewData["Title"] = "Список категорий";
+}
+
+@section Styles {
+    <link rel="stylesheet" href="~/css/categories.css" asp-append-version="true">
+}
+
+<div class="categories-header">
+    <div class="categories-header-top">
+        @if (User.IsInRole("Administrator"))
+        {
+            <h1>Все категории</h1>
+        }
+        else 
+        {
+            <h1>Активные категории</h1>
+        }
+
+        @if (User.IsInRole("Administrator"))
+        {
+            <a asp-action="Add" class="btn-create-category">Создать категорию</a>
+        }
+    </div>
+
+    <div class="last-updated-datetime">Обновлено: <span id="last-updated-datetime"></span></div>
+</div>
+
+<div class="categories-cards-container" id="categories-cards-container"></div>
+
+<script>
+    window.currentUserId = '@User.FindFirstValue(ClaimTypes.NameIdentifier)';
+    window.userRole = '@User.FindFirstValue(ClaimTypes.Role)';
+</script>
+
+@section Scripts {
+    <script src="~/js/categories.js" asp-append-version="true"></script>
+}

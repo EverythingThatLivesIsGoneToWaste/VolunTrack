@@ -176,6 +176,71 @@ async function loadCategories() {
     }
 }
 
+async function loadCategoriesDetailed() {
+    const container = document.getElementById("categories-cards-container");
+
+    try {
+        const response = await fetch('/api/categories');
+        const categories = await response.json();
+
+        if (categories.length === 0) {
+            container.innerHTML = `<p>Категории не найдены</p>`;
+            return;
+        }
+
+        container.innerHTML = '';
+
+        const isAdmin = window.userRole === 'Administrator';
+
+        categories.forEach(cat => {
+            let categoryCardActionsHtml = ''
+
+            if (isAdmin) {
+                categoryCardActionsHtml = `
+                <div class="category-card-actions">
+                    <button class="edit-button" data-category-id="${cat.id}">✏️</button>
+                    <button class="toggle-button" data-category-id="${cat.id}" data-active="${cat.isActive}">
+                        ${cat.isActive ? 'Деактивировать' : 'Активировать'}
+                    </button>
+                    <button class="delete-button" data-category-id="${cat.id}">🗑️</button>
+                </div>
+            `
+            }
+
+            const card = document.createElement('div');
+            card.className = 'category-card';
+            card.dataset.id = cat.id;
+            card.style.borderLeft = `5px solid #${cat.colorRgb.toString(16).padStart(6, '0')}`;
+            card.innerHTML = `
+                <div class="category-card-header">
+                    <h3>${escapeHtml(cat.name)}</h3>
+                    ${categoryCardActionsHtml}
+                </div>
+                <p class="category-description">${escapeHtml(cat.description)}</p>
+                <div class="category-color" style="background-color: #${cat.colorRgb.toString(16).padStart(6, '0')}"></div>
+                
+                <div class="edit-fields" style="display: none;">
+                    <input type="text" class="edit-name" value="${escapeHtml(cat.name)}">
+                    <textarea class="edit-description">${escapeHtml(cat.description)}</textarea>
+                    <input type="color" class="edit-color" value="#${cat.colorRgb.toString(16).padStart(6, '0')}">
+                    <button class="save-edit" data-id="${cat.id}">Сохранить</button>
+                    <button class="cancel-edit">Отмена</button>
+                </div>
+            `;
+            container.appendChild(card);
+        });
+
+        const lastUpdated = document.getElementById("last-updated-datetime");
+        if (lastUpdated) {
+            lastUpdated.textContent = new Date().toLocaleString();
+        }
+
+    } catch (error) {
+        container.innerHTML = `<p>Ошибка загрузки категорий</p>`;
+        console.error('Failed to load categories:', error);
+    }
+}
+
 async function changeEventStatus() {
     const button = event.currentTarget;
     const eventItem = button.closest(".event-item");

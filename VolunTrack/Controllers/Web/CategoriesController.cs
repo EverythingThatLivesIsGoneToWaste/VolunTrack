@@ -51,36 +51,5 @@ namespace VolunTrack.Controllers.Web
                 return View(dto);
             }
         }
-
-        [Authorize(Roles = "Administrator")]
-        [HttpPost]
-        public async Task<IActionResult> Edit(UpdateCategoryDto dto)
-        {
-            if (!ModelState.IsValid)
-                return View(dto);
-
-            try { 
-                await _categoryService.UpdateAsync(dto);
-                return RedirectToAction(nameof(Index));
-            }
-            catch (NotFoundException ex) {
-                ModelState.AddModelError(string.Empty, ex.Message);
-                Response.StatusCode = 404;
-                return View(dto);
-            }
-            catch (AlreadyExistsException ex)
-            {
-                ModelState.AddModelError(string.Empty, ex.Message);
-                Response.StatusCode = 409;
-                return View(dto);
-            }
-            catch (Exception ex)
-            {
-                _logger.LogError(ex, "Error during category {Action}", nameof(Edit));
-                ModelState.AddModelError(string.Empty, "Internal server error");
-                Response.StatusCode = 500;
-                return View(dto);
-            }
-        }
     }
 }

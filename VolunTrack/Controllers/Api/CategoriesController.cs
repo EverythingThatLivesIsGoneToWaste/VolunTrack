@@ -1,8 +1,9 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System.Security.Claims;
-using VolunTrack.Services;
+using VolunTrack.DTO;
 using VolunTrack.Exceptions;
+using VolunTrack.Services;
 
 namespace VolunTrack.Controllers.Api
 {
@@ -32,6 +33,28 @@ namespace VolunTrack.Controllers.Api
             catch
             {
                 return StatusCode(500);
+            }
+        }
+
+        [Authorize(Roles = "Administrator")]
+        [HttpPut("{categoryId}")]
+        public async Task<IActionResult> Update(int categoryId, [FromBody] UpdateCategoryDto dto)
+        {
+            if (categoryId != dto.Id)
+                return BadRequest(new { message = "ID mismatch" });
+
+            try
+            {
+                var result = await _categoryService.UpdateAsync(dto);
+                return Ok(result);
+            }
+            catch (NotFoundException ex)
+            {
+                return NotFound(new { message = ex.Message });
+            }
+            catch (AlreadyExistsException ex)
+            {
+                return Conflict(new { message = ex.Message });
             }
         }
 
