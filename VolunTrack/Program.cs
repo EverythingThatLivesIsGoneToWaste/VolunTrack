@@ -54,6 +54,7 @@ builder.Services.AddScoped<ILoginService, LoginService>();
 builder.Services.AddScoped<IProfileService, ProfileService>();
 builder.Services.AddScoped<IEventService, EventService>();
 builder.Services.AddScoped<IParticipationService, ParticipationService>();
+builder.Services.AddScoped<ICategoryService, CategoryService>();
 
 // Authentication setup
 builder.Services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme)
