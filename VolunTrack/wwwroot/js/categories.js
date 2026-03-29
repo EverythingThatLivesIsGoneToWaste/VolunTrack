@@ -76,17 +76,16 @@ document.body.addEventListener("click", (e) => {
 
     const card = editButton.closest(".category-card");
     if (!card) return;
-    
+
     const editForm = card.querySelector(".edit-fields");
     if (editForm) {
-        document.querySelectorAll(".edit-fields").forEach(form => {
-            if (form !== editForm) form.style.display = "none";
+        document.querySelectorAll(".edit-fields.show").forEach(form => {
+            if (form !== editForm) {
+                form.classList.remove("show");
+            }
         });
 
-        editForm.style.display =
-            (editForm.style.display == 'none') ?
-                'block' :
-                'none'
+        editForm.classList.toggle("show");
     }
 });
 
@@ -131,6 +130,22 @@ document.body.addEventListener("click", (e) => {
 
     const card = cancelButton.closest(".category-card");
     const editForm = card.querySelector(".edit-fields");
-    if (editForm) editForm.style.display = "none";
+    if (editForm) {
+        editForm.classList.toggle("show");
+    }
 });
 
+// Dynamically abjusts container padding when scrollbar shows
+var div = document.getElementById('categories-cards-container');
+
+function updatePadding() {
+    var hasVerticalScrollbar = div.scrollHeight > div.clientHeight;
+    div.style.paddingInlineEnd = hasVerticalScrollbar ? '20px' : '0';
+}
+
+updatePadding();
+
+var resizeObserver = new ResizeObserver(updatePadding);
+resizeObserver.observe(div);
+
+window.addEventListener('resize', updatePadding);

@@ -25,7 +25,9 @@
 
     <div class="input-group">
         <label for="inputColor">Выберите цвет ее отображения</label>
-        <input type="color" id="inputColor" asp-for="ColorRgb">
+        <div class="color-input-wrapper">
+            <input type="color" id="inputColor" asp-for="ColorRgb">
+        </div>
     </div>
 
     <button type="submit" id="CreateCategoryButton" class="submit-button">Подтвердить</button>

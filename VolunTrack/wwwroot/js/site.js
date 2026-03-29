@@ -198,11 +198,15 @@ async function loadCategoriesDetailed() {
             if (isAdmin) {
                 categoryCardActionsHtml = `
                 <div class="category-card-actions">
-                    <button class="edit-button" data-category-id="${cat.id}">✏️</button>
+                    <button class="edit-button" data-category-id="${cat.id}" title="Нажмите, чтобы показать форму редактирования">
+                        <img src="/images/ui/buttons/edit-pencil.png">
+                    </button>
                     <button class="toggle-button" data-category-id="${cat.id}" data-active="${cat.isActive}">
                         ${cat.isActive ? 'Деактивировать' : 'Активировать'}
                     </button>
-                    <button class="delete-button" data-category-id="${cat.id}">🗑️</button>
+                    <button class="delete-button" data-category-id="${cat.id}" title="Нажмите, чтобы удалить">
+                        <img src="/images/ui/buttons/delete-bin.png">
+                    </button>
                 </div>
             `
             }
@@ -217,14 +221,21 @@ async function loadCategoriesDetailed() {
                     ${categoryCardActionsHtml}
                 </div>
                 <p class="category-description">${escapeHtml(cat.description)}</p>
-                <div class="category-color" style="background-color: #${cat.colorRgb.toString(16).padStart(6, '0')}"></div>
                 
-                <div class="edit-fields" style="display: none;">
-                    <input type="text" class="edit-name" value="${escapeHtml(cat.name)}">
-                    <textarea class="edit-description">${escapeHtml(cat.description)}</textarea>
-                    <input type="color" class="edit-color" value="#${cat.colorRgb.toString(16).padStart(6, '0')}">
-                    <button class="save-edit" data-id="${cat.id}">Сохранить</button>
-                    <button class="cancel-edit">Отмена</button>
+                <div class="edit-fields">
+                    <div class="text-fields-section">
+                        <input type="text" class="edit-name" value="${escapeHtml(cat.name)}">
+                        <textarea class="edit-description">${escapeHtml(cat.description)}</textarea>
+                    </div>
+
+                    <div class="color-input-wrapper" style="background-color: #${cat.colorRgb.toString(16).padStart(6, '0')};">
+                        <input type="color" class="edit-color" value="#${cat.colorRgb.toString(16).padStart(6, '0')}">
+                    </div>
+
+                    <div class="buttons-section">
+                        <button class="save-edit" data-id="${cat.id}">Сохранить</button>
+                        <button class="cancel-edit">Отмена</button>
+                    </div>
                 </div>
             `;
             container.appendChild(card);
