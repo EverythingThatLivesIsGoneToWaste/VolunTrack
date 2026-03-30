@@ -34,6 +34,7 @@ namespace VolunTrack.Repositories
         {
             return await _context.UserCategories
                 .Where(uc => uc.UserId == userId)
+                .Include(uc => uc.Category)
                 .Select(uc => uc.Category)
                 .ToListAsync();
         }

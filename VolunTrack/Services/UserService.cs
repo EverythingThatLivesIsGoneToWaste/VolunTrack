@@ -47,5 +47,11 @@ namespace VolunTrack.Services
                 return ToggleUserCategoryResult.Removed();
             }
         }
+
+        public async Task<List<CategoryDto>> GetUserCategoriesAsync(int userId)
+        {
+            var categories = await _userRepository.GetUserCategoriesAsync(userId);
+            return [..categories.Select(c => CategoryDto.FromEntity(c))];
+        }
     }
 }

@@ -23,7 +23,7 @@ async function toggleCategory(categoryId) {
 
             const isActive = button.dataset.active === 'true';
 
-            button.textContent = isActive ? 'Активировать' : 'Деактивировать';
+            button.textContent = isActive ? 'Неактивна' : 'Активна';
             button.dataset.active = (!isActive).toString();
             button.classList.toggle('active');
 
@@ -134,6 +134,46 @@ document.body.addEventListener("click", (e) => {
         editForm.classList.toggle("show");
     }
 });
+
+// Assign/remove category from current user profile
+document.body.addEventListener("click", async (e) => {
+    const button = e.target.closest(".toggle-user-category-button");
+    if (!button) return;
+
+    const userId = window.currentUserId;
+    const categoryId = button.dataset.id;
+    
+    await ToggleCategoryProfileAssignment(userId, categoryId, button)
+});
+
+async function ToggleCategoryProfileAssignment(userId, categoryId, button) {
+    const originalText = button.textContent;
+
+    try {
+        button.disabled = true;
+
+        const response = await fetch(`/api/users/${userId}/categories/${categoryId}/toggle`, {
+            method: 'PATCH'
+        });
+
+        const result = await response.json();
+
+        if (response.ok) {
+            showToast(result.message, "success");
+            await loadCategoriesDetailed();
+            return;
+        } else {
+            showToast(result.message || "Ошибка", "error");
+            button.disabled = false;
+            button.textContent = originalText;
+        }
+    } catch (error) {
+        console.error('Failed to toggle category:', error);
+        showToast("Ошибка соединения", "error");
+        button.disabled = false;
+        button.textContent = originalText;
+    }
+}
 
 // Dynamically abjusts container padding when scrollbar shows
 var div = document.getElementById('categories-cards-container');

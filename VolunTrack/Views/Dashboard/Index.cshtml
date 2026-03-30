@@ -18,8 +18,25 @@
                  class="user-avatar" />
             <div class="user-info">
                 <h1>@Model.CurrentUser.FullName</h1>
-                <p>@Model.CurrentUser.Email</p>
-                <p>Роль: @UserDto.GetRoleName(Model.CurrentUser.Role)</p>
+                <p class="user-email">@Model.CurrentUser.Email</p>
+                <p class="user-role">Роль: @UserDto.GetRoleName(Model.CurrentUser.Role)</p>
+
+                @if (Model.CurrentUser.Categories.Count != 0)
+                {
+                    <div class="user-categories">
+                        <p>Мои категории:</p>
+                        <div class="user-categories-list">
+                            @foreach (var cat in Model.CurrentUser.Categories)
+                            {
+                                <span class="category-badge" style="background-color: #@(cat.ColorRgb.ToString("X6"))40;
+                                border-left: 3px solid #@(cat.ColorRgb.ToString("X6"))"
+                                title="@cat.Name"></span>
+                            }
+                        </div>
+                    </div>
+                }
+
+                <a asp-controller="Categories" asp-action="Index">Управление категориями</a>
                 <a asp-controller="Profile" asp-action="Edit">Редактировать профиль</a>
             </div>
         </div>

@@ -55,5 +55,17 @@ namespace VolunTrack.Controllers.Api
                 return StatusCode(500, new { message = "Internal server error" });
             }
         }
+
+        [Authorize]
+        [HttpGet("me/categories")]
+        public async Task<IActionResult> GetMyCategories()
+        {
+            var claimsUserIdString = User.FindFirstValue(ClaimTypes.NameIdentifier);
+            if (!int.TryParse(claimsUserIdString, out var userId))
+                return BadRequest("Invalid user ID in token");
+
+            var categories = await _userService.GetUserCategoriesAsync(userId);
+            return Ok(categories);
+        }
     }
 }

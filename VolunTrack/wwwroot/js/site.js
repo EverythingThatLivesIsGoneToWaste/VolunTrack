@@ -178,6 +178,7 @@ async function loadCategories() {
 
 async function loadCategoriesDetailed() {
     const container = document.getElementById("categories-cards-container");
+    if (!container) return;
 
     try {
         const response = await fetch('/api/categories');
@@ -192,7 +193,17 @@ async function loadCategoriesDetailed() {
 
         const isAdmin = window.userRole === 'Administrator';
 
+        const userCategories = await getUserCategories();
+
         categories.forEach(cat => {
+            const isUserCategory = userCategories.some(uc => uc.id === cat.id);
+
+            const actionButtonHtml = `
+                <button class="toggle-user-category-button" data-id="${cat.id}" data-assigned="${isUserCategory}">
+                    ${isUserCategory ? 'Удалить из моих' : 'Добавить в мои'}
+                </button>
+            `;
+
             let categoryCardActionsHtml = ''
 
             if (isAdmin) {
@@ -202,7 +213,7 @@ async function loadCategoriesDetailed() {
                         <img src="/images/ui/buttons/edit-pencil.png">
                     </button>
                     <button class="toggle-button" data-category-id="${cat.id}" data-active="${cat.isActive}">
-                        ${cat.isActive ? 'Деактивировать' : 'Активировать'}
+                        ${cat.isActive ? 'Активна' : 'Нективна'}
                     </button>
                     <button class="delete-button" data-category-id="${cat.id}" title="Нажмите, чтобы удалить">
                         <img src="/images/ui/buttons/delete-bin.png">
@@ -217,7 +228,11 @@ async function loadCategoriesDetailed() {
             card.style.borderLeft = `5px solid #${cat.colorRgb.toString(16).padStart(6, '0')}`;
             card.innerHTML = `
                 <div class="category-card-header">
-                    <h3>${escapeHtml(cat.name)}</h3>
+                    <div class="header-top-section">
+                        <h3>${escapeHtml(cat.name)}</h3>
+                        ${actionButtonHtml}
+                    </div>
+                    
                     ${categoryCardActionsHtml}
                 </div>
                 <p class="category-description">${escapeHtml(cat.description)}</p>
@@ -233,6 +248,7 @@ async function loadCategoriesDetailed() {
                     </div>
 
                     <div class="buttons-section">
+                        
                         <button class="save-edit" data-id="${cat.id}">Сохранить</button>
                         <button class="cancel-edit">Отмена</button>
                     </div>
@@ -249,6 +265,20 @@ async function loadCategoriesDetailed() {
     } catch (error) {
         container.innerHTML = `<p>Ошибка загрузки категорий</p>`;
         console.error('Failed to load categories:', error);
+    }
+}
+
+async function getUserCategories() {
+    try {
+        const response = await fetch('/api/users/me/categories');
+        const categories = await response.json();
+
+        if (categories.length === 0) {
+            return [];
+        }
+        return categories;
+    } catch (error) {
+        showToast("Некоторые данные не были загружены (категории)", "error");
     }
 }
 

@@ -18,9 +18,9 @@ namespace VolunTrack.DTO
         [Required]
         public List<CategoryDto> Categories { get; set; } = [];
 
-        public static UserDto FromEntity(User user)
+        public static UserDto FromEntity(User user, List<Category>? categories = null)
         {
-            return new UserDto
+            var dto = new UserDto
             {
                 Id = user.Id,
                 Login = user.Login,
@@ -29,8 +29,10 @@ namespace VolunTrack.DTO
                 Email = user.Email,
                 Role = user.Role,
                 IsActive = user.IsActive,
-                CreatedAtUtc = user.CreatedAtUtc
+                CreatedAtUtc = user.CreatedAtUtc,
+                Categories = categories?.Select(c => CategoryDto.FromEntity(c)).ToList() ?? []
             };
+            return dto;
         }
 
         public static string GetAvatarByRole(UserRole role)
