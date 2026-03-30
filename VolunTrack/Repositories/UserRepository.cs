@@ -24,6 +24,12 @@ namespace VolunTrack.Repositories
             return await _context.Users.FirstOrDefaultAsync(u => u.Login == login);
         }
 
+        public async Task<UserCategory?> GetUserCategoryAsync(int userId, int categoryId)
+        {
+            return await _context.UserCategories.FirstOrDefaultAsync(
+                uc => uc.UserId == userId && uc.CategoryId == categoryId);
+        }
+
         public async Task<List<Category>> GetUserCategoriesAsync(int userId)
         {
             return await _context.UserCategories
@@ -85,11 +91,24 @@ namespace VolunTrack.Repositories
             await _context.SaveChangesAsync();
         }
 
+        public async Task AddUserCategoryAsync(UserCategory userCategory)
+        {
+            await _context.UserCategories.AddAsync(userCategory);
+            await _context.SaveChangesAsync();
+        }
+
         public async Task AddUserCategoriesAsync(IEnumerable<UserCategory> userCategories)
         {
             await _context.UserCategories.AddRangeAsync(userCategories);
             await _context.SaveChangesAsync();
         }
+
+        public async Task RemoveUserCategoryAsync(UserCategory userCategory)
+        {
+            _context.UserCategories.Remove(userCategory);
+            await _context.SaveChangesAsync();
+        }
+
         public async Task UpdateAsync(User user)
         {
             _context.Users.Update(user);

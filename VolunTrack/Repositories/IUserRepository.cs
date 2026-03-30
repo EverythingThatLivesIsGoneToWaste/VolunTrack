@@ -7,6 +7,7 @@ namespace VolunTrack.Repositories
     {
         Task<User?> GetByIdAsync(int id);
         Task<User?> GetByLoginAsync(string login);
+        Task<UserCategory?> GetUserCategoryAsync(int userId, int categoryId);
         Task<List<Category>> GetUserCategoriesAsync(int id);
 
         Task<List<User>> SearchAsync(
@@ -21,7 +22,9 @@ namespace VolunTrack.Repositories
         Task<bool> ExistsByEmailAsync(string email);
 
         Task AddAsync(User user);
+        Task AddUserCategoryAsync(UserCategory userCategory);
         Task AddUserCategoriesAsync(IEnumerable<UserCategory> userCategories);
+        Task RemoveUserCategoryAsync(UserCategory userCategory);
         Task UpdateAsync(User user);
         Task RemoveAsync(User user);
     }

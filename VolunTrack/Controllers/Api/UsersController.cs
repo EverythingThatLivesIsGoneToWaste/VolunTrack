@@ -1,0 +1,59 @@
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
+using System.Security.Claims;
+using VolunTrack.Enums;
+using VolunTrack.Services;
+
+namespace VolunTrack.Controllers.Api
+{
+    [Route("api/users")]
+    [ApiController]
+    public class UsersController : ControllerBase
+    {
+        private readonly IUserService _userService;
+        private readonly ILogger<UsersController> _logger;
+
+        public UsersController(
+            IUserService userService, 
+            ILogger<UsersController> logger)
+        {
+            _userService = userService;
+            _logger = logger;
+        }
+
+        [Authorize]
+        [HttpPatch("{userId}/categories/{categoryId}/toggle")]
+        public async Task<IActionResult> ToggleUserCategory(int userId, int categoryId)
+        {
+            var claimsUserIdString = User.FindFirstValue(ClaimTypes.NameIdentifier);
+            if (!int.TryParse(claimsUserIdString, out var claimsUserId))
+                return BadRequest("Invalid user ID in token");
+
+            if (claimsUserId != userId)
+                return Forbid();
+
+            try
+            {
+                var result = await _userService.ToggleUserCategory(userId, categoryId);
+                if (result.IsSuccess)
+                {
+                    _logger.LogInformation("User {userId} successfully assigned/removed category {categoryId} from their profile", 
+                        userId, categoryId);
+                    return Ok(result);
+                }
+
+                return result.Status switch
+                {
+                    ToggleUserCategoryStatus.UserNotFound => NotFound(result),
+                    ToggleUserCategoryStatus.CategoryNotFound => NotFound(result),
+                    ToggleUserCategoryStatus.CategoryInactive => Conflict(result),
+                    _ => BadRequest(result)
+                };
+            } catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error toggling category {categoryId} for user {userId}", userId, categoryId);
+                return StatusCode(500, new { message = "Internal server error" });
+            }
+        }
+    }
+}
