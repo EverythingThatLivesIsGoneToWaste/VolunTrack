@@ -94,5 +94,13 @@ namespace VolunTrack.Controllers.Api
                 return StatusCode(500, new { message = "Internal server error" });
             }
         }
+
+        [Authorize(Roles = "Administrator")]
+        [HttpGet]
+        public async Task<IActionResult> GetUsers([FromQuery] string? search)
+        {
+            var users = await _userService.GetUsersAsync(search);
+            return Ok(users);
+        }
     }
 }

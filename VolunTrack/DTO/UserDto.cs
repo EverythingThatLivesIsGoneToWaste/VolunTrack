@@ -18,7 +18,7 @@ namespace VolunTrack.DTO
         [Required]
         public List<CategoryDto> Categories { get; set; } = [];
 
-        public static UserDto FromEntity(User user, List<Category>? categories = null)
+        public static UserDto FromEntity(User user)
         {
             var dto = new UserDto
             {
@@ -30,7 +30,7 @@ namespace VolunTrack.DTO
                 Role = user.Role,
                 IsActive = user.IsActive,
                 CreatedAtUtc = user.CreatedAtUtc,
-                Categories = categories?.Select(c => CategoryDto.FromEntity(c)).ToList() ?? []
+                Categories = user.Categories?.Select(uc => CategoryDto.FromEntity(uc.Category)).ToList() ?? []
             };
             return dto;
         }

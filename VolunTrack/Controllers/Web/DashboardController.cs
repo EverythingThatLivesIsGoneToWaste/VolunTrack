@@ -37,7 +37,6 @@ namespace VolunTrack.Controllers.Web
             }
 
             var user = await _userRepository.GetByIdAsync(userId);
-            var userCategories = await _userRepository.GetUserCategoriesAsync(userId);
 
             if (user == null)
             {
@@ -58,7 +57,7 @@ namespace VolunTrack.Controllers.Web
 
             var viewModel = new DashboardViewModel
             {
-                CurrentUser = UserDto.FromEntity(user, userCategories)
+                CurrentUser = UserDto.FromEntity(user)
             };
 
             return View(viewModel);

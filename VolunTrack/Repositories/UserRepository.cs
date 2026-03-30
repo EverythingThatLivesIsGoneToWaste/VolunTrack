@@ -16,12 +16,23 @@ namespace VolunTrack.Repositories
 
         public async Task<User?> GetByIdAsync(int id)
         {
-            return await _context.Users.FindAsync(id);
+            return await _context.Users
+                .Include(u => u.Categories)
+                    .ThenInclude(uc => uc.Category)
+                .FirstOrDefaultAsync(u => u.Id == id);
         }
 
         public async Task<User?> GetByLoginAsync(string login)
         {
             return await _context.Users.FirstOrDefaultAsync(u => u.Login == login);
+        }
+
+        public async Task<List<User>> GetAllAsync()
+        {
+            return await _context.Users
+                .Include(e => e.Categories)
+                    .ThenInclude(ec => ec.Category)
+                .ToListAsync();
         }
 
         public async Task<UserCategory?> GetUserCategoryAsync(int userId, int categoryId)
@@ -46,15 +57,18 @@ namespace VolunTrack.Repositories
             int page = 1, 
             int pageSize = 10)
         {
-            var query = _context.Users.AsQueryable();
+            var query = _context.Users
+                .Include(u => u.Categories)
+                    .ThenInclude(uc => uc.Category)
+                .AsQueryable();
 
             if (!string.IsNullOrWhiteSpace(searchTerm))
             {
                 query = query.Where(u =>
-                    u.Login.Contains(searchTerm) ||
-                    u.FullName.Contains(searchTerm) ||
-                    u.Email.Contains(searchTerm) ||
-                    u.Phone.Contains(searchTerm));
+                    EF.Functions.ILike(u.Login, $"%{searchTerm}%") ||
+                    EF.Functions.ILike(u.FullName, $"%{searchTerm}%") ||
+                    EF.Functions.ILike(u.Email, $"%{searchTerm}%") ||
+                    EF.Functions.ILike(u.Phone, $"%{searchTerm}%"));
             }
 
             if (role.HasValue)

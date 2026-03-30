@@ -10,16 +10,13 @@ namespace VolunTrack.Services
     {
         private readonly IUserRepository _userRepository;
         private readonly ICategoryRepository _categoryRepository;
-        private readonly ILoginService _loginService;
 
         public UserService(
             IUserRepository userRepository,
-            ICategoryRepository categoryRepository,
-            ILoginService loginService)
+            ICategoryRepository categoryRepository)
         {
             _userRepository = userRepository;
             _categoryRepository = categoryRepository;
-            _loginService = loginService;
         }
 
         public async Task<ToggleUserCategoryResult> ToggleUserCategory(int userId, int categoryId)
@@ -68,6 +65,15 @@ namespace VolunTrack.Services
             await _userRepository.UpdateAsync(userEntity);
 
             return UserDto.FromEntity(userEntity);
+        }
+
+        public async Task<List<UserDto>> GetUsersAsync(string? search)
+        {
+            var users = string.IsNullOrWhiteSpace(search)
+                ? await _userRepository.GetAllAsync()
+                : await _userRepository.SearchAsync(search);
+
+            return [..users.Select(u => UserDto.FromEntity(u))];
         }
     }
 }
