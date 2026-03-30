@@ -10,16 +10,16 @@ namespace VolunTrack.Controllers.Web
 {
     public class DashboardController : Controller
     {
-        private readonly ILoginService _authService;
+        private readonly ILoginService _loginService;
         private readonly ILogger<LoginController> _logger;
         private readonly IUserRepository _userRepository;
 
         public DashboardController(
-            ILoginService authService,
+            ILoginService loginService,
             ILogger<LoginController> logger,
             IUserRepository userRepository)
         {
-            _authService = authService;
+            _loginService = loginService;
             _logger = logger;
             _userRepository = userRepository;
         }
@@ -42,7 +42,17 @@ namespace VolunTrack.Controllers.Web
             if (user == null)
             {
                 _logger.LogError("User with id {UserId} not found in database", userId);
-                await _authService.LogoutAsync();
+                await _loginService.LogoutAsync();
+                return RedirectToAction("Index", "Login");
+            }
+
+            var roleFromDb = user.Role.ToString();
+            var roleFromClaim = User.FindFirstValue(ClaimTypes.Role);
+
+            if (roleFromDb != roleFromClaim)
+            {
+                await _loginService.LogoutAsync();
+                TempData["LogoutReason"] = "Ваша роль была изменена. Пожалуйста, войдите заново";
                 return RedirectToAction("Index", "Login");
             }
 

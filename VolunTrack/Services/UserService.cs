@@ -1,6 +1,8 @@
-﻿using VolunTrack.Models;
+﻿using VolunTrack.DTO;
+using VolunTrack.Enums;
+using VolunTrack.Exceptions;
+using VolunTrack.Models;
 using VolunTrack.Repositories;
-using VolunTrack.DTO;
 
 namespace VolunTrack.Services
 {
@@ -8,13 +10,16 @@ namespace VolunTrack.Services
     {
         private readonly IUserRepository _userRepository;
         private readonly ICategoryRepository _categoryRepository;
+        private readonly ILoginService _loginService;
 
         public UserService(
             IUserRepository userRepository,
-            ICategoryRepository categoryRepository)
+            ICategoryRepository categoryRepository,
+            ILoginService loginService)
         {
             _userRepository = userRepository;
             _categoryRepository = categoryRepository;
+            _loginService = loginService;
         }
 
         public async Task<ToggleUserCategoryResult> ToggleUserCategory(int userId, int categoryId)
@@ -52,6 +57,17 @@ namespace VolunTrack.Services
         {
             var categories = await _userRepository.GetUserCategoriesAsync(userId);
             return [..categories.Select(c => CategoryDto.FromEntity(c))];
+        }
+
+        public async Task<UserDto> SetUserRoleAsync(int userId, UserRole userRole)
+        {
+            var userEntity = await _userRepository.GetByIdAsync(userId)
+                ?? throw new NotFoundException($"User {userId} not found");
+
+            userEntity.Role = userRole;
+            await _userRepository.UpdateAsync(userEntity);
+
+            return UserDto.FromEntity(userEntity);
         }
     }
 }

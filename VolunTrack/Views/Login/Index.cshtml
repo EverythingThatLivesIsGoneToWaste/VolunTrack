@@ -30,6 +30,23 @@
 
 <div id="clientErrorSummary" class="text-danger" style="display: none"></div>
 
+@if (TempData["LogoutReason"] != null)
+{
+    <div id="autoToast" class="toast-message warning">
+        @TempData["LogoutReason"]
+    </div>
+}
+
+<script>
+    document.addEventListener("DOMContentLoaded", function() {
+        const toast = document.getElementById("autoToast");
+        if (toast) {
+            showToast(toast.textContent, "alert", 5000);
+            toast.remove();
+        }
+    });
+</script>
+
 @section Scripts {
     <script src="~/js/login.js" asp-append-version="true"></script>
 }

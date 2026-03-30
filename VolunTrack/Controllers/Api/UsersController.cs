@@ -1,7 +1,9 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System.Security.Claims;
+using VolunTrack.DTO;
 using VolunTrack.Enums;
+using VolunTrack.Models;
 using VolunTrack.Services;
 
 namespace VolunTrack.Controllers.Api
@@ -66,6 +68,31 @@ namespace VolunTrack.Controllers.Api
 
             var categories = await _userService.GetUserCategoriesAsync(userId);
             return Ok(categories);
+        }
+
+        [Authorize(Roles = "Administrator")]
+        [HttpPatch("/api/users/{userId}/role")]
+        public async Task<IActionResult> SetUserRole(int userId, [FromBody] SetUserRoleDto dto)
+        {
+            var claimsUserIdString = User.FindFirstValue(ClaimTypes.NameIdentifier);
+            if (!int.TryParse(claimsUserIdString, out var claimsUserId))
+                return BadRequest("Invalid user ID in token");
+
+            if (claimsUserId == userId)
+            {
+                return Conflict(new {message = "Administrator can't update own role" });
+            }
+
+            try
+            {
+                var result = await _userService.SetUserRoleAsync(userId, dto.UserRole);
+                return Ok(result);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error changing role to {userRole} for user {userId}", dto.UserRole, userId);
+                return StatusCode(500, new { message = "Internal server error" });
+            }
         }
     }
 }
