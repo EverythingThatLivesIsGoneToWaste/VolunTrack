@@ -20,6 +20,7 @@ namespace VolunTrack.Repositories
                 .Include(e => e.EventCategories)
                     .ThenInclude(ec => ec.Category)
                 .Include(e => e.EventPhotos)
+                .Include(e => e.Participations)
                 .FirstOrDefaultAsync(e => e.Id == id);
         }
 
@@ -37,6 +38,7 @@ namespace VolunTrack.Repositories
                 .Include(e => e.EventCategories)
                     .ThenInclude(ec => ec.Category)
                 .Include(e => e.EventPhotos)
+                .Include(e => e.Participations)
                 .Where(e => e.StartDateTime > DateTime.UtcNow && e.Status == EventStatus.Published)
                 .ToListAsync();
         }
@@ -54,7 +56,9 @@ namespace VolunTrack.Repositories
 
         public async Task<List<Event>> GetByCoordinatorIdAsync(int coordinatorId)
         {
-            return await _context.Events.Where(e => e.CreatedByUserId == coordinatorId).ToListAsync();
+            return await _context.Events
+                .Include(e => e.Participations)
+                .Where(e => e.CreatedByUserId == coordinatorId).ToListAsync();
         }
 
         public async Task AddAsync(Event @event)
