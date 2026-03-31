@@ -75,5 +75,16 @@ namespace VolunTrack.Services
 
             return [..users.Select(u => UserDto.FromEntity(u))];
         }
+
+        public async Task<UserDto> ToggleUserActivityAsync(int userId)
+        {
+            var user = await _userRepository.GetByIdAsync(userId)
+                ?? throw new NotFoundException($"User {userId} not found");
+
+            user.IsActive = !user.IsActive;
+            await _userRepository.UpdateAsync(user);
+
+            return UserDto.FromEntity(user);
+        }
     }
 }

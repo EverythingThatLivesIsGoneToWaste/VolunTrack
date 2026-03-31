@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Mvc;
 using System.Security.Claims;
 using VolunTrack.DTO;
 using VolunTrack.Enums;
+using VolunTrack.Exceptions;
 using VolunTrack.Models;
 using VolunTrack.Services;
 
@@ -101,6 +102,35 @@ namespace VolunTrack.Controllers.Api
         {
             var users = await _userService.GetUsersAsync(search);
             return Ok(users);
+        }
+
+        [Authorize(Roles = "Administrator")]
+        [HttpPatch("{userId}/activity/toggle")]
+        public async Task<IActionResult> ToggleUserActivity(int userId)
+        {
+            var claimsUserIdString = User.FindFirstValue(ClaimTypes.NameIdentifier);
+            if (!int.TryParse(claimsUserIdString, out var claimsUserId))
+                return BadRequest("Invalid user ID in token");
+
+            if (claimsUserId == userId)
+            {
+                return Conflict(new { message = "Administrator can't update own activity status" });
+            }
+
+            try
+            {
+                var result = await _userService.ToggleUserActivityAsync(userId);
+                return Ok(result);
+            }
+            catch (NotFoundException ex)
+            {
+                return NotFound(new { message = ex.Message });
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error toggling activity status for user {userId}", userId);
+                return StatusCode(500, new { message = "Internal server error" });
+            }
         }
     }
 }

@@ -64,6 +64,48 @@ document.body.addEventListener("click", async (e) => {
     }
 });
 
+document.body.addEventListener("click", async (e) => {
+    const button = e.target.closest(".status-toggle-button");
+    if (!button) return;
+
+    const userId = button.dataset.userId;
+    const isCurrentlyActive = button.dataset.status === 'true';
+    const originalText = button.textContent;
+
+    try {
+        button.disabled = true;
+
+        const response = await fetch(`/api/users/${userId}/activity/toggle`, {
+            method: 'PATCH',
+            headers: { 'Content-Type': 'application/json' }
+        });
+
+        const result = await response.json();
+
+        if (response.ok) {
+            const newIsActive = !isCurrentlyActive;
+
+            button.textContent = newIsActive ? 'Активен' : 'Неактивен';
+            button.dataset.status = newIsActive.toString();
+            button.classList.toggle('active', newIsActive);
+
+            const statusSpan = button.closest('.user-card')?.querySelector('.user-status');
+            if (statusSpan) {
+                statusSpan.textContent = newIsActive ? 'Активен' : 'Неактивен';
+                statusSpan.classList.toggle('active', newIsActive);
+            }
+
+            showToast(result.message || `Пользователь ${result.login} ${newIsActive ? 'активирован' : 'деактивирован'}`, "success");
+        } else {
+            showToast(result.message || "Ошибка изменения статуса", "error");
+        }
+        button.disabled = false;
+    } catch (error) {
+        showToast("Ошибка соединения", "error");
+        button.disabled = false;
+    }
+});
+
 function getRoleName(role) {
     const roleMap = {
         'Volunteer': 'Волонтёр',
@@ -105,9 +147,18 @@ async function loadUsers(search = '') {
                 </span>`
             ).join('') || '';
 
+            let statusButtonHtml = '';
             let roleSelectHtml = '';
 
-            if (!isAdmin)
+            if (!isAdmin) {
+                statusButtonHtml = `
+                    <button class="status-toggle-button" 
+                            data-status="${u.isActive}" 
+                            data-user-id="${u.id}">
+                        ${u.isActive ? 'Активен' : 'Неактивен'}
+                    </button>
+                `;
+
                 roleSelectHtml = `
                     <div class="role-select-section">
                         <select class="user-role-select" data-user-id="${u.id}" data-original-value="${u.role}">
@@ -118,12 +169,14 @@ async function loadUsers(search = '') {
                         <button class="confirm-button" data-user-id="${u.id}"><img src="/images/ui/buttons/checkmark.png"></button>
                     </div>
                 `;
+            }
+                
             
             div.innerHTML = `
                 <div class="user-header">
                     <div class="header-top-section">
                         <h3 class="user-login">${escapeHtml(u.login)}</h3>
-                        <button class="status-toggle-button" data-status="${u.isActive}">${u.isActive ? 'Активен' : 'Неактивен'}</button>
+                        ${statusButtonHtml}
                     </div>
                     ${roleSelectHtml}
                 </div>
