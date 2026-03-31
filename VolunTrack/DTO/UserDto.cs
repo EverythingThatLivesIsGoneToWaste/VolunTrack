@@ -17,6 +17,7 @@ namespace VolunTrack.DTO
 
         [Required]
         public List<CategoryDto> Categories { get; set; } = [];
+        public int ParticipationsCount { get; set; }
 
         public static UserDto FromEntity(User user)
         {
@@ -30,7 +31,8 @@ namespace VolunTrack.DTO
                 Role = user.Role,
                 IsActive = user.IsActive,
                 CreatedAtUtc = user.CreatedAtUtc,
-                Categories = user.Categories?.Select(uc => CategoryDto.FromEntity(uc.Category)).ToList() ?? []
+                Categories = user.Categories?.Select(uc => CategoryDto.FromEntity(uc.Category)).ToList() ?? [],
+                ParticipationsCount = user.Participations?.Count ?? 0,
             };
             return dto;
         }

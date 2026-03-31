@@ -30,8 +30,9 @@ namespace VolunTrack.Repositories
         public async Task<List<User>> GetAllAsync()
         {
             return await _context.Users
-                .Include(e => e.Categories)
-                    .ThenInclude(ec => ec.Category)
+                .Include(u => u.Categories)
+                    .ThenInclude(uc => uc.Category)
+                .Include(u => u.Participations)
                 .ToListAsync();
         }
 
@@ -60,6 +61,7 @@ namespace VolunTrack.Repositories
             var query = _context.Users
                 .Include(u => u.Categories)
                     .ThenInclude(uc => uc.Category)
+                .Include(u => u.Participations)
                 .AsQueryable();
 
             if (!string.IsNullOrWhiteSpace(searchTerm))
