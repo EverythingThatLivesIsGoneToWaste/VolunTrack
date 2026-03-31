@@ -52,8 +52,9 @@ namespace VolunTrack.Services
                 await _userRepository.AddUserCategoriesAsync(userCategories);
             }
 
-            return RegistrationResponse.Success(UserDto.FromEntity(user)
-            );
+            var userComplete = await _userRepository.GetByIdAsync(user.Id);
+
+            return RegistrationResponse.Success(UserDto.FromEntity(userComplete!));
         }
     }
 }

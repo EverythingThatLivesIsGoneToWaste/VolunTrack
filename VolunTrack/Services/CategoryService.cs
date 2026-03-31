@@ -15,7 +15,7 @@ namespace VolunTrack.Services
             _categoryRepository = categoryRepository;
         }
 
-        public async Task<List<CategoryDto>> GetCategoriesAsync(string userRole)
+        public async Task<List<CategoryDto>> GetCategoriesAsync(string? userRole)
         {
             List<Category> categories;
 

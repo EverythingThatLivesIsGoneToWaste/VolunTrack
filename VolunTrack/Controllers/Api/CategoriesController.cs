@@ -19,8 +19,8 @@ namespace VolunTrack.Controllers.Api
             _categoryService = categoryService;
         }
 
-        [Authorize]
         [HttpGet]
+        [AllowAnonymous]
         public async Task<IActionResult> Get()
         {
             try
