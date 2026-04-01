@@ -212,3 +212,18 @@ async function loadUsers(search = '') {
         container.innerHTML = `<p>Ошибка загрузки пользователей</p>`;
     }
 }
+
+// Dynamically abjusts container padding when scrollbar shows
+var div = document.getElementById('users-container');
+
+function updatePadding() {
+    var hasHorizontalScrollbar = div.scrollWidth > div.clientWidth;
+    div.style.paddingBottom = hasHorizontalScrollbar ? '20px' : '0';
+}
+
+updatePadding();
+
+var resizeObserver = new ResizeObserver(updatePadding);
+resizeObserver.observe(div);
+
+window.addEventListener('resize', updatePadding);

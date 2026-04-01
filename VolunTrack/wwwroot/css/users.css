@@ -1,6 +1,5 @@
 ﻿.search-section {
     display: flex;
-    align-content: center;
     background-color: #eeeeee;
     gap: 16px;
     padding: 10px 16px;
@@ -12,7 +11,7 @@
     width: 400px;
     border: 0;
     padding-inline: 12px;
-    border-radius: 16px;
+    border-radius: 25px;
     outline: 0;
 }
 
@@ -27,6 +26,10 @@
     transition: all 200ms ease-in-out;
 }
 
+.search-button {
+    padding: 4px 9px;
+}
+
 .reset-button img {
     height: 90%;
     object-fit: cover;
@@ -34,14 +37,14 @@
 }
 
 .last-updated-datetime {
-    margin-bottom: 1rem;
+    margin-block: 1rem;
 }
 
 .users-container {
     display: flex;
     gap: 20px;
-    padding-top: 10px;
     padding-inline: 20px;
+    min-height: 525px;
     overflow: hidden;
     overflow-x: auto;
     height: 55vh;
@@ -115,7 +118,7 @@
     color: white;
     border: 0;
     height: 50px;
-    padding: 4px 5px;
+    padding: 3px 9px;
     border-radius: 12px;
     background-color: rgb(179, 17, 49);
     transition: all 200ms ease-in-out;
@@ -125,6 +128,14 @@
     height: 100%;
     object-fit: cover;
     overflow: hidden;
+}
+
+.role-select-section button {
+    height: 50px;
+    width: 50px;
+    border: 0;
+    padding: 8px 5px;
+    border-radius: 12px;
 }
 
 .user-footer {
