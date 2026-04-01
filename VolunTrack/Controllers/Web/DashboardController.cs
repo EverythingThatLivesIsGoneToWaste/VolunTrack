@@ -25,7 +25,6 @@ namespace VolunTrack.Controllers.Web
         }
 
         [Authorize]
-
         public async Task<IActionResult> Index()
         {
             var userIdClaim = User.FindFirstValue(ClaimTypes.NameIdentifier);
@@ -42,16 +41,6 @@ namespace VolunTrack.Controllers.Web
             {
                 _logger.LogError("User with id {UserId} not found in database", userId);
                 await _loginService.LogoutAsync();
-                return RedirectToAction("Index", "Login");
-            }
-
-            var roleFromDb = user.Role.ToString();
-            var roleFromClaim = User.FindFirstValue(ClaimTypes.Role);
-
-            if (roleFromDb != roleFromClaim)
-            {
-                await _loginService.LogoutAsync();
-                TempData["LogoutReason"] = "Ваша роль была изменена. Пожалуйста, войдите заново";
                 return RedirectToAction("Index", "Login");
             }
 
