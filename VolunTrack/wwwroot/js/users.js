@@ -56,6 +56,7 @@ document.body.addEventListener("click", async (e) => {
 
         if (response.ok) {
             showToast(`Роль пользователя ${result.login} изменена на ${getRoleName(result.role)}`, "success");
+            select.dataset.originalValue = newRole;
         } else {
             showToast(result.message, "error");
         }

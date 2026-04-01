@@ -5,6 +5,7 @@ using VolunTrack.Data;
 using VolunTrack.Models;
 using VolunTrack.Repositories;
 using VolunTrack.Services;
+using VolunTrack.Middlewares;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -100,6 +101,7 @@ app.UseRouting();
 
 app.UseAuthentication();
 app.UseAuthorization();
+app.UseMiddleware<UserStatusMiddleware>();
 
 app.MapStaticAssets();
 

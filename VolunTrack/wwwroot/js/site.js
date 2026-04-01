@@ -1,4 +1,30 @@
-﻿async function loadEvents(url) {
+﻿const originalFetch = window.fetch;
+window.fetch = async function (...args) {
+    const response = await originalFetch(...args);
+
+    if (response.status === 401) {
+        let reason = 'unauthorized';
+        try {
+            const data = await response.clone().json();
+            reason = data.reason || reason;
+        } catch (e) { }
+
+        setTimeout(() => {
+            window.location.href = `/Login?reason=${reason}`;
+        }, 3000);
+
+        return response;
+    }
+
+    if (response.status === 403) {
+        showToast("Доступ запрещён", "error");
+        return response;
+    }
+
+    return response;
+};
+
+async function loadEvents(url) {
     const container = document.getElementById("events-container");
 
     try {

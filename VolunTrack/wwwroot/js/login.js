@@ -1,4 +1,17 @@
-﻿document.getElementById("loginForm").addEventListener("submit", validateForm);
+﻿document.addEventListener("DOMContentLoaded", function () {
+    const urlParams = new URLSearchParams(window.location.search);
+    const reason = urlParams.get('reason');
+
+    if (reason === 'inactive') {
+        showToast("Ваш аккаунт деактивирован", "alert");
+    } else if (reason === 'role-changed') {
+        showToast("Ваша роль была изменена", "alert");
+    } else if (reason === 'unauthorized') {
+        showToast("Сессия истекла", "alert");
+    }
+});
+
+document.getElementById("loginForm").addEventListener("submit", validateForm);
 
 function validateForm(e) {
     const errors = [];
