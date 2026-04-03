@@ -1,4 +1,15 @@
-﻿.dashboard-grid {
+﻿@media (min-width: 1400px) {
+    .container {
+        max-width: 80vw;
+    }
+}
+
+main {
+    display: flex;
+    justify-content: center;
+}
+
+.dashboard-grid {
     display: flex;
     gap: 30px;
 }

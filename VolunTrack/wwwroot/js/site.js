@@ -54,13 +54,13 @@ async function loadEvents(url) {
                     buttonHtml = `<button class="join-button" data-event-id="${e.id}">Записаться</button>`;
                 }
             } else {
-                buttonHtml = `<span class="event-closed">Завершено</span>`;
+                buttonHtml = `<span class="event-closed">Набор завершен</span>`;
             }
 
             const categoriesHtml = e.categories?.map(cat =>
                 `<span class="category-badge" style="
                 background-color: #${cat.colorRgb.toString(16).padStart(6, '0')}40; 
-                border-left: 3px solid #${cat.colorRgb.toString(16).padStart(6, '0')}">
+                border-left: 3px solid #${cat.colorRgb.toString(16).padStart(6, '0')}" title="${escapeHtml(cat.description)}">
                 ${cat.name}
                 </span>`
                     ).join('') || '';

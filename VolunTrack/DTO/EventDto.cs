@@ -39,7 +39,8 @@ namespace VolunTrack.DTO
                 {
                     Id = ec.Category.Id,
                     Name = ec.Category.Name,
-                    ColorRgb = ec.Category.ColorRgb
+                    ColorRgb = ec.Category.ColorRgb,
+                    Description = ec.Category.Description
                 }).ToList() ?? []
             };
 
