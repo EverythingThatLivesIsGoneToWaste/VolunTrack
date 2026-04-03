@@ -61,6 +61,14 @@ namespace VolunTrack.Repositories
                 .Where(e => e.CreatedByUserId == coordinatorId).ToListAsync();
         }
 
+        public async Task<List<Event>> GetEventsToUpdateStatusAsync()
+        {
+            return await _context.Events
+                .Where(e => e.Status != EventStatus.Cancelled &&
+                    e.Status != EventStatus.Draft)
+                .ToListAsync();
+        }
+
         public async Task AddAsync(Event @event)
         {
             await _context.Events.AddAsync(@event);

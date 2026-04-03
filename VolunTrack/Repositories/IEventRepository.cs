@@ -9,6 +9,7 @@ namespace VolunTrack.Repositories
         Task<List<Event>> GetUpcomingAsync();
         Task<List<Event>> GetByCategoryIdsAsync(List<int> categoryIds);
         Task<List<Event>> GetByCoordinatorIdAsync(int coordinatorId);
+        Task<List<Event>> GetEventsToUpdateStatusAsync();
 
         Task AddAsync(Event @event);
         Task AddEventCategoriesAsync(IEnumerable<EventCategory> eventCategories);

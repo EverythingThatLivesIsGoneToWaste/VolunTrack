@@ -6,6 +6,8 @@ using VolunTrack.Models;
 using VolunTrack.Repositories;
 using VolunTrack.Services;
 using VolunTrack.Middlewares;
+using VolunTrack.Jobs;
+using Quartz;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -69,6 +71,21 @@ builder.Services.AddControllers()
     {
         options.JsonSerializerOptions.Converters.Add(new JsonStringEnumConverter());
     });
+
+// Configure background jobs using Quartz
+builder.Services.AddQuartz(q =>
+{
+    var jobKey = new JobKey("UpdateEventStatusJob");
+
+    q.AddJob<UpdateEventStatusJob>(opts => opts.WithIdentity(jobKey));
+
+    q.AddTrigger(opts => opts
+        .ForJob(jobKey)
+        .WithIdentity("UpdateEventStatus-trigger")
+        .WithCronSchedule("0 * * * * ?"));
+});
+
+builder.Services.AddQuartzHostedService(q => q.WaitForJobsToComplete = true);
 
 var app = builder.Build();
 
