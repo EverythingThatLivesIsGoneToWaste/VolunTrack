@@ -10,5 +10,7 @@ namespace VolunTrack.Services
         Task<UserDto> SetUserRoleAsync(int userId, UserRole userRole);
         Task<List<UserDto>> GetUsersAsync(string? search);
         Task<UserDto> ToggleUserActivityAsync(int userId);
+        Task<List<EventDto>> GetUpcomingEventsAsync(int userId);
+        Task<List<EventDto>> GetCompletedEventsAsync(int userId);
     }
 }

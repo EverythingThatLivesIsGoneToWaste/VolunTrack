@@ -10,13 +10,16 @@ namespace VolunTrack.Services
     {
         private readonly IUserRepository _userRepository;
         private readonly ICategoryRepository _categoryRepository;
+        private readonly IParticipationRepository _participationRepository;
 
         public UserService(
             IUserRepository userRepository,
-            ICategoryRepository categoryRepository)
+            ICategoryRepository categoryRepository,
+            IParticipationRepository participationRepository)
         {
             _userRepository = userRepository;
             _categoryRepository = categoryRepository;
+            _participationRepository = participationRepository;
         }
 
         public async Task<ToggleUserCategoryResult> ToggleUserCategory(int userId, int categoryId)
@@ -85,6 +88,18 @@ namespace VolunTrack.Services
             await _userRepository.UpdateAsync(user);
 
             return UserDto.FromEntity(user);
+        }
+
+        public async Task<List<EventDto>> GetUpcomingEventsAsync(int userId)
+        {
+            var events = await _participationRepository.GetUpcomingEventsByUserIdAsync(userId);
+            return events.Select(e => EventDto.FromEntity(e)).ToList();
+        }
+
+        public async Task<List<EventDto>> GetCompletedEventsAsync(int userId)
+        {
+            var events = await _participationRepository.GetCompletedEventsByUserIdAsync(userId);
+            return events.Select(e => EventDto.FromEntity(e)).ToList();
         }
     }
 }

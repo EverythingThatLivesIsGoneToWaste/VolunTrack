@@ -76,5 +76,30 @@ namespace VolunTrack.Repositories
             return await _context.Participations
                 .AnyAsync(p => p.UserId == userId && p.EventId == eventId);
         }
+
+        public async Task<List<Event>> GetUpcomingEventsByUserIdAsync(int userId)
+        {
+            return await _context.Participations
+                .Where(p => p.UserId == userId
+                            && p.Event.StartDateTime > DateTime.UtcNow
+                            && p.Event.Status == EventStatus.Published)
+                .Include(p => p.Event)
+                    .ThenInclude(e => e.EventCategories)
+                        .ThenInclude(ec => ec.Category)
+                .Select(p => p.Event)
+                .ToListAsync();
+        }
+
+        public async Task<List<Event>> GetCompletedEventsByUserIdAsync(int userId)
+        {
+            return await _context.Participations
+                .Where(p => p.UserId == userId
+                            && p.Event.Status == EventStatus.Completed)
+                .Include(p => p.Event)
+                    .ThenInclude(e => e.EventCategories)
+                        .ThenInclude(ec => ec.Category)
+                .Select(p => p.Event)
+                .ToListAsync();
+        }
     }
 }

@@ -132,5 +132,29 @@ namespace VolunTrack.Controllers.Api
                 return StatusCode(500, new { message = "Internal server error" });
             }
         }
+
+        [Authorize]
+        [HttpGet("me/events/upcoming")]
+        public async Task<IActionResult> GetUpcomingEvents()
+        {
+            var claimsUserIdString = User.FindFirstValue(ClaimTypes.NameIdentifier);
+            if (!int.TryParse(claimsUserIdString, out var userId))
+                return BadRequest("Invalid user ID in token");
+
+            var events = await _userService.GetUpcomingEventsAsync(userId);
+            return Ok(events);
+        }
+
+        [Authorize]
+        [HttpGet("me/events/completed")]
+        public async Task<IActionResult> GetCompletedEvents()
+        {
+            var claimsUserIdString = User.FindFirstValue(ClaimTypes.NameIdentifier);
+            if (!int.TryParse(claimsUserIdString, out var userId))
+                return BadRequest("Invalid user ID in token");
+
+            var events = await _userService.GetCompletedEventsAsync(userId);
+            return Ok(events);
+        }
     }
 }
