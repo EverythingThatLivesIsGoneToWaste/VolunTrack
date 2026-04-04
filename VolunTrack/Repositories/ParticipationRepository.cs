@@ -86,6 +86,8 @@ namespace VolunTrack.Repositories
                 .Include(p => p.Event)
                     .ThenInclude(e => e.EventCategories)
                         .ThenInclude(ec => ec.Category)
+                .Include(p => p.Event)
+                    .ThenInclude(e => e.Participations)
                 .Select(p => p.Event)
                 .ToListAsync();
         }
@@ -98,6 +100,8 @@ namespace VolunTrack.Repositories
                 .Include(p => p.Event)
                     .ThenInclude(e => e.EventCategories)
                         .ThenInclude(ec => ec.Category)
+                .Include(p => p.Event)
+                    .ThenInclude(e => e.Participations)
                 .Select(p => p.Event)
                 .ToListAsync();
         }

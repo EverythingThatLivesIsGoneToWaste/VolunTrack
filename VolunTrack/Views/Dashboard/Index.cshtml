@@ -40,6 +40,17 @@
                 <a asp-controller="Profile" asp-action="Edit">Редактировать профиль</a>
             </div>
         </div>
+        <div class="my-events-history">
+            <div class="events-history-header">
+                <h2>История</h2>
+                <div class="toggle-switch">
+                    <div class="toggle-option active" data-type="upcoming">Предстоящие</div>
+                    <div class="toggle-option" data-type="completed">Завершённые</div>
+                    <div class="toggle-slider"></div>
+                </div>
+            </div>
+            <div class="events-history-container" id="events-history-container"></div>
+        </div>
     </div>
     <div style="border-left: 2px solid;"></div>
     <div class="events-section">

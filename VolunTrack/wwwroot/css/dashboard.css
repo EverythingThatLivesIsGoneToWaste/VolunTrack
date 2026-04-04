@@ -19,13 +19,18 @@ main {
     flex-direction: column;
 }
 
-.user-info-card {
+.user-info-card, .my-events-history {
     display: flex;
     gap: 20px;
     align-items: center;
     padding: 20px;
     border-radius: 30px;
     background-color: #eeeeee;
+}
+
+.my-events-history {
+    flex-direction: column;
+    gap: 12px;
 }
 
 .user-info {
@@ -68,4 +73,129 @@ main {
 .events-footer {
     color: #333;
     font-weight: 500;
+}
+
+.user-section {
+    gap: 20px;
+}
+
+.events-history-header {
+    width: 100%;
+    display: flex;
+    justify-content: space-between;
+}
+
+.events-history-container {
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+}
+
+.user-event-item {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    font-size: 20px;
+    background-color: #e0e0e0;
+    border-radius: 30px;
+    padding: 20px;
+    transition: all 200ms ease-in-out;
+}
+
+.user-event-header {
+    display: flex;
+    justify-content: space-between;
+}
+
+.participants-section {
+    display: inherit;
+    gap: 12px;
+    align-items: center;
+}
+
+.participants-button img {
+    height: 100%;
+    object-fit: cover;
+    overflow: hidden;
+}
+
+.participants-button {
+    border: 0;
+    width: 50px;
+    height: 50px;
+    padding: 4px 5px;
+    border-radius: 12px;
+    background-color: rgb(179, 17, 49);
+    transition: all 200ms ease-in-out;
+}
+
+.event-content {
+    display: flex;
+    justify-content: space-between;
+}
+
+.event-info {
+    display: flex;
+    flex-direction: column;
+}
+
+.user-event-categories {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    justify-content: center;
+    padding-inline-end: 4px;
+}
+
+.user-event-categories .category-badge {
+    padding: 0;
+    height: 36px;
+    width: 42px;
+}
+
+/*Custom events toggle switch*/
+.toggle-switch {
+    position: relative;
+    display: inline-flex;
+    background-color: #e0e0e0;
+    border-radius: 16px;
+    cursor: pointer;
+    overflow: hidden;
+    padding: 4px 0px;
+}
+
+.toggle-option {
+    position: relative;
+    z-index: 2;
+    padding: 8px 20px;
+    font-size: 16px;
+    font-weight: 500;
+    transition: color 300ms ease-in-out;
+    cursor: pointer;
+    user-select: none;
+}
+
+.toggle-option.active {
+    color: #000;
+}
+
+.toggle-option:not(.active) {
+    color: #888;
+}
+
+.toggle-slider {
+    position: absolute;
+    top: 4px;
+    left: 4px;
+    height: calc(100% - 8px);
+    width: calc(50% - 4px);
+    background-color: white;
+    border-radius: 13px;
+    transition: transform 300ms ease-in-out;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+}
+
+.toggle-switch[data-selected="completed"] .toggle-slider {
+    transform: translateX(100%);
 }
