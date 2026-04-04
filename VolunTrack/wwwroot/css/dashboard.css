@@ -19,6 +19,10 @@ main {
     flex-direction: column;
 }
 
+.events-container {
+    height: 80vh;
+}
+
 .user-info-card, .my-events-history {
     display: flex;
     gap: 20px;
@@ -63,16 +67,7 @@ main {
     height: 150px;
     object-fit: cover;
     border-radius: 50%;
-    border: 1px solid #333;
-}
-
-.events-container {
-    height: 80vh;
-}
-
-.events-footer {
-    color: #333;
-    font-weight: 500;
+    border: 3px solid #888;
 }
 
 .user-section {
@@ -137,6 +132,7 @@ main {
 .event-content {
     display: flex;
     justify-content: space-between;
+    gap: 20px;
 }
 
 .event-info {
