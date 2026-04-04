@@ -104,5 +104,15 @@ namespace VolunTrack.Services
 
             return eventDtos;
         }
+
+        public async Task<List<ParticipantDto>> GetEventParticipantsAsync(int eventId)
+        {
+            var eventEntity = await _eventRepository.GetByIdAsync(eventId)
+                ?? throw new NotFoundException($"Event {eventId} not found");
+
+            var participants = await _participationRepository.GetByEventIdAsync(eventId);
+
+            return [.. participants.Select(p => ParticipantDto.FromEntity(p))];
+        }
     }
 }

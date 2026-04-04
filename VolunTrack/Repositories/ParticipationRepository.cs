@@ -30,6 +30,14 @@ namespace VolunTrack.Repositories
                 .FirstOrDefaultAsync(p => p.UserId == userId  && p.EventId == eventId);
         }
 
+        public async Task<List<Participation>> GetByEventIdAsync(int eventId)
+        {
+            return await _context.Participations
+               .Include(p => p.User)
+               .Where(p => p.EventId == eventId)
+               .ToListAsync();
+        }
+
         public async Task AddAsync(Participation participation)
         {
             await _context.Participations.AddAsync(participation);

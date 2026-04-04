@@ -98,5 +98,20 @@ namespace VolunTrack.Controllers.Api
 
             return Ok(template);
         }
+
+        [Authorize]
+        [HttpGet("{eventId}/participants")]
+        public async Task<IActionResult> GetEventParticipants(int eventId) {
+            var claimsUserIdString = User.FindFirstValue(ClaimTypes.NameIdentifier);
+            if (!int.TryParse(claimsUserIdString, out var userId))
+                return BadRequest("Invalid user ID in token");
+
+            var eventEntity = await _eventRepository.GetByIdAsync(eventId);
+            if (eventEntity == null)
+                return NotFound();
+
+            var events = await _eventService.GetEventParticipantsAsync(eventId);
+            return Ok(events);
+        }
     }
 }

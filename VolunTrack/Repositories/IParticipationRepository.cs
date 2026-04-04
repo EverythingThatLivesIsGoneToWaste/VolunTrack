@@ -9,6 +9,7 @@ namespace VolunTrack.Repositories
         Task<Participation?> GetByUserAndEventAsync(int userId, int eventId);
         Task<List<Event>> GetUpcomingEventsByUserIdAsync(int userId);
         Task<List<Event>> GetCompletedEventsByUserIdAsync(int userId);
+        Task<List<Participation>> GetByEventIdAsync(int eventId);
 
         Task AddAsync(Participation participation);
         Task UpdateCheckInAsync(Participation participation, DateTime checkInTime);
