@@ -91,3 +91,38 @@ form h1 {
         opacity: 1;
     }
 }
+
+/*Modal*/
+.modal {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0,0,0,0.5);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 1000;
+}
+
+.modal-content {
+    background: white;
+    border-radius: 30px;
+    max-width: 500px;
+    width: 90%;
+    max-height: 80vh;
+    overflow-y: auto;
+}
+
+.close-modal {
+    cursor: pointer;
+    font-size: 24px;
+    justify-self: flex-start;
+    margin-bottom: auto;
+}
+
+.modal-header {
+    display: flex;
+    justify-content: space-between;
+}

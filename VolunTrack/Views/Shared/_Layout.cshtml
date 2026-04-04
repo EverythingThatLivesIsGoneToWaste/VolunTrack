@@ -69,6 +69,20 @@
             &copy; 2026 - VolunTrack
         </div>
     </footer>
+
+    <!--Modal for event participants-->
+    <div id="participantsModal" class="modal" style="display: none;">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>Участники события:<br><span id="modalEventName"></span></h3>
+                <button class="close-modal-button">
+                    <img src="/images/ui/buttons/close-window.png" alt="Закрыть">
+                </button>
+            </div>
+            <div id="participantsList" class="modal-body"></div>
+        </div>
+    </div>
+
     <script src="~/lib/jquery/dist/jquery.min.js"></script>
     <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
     <script src="~/js/site.js" asp-append-version="true"></script>
