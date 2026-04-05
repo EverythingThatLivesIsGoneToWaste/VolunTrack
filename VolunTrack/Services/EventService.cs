@@ -11,15 +11,18 @@ namespace VolunTrack.Services
         private readonly IEventRepository _eventRepository;
         private readonly ICategoryRepository _categoryRepository;
         private readonly IParticipationRepository _participationRepository;
+        private readonly IUserRepository _userRepository;
 
         public EventService(
             IEventRepository eventRepository, 
             ICategoryRepository categoryRepository,
-            IParticipationRepository participationRepository)
+            IParticipationRepository participationRepository,
+            IUserRepository userRepository)
         {
             _eventRepository = eventRepository;
             _categoryRepository = categoryRepository;
             _participationRepository = participationRepository;
+            _userRepository = userRepository;
         }
 
         public async Task<EventDto> AddAsync(CreateEventDto model)
@@ -113,6 +116,95 @@ namespace VolunTrack.Services
             var participants = await _participationRepository.GetByEventIdAsync(eventId);
 
             return [.. participants.Select(p => ParticipantDto.FromEntity(p))];
+        }
+
+        public async Task<List<EventPhotoDto>> GetEventPhotosAsync(int eventId)
+        {
+            _ = await _eventRepository.GetByIdAsync(eventId)
+                ?? throw new NotFoundException($"Event {eventId} not found");
+
+            var photos = await _eventRepository.GetPhotosByEventIdAsync(eventId);
+            var dtos = new List<EventPhotoDto>();
+
+            foreach (var photo in photos)
+            {
+                var uploadedBy = photo.UploadedByUserId.HasValue
+                    ? await _userRepository.GetByIdAsync(photo.UploadedByUserId.Value)
+                    : null;
+
+                dtos.Add(EventPhotoDto.FromEntity(photo, uploadedBy));
+            }
+
+            return dtos;
+        }
+
+        public async Task<EventPhotoDto> AddEventPhotoAsync(int eventId, UploadPhotoDto dto, int userId)
+        {
+            var eventEntity = await _eventRepository.GetByIdAsync(eventId)
+                ?? throw new NotFoundException($"Event {eventId} not found");
+            
+            var user = await _userRepository.GetByIdAsync(userId);
+            var isAdmin = user?.Role == UserRole.Administrator;
+            var isCreator = eventEntity.CreatedByUserId == userId;
+            var isLeader = await _userRepository.IsLeaderOfEventAsync(userId, eventId);
+
+            if (!isAdmin && !isCreator && !isLeader)
+                throw new Exceptions.UnauthorizedAccessException("No permission to upload photos");
+
+            var fileName = $"{Guid.NewGuid()}_{dto.File.FileName}";
+            var filePath = Path.Combine("wwwroot", "uploads", "events", eventId.ToString(), fileName);
+
+            var allowedExtensions = new[] { ".jpg", ".jpeg", ".png", ".gif", ".webp" };
+            var extension = Path.GetExtension(dto.File.FileName).ToLowerInvariant();
+            if (!allowedExtensions.Contains(extension))
+                throw new ArgumentException("Unsupported file format. Allowed: jpg, jpeg, png, gif, webp");
+
+            if (dto.File.Length > 10 * 1024 * 1024)
+                throw new ArgumentException("File size exceeds 5 MB limit");
+
+            Directory.CreateDirectory(Path.GetDirectoryName(filePath)!);
+            using (var stream = new FileStream(filePath, FileMode.Create))
+            {
+                await dto.File.CopyToAsync(stream);
+            }
+
+            var photo = new EventPhoto
+            {
+                EventId = eventId,
+                Title = dto.Title ?? dto.File.FileName,
+                FilePath = $"/uploads/events/{eventId}/{fileName}",
+                PhotoType = dto.PhotoType,
+                UploadedByUserId = userId,
+                UploadedAtUtc = DateTime.UtcNow
+            };
+
+            await _eventRepository.AddPhotoAsync(photo);
+
+            return EventPhotoDto.FromEntity(photo);
+        }
+
+        public async Task RemoveEventPhotoAsync(int photoId, int userId)
+        {
+            var photo = await _eventRepository.GetPhotoByIdAsync(photoId)
+                ?? throw new NotFoundException($"Photo {photoId} not found");
+
+            var eventEntity = await _eventRepository.GetByIdAsync(photo.EventId)
+                ?? throw new NotFoundException($"Event {photo.EventId} not found");
+
+            var user = await _userRepository.GetByIdAsync(userId);
+            var isAdmin = user?.Role == UserRole.Administrator;
+            var isCreator = eventEntity.CreatedByUserId == userId;
+            var isLeader = await _userRepository.IsLeaderOfEventAsync(userId, photo.EventId);
+            var isUploader = photo.UploadedByUserId == userId;
+
+            if (!isAdmin && !isCreator && !isLeader && !isUploader)
+                throw new Exceptions.UnauthorizedAccessException("No permission to delete this photo");
+
+            var fullPath = Path.Combine("wwwroot", photo.FilePath.TrimStart('/'));
+            if (File.Exists(fullPath))
+                File.Delete(fullPath);
+
+            await _eventRepository.DeletePhotoAsync(photo);
         }
     }
 }

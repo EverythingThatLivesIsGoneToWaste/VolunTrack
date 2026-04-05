@@ -28,5 +28,7 @@ namespace VolunTrack.Repositories
         Task RemoveUserCategoryAsync(UserCategory userCategory);
         Task UpdateAsync(User user);
         Task RemoveAsync(User user);
+
+        Task<bool> IsLeaderOfEventAsync(int userId, int eventId);
     }
 }

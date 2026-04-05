@@ -137,5 +137,11 @@ namespace VolunTrack.Repositories
             _context.Users.Remove(user);
             await _context.SaveChangesAsync();
         }
+
+        public async Task<bool> IsLeaderOfEventAsync(int userId, int eventId)
+        {
+            return await _context.UserLeaderAssignments
+                .AnyAsync(ula => ula.UserId == userId && ula.EventId == eventId);
+        }
     }
 }
