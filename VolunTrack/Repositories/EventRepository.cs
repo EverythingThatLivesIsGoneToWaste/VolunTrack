@@ -29,6 +29,7 @@ namespace VolunTrack.Repositories
             return await _context.Events
                 .Include(e => e.EventCategories)
                     .ThenInclude(ec => ec.Category)
+                .Include(e => e.EventPhotos)
                 .ToListAsync();
         }
 
@@ -58,6 +59,7 @@ namespace VolunTrack.Repositories
         {
             return await _context.Events
                 .Include(e => e.Participations)
+                .Include(e => e.EventPhotos)
                 .Where(e => e.CreatedByUserId == coordinatorId).ToListAsync();
         }
 

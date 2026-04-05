@@ -15,6 +15,8 @@ namespace VolunTrack.DTO
         public EventStatus Status { get; set; }
         public int? CreatedByUserId { get; set; }
         public int ParticipantsCount { get; set; }
+        public int PhotosCount { get; set; }
+        public int DocumentsCount { get; set; }
         public int MaxParticipants { get; set; }
         public bool IsJoined { get; set; }
         public List<CategoryDto> Categories { get; set; } = [];
@@ -33,6 +35,7 @@ namespace VolunTrack.DTO
                 Status = @event.Status,
                 CreatedByUserId = @event.CreatedByUserId,
                 ParticipantsCount = @event.Participations?.Count ?? 0,
+                PhotosCount = @event.EventPhotos?.Count ?? 0,
                 MaxParticipants = @event.EstimatedParticipantsCount,
                 IsJoined = false,
                 Categories = @event.EventCategories?.Select(ec => new CategoryDto

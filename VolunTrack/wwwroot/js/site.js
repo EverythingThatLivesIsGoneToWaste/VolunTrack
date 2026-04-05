@@ -130,6 +130,29 @@ async function loadEvents(url) {
                         ${buttonHtml}
                     </div>
                 </div>
+
+                <div class="event-media-section" id="event-media-section-${e.id}" style="display: none;">
+                    <div class="event-photos">
+                        <h4>Фотографии мероприятия</h4>
+                        <div class="photos-grid" id="photos-${e.id}">
+                        </div>
+                        <button class="upload-photo-btn" data-event-id="${e.id}">Загрузить фото</button>
+                        <input type="file" class="photo-input" data-event-id="${e.id}" accept="image/*" multiple style="display: none;">
+                    </div>
+        
+                    <div class="event-documents" style="display: none;">
+                        <h4>Документы</h4>
+                        <div class="documents-list" id="docs-${e.id}"></div>
+                        <button class="upload-doc-btn" data-event-id="${e.id}">Загрузить документ</button>
+                        <input type="file" class="doc-input" data-event-id="${e.id}" accept=".pdf,.docx" style="display: none;">
+                    </div>
+                </div>
+
+                <div class="media-buttons-section">
+                    <button class="toggle-media-btn" data-event-id="${e.id}">Показать медиа</button>
+                    <span class="event-photos-count"><img src="images/ui/buttons/photo.png">${e.photosCount || 0}</span>
+                    <span class="event-documents-count"><img src="images/ui/buttons/document.png">${e.documentsCount || 0}</span>
+                </div>
             `;
 
             container.appendChild(div);

@@ -194,3 +194,33 @@
 .event-closed {
     align-self: center;
 }
+
+/*Event photos*/
+.photos-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(100px, 1fr));
+    gap: 10px;
+    margin: 10px 0;
+}
+
+.event-photo-thumb {
+    width: 100%;
+    height: 120px;
+    object-fit: cover;
+    border-radius: 8px;
+}
+
+.photo-item {
+    position: relative;
+}
+
+.delete-photo-btn {
+    position: absolute;
+    top: 5px;
+    right: 5px;
+    background: rgba(0,0,0,0.6);
+    color: white;
+    border: none;
+    border-radius: 50%;
+    cursor: pointer;
+}
