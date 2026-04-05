@@ -126,3 +126,47 @@ form h1 {
     display: flex;
     justify-content: space-between;
 }
+
+/*Modal for event participants*/
+.close-modal-button img {
+    height: 90%;
+    object-fit: cover;
+    overflow: hidden;
+}
+
+.close-modal-button {
+    border: 0;
+    width: 50px;
+    height: 50px;
+    padding: 4px 5px;
+    border-radius: 12px;
+    background-color: rgb(179, 17, 49);
+    transition: all 200ms ease-in-out;
+}
+
+.close-modal-button:hover {
+    background-color: rgb(140, 17, 49);
+}
+
+.participant-item {
+    display: flex;
+    gap: 20px;
+    align-items: center;
+    padding: 20px;
+    border-radius: 30px;
+    background-color: #eeeeee;
+}
+
+.participant-avatar {
+    height: 100px;
+    width: 100px;
+    object-fit: cover;
+    border-radius: 50%;
+    border: 2px solid #888;
+}
+
+.modal-body {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+}

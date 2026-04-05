@@ -67,7 +67,7 @@ async function loadEvents(url) {
 
             const isAdmin = window.userRole === 'Administrator';
             const isCoordinator = window.userRole === 'EventCoordinator';
-            const isCreator = e.createdByUserId === window.currentUserId;
+            const isCreator = Number(e.createdByUserId) === Number(window.currentUserId);
 
             let statusSelectHtml = '';
             let templateHtml = '';
@@ -80,6 +80,8 @@ async function loadEvents(url) {
                 `;
             }
 
+            let participantsButtonHtml = '';
+
             if (isAdmin || (isCoordinator && isCreator)) {
                 statusSelectHtml = `
                     <div class="status-select-section">
@@ -91,6 +93,11 @@ async function loadEvents(url) {
                         <button class="confirm-button"><img src="/images/ui/buttons/checkmark.png"></button>
                         ${templateHtml}
                     </div>
+                `;
+                participantsButtonHtml = `
+                    <button class="participants-button" data-event-id="${e.id}" title="Нажмите, чтобы просмотреть участников">
+                        <img src="/images/ui/buttons/user.png">
+                    </button>
                 `;
             }
 
@@ -118,7 +125,10 @@ async function loadEvents(url) {
         
                 <div class="event-footer">
                     <span class="event-participants">Участников: ${e.participantsCount || 0}</span>
-                    ${buttonHtml}
+                    <div class="participation-section">
+                        ${participantsButtonHtml}
+                        ${buttonHtml}
+                    </div>
                 </div>
             `;
 
@@ -391,5 +401,76 @@ async function useAsTemplate(eventId) {
         window.location.href = '/events/add?template=true';
     } catch (error) {
         showToast("Ошибка загрузки шаблона", "error");
+    }
+}
+
+function getAvatarByRole(role) {
+    const avatarMap = {
+        'Volunteer': '/images/avatars/volunteer.png',
+        'EventCoordinator': '/images/avatars/coordinator.png',
+        'RegionCoordinator': '/images/avatars/region-coordinator.png',
+        'Administrator': '/images/avatars/administrator.png'
+    };
+    return avatarMap[role] || '/images/avatars/default.png';
+}
+
+// Opening modal
+document.body.addEventListener("click", async (e) => {
+    const button = e.target.closest(".participants-button");
+    if (!button) return;
+
+    const eventId = button.dataset.eventId;
+    const eventItem = button.closest(".user-event-item, .event-item");
+    const eventName = eventItem?.querySelector(".event-name")?.textContent || "Событие";
+
+    const modal = document.getElementById("participantsModal");
+    document.getElementById("modalEventName").textContent = eventName;
+    modal.style.display = "flex";
+
+    await loadParticipants(eventId);
+});
+
+// Closing modal
+document.body.addEventListener("click", (e) => {
+    const closeButton = e.target.closest(".close-modal-button");
+    if (closeButton) {
+        document.getElementById("participantsModal").style.display = "none";
+    }
+});
+
+window.addEventListener("click", (e) => {
+    const modal = document.getElementById("participantsModal");
+    if (e.target === modal) {
+        modal.style.display = "none";
+    }
+});
+
+// Loading participants for modal
+async function loadParticipants(eventId) {
+    const container = document.getElementById("participantsList");
+    container.innerHTML = '<div class="loading">Загрузка...</div>';
+
+    try {
+        const response = await fetch(`/api/events/${eventId}/participants`);
+        const participants = await response.json();
+
+        if (participants.length === 0) {
+            container.innerHTML = '<p>Нет участников</p>';
+            return;
+        }
+
+        container.innerHTML = participants.map(p => `
+            <div class="participant-item">
+                <img src="${getAvatarByRole(p.role)}" class="participant-avatar">
+                <div class="participant-info">
+                    <div class="participant-name">${escapeHtml(p.fullName)}</div>
+                    <div class="participant-login">@${escapeHtml(p.login)}</div>
+                    <div class="participant-email">${escapeHtml(p.email)}</div>
+                </div>
+            </div>
+        `).join('');
+    } catch (error) {
+        container.innerHTML = '<p>Ошибка загрузки</p>';
+        console.error(error);
     }
 }
