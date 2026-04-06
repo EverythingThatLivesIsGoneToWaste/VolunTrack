@@ -81,7 +81,11 @@ async function loadEvents(url) {
                 `;
             }
 
-            let participantsButtonHtml = '';
+            let participantsButtonHtml = `
+                <button class="participants-button" data-event-id="${e.id}" title="Нажмите, чтобы просмотреть участников">
+                    <img src="/images/ui/buttons/user.png">
+                </button>
+            `;
             let documentsCounterHtml = '';
             let photosUploadButtonHtml = '';
 
@@ -96,11 +100,6 @@ async function loadEvents(url) {
                         <button class="confirm-button"><img src="/images/ui/buttons/checkmark.png"></button>
                         ${templateHtml}
                     </div>
-                `;
-                participantsButtonHtml = `
-                    <button class="participants-button" data-event-id="${e.id}" title="Нажмите, чтобы просмотреть участников">
-                        <img src="/images/ui/buttons/user.png">
-                    </button>
                 `;
                 photosUploadButtonHtml = `
                     <button class="upload-photo-btn" data-event-id="${e.id}">Загрузить фото</button>
