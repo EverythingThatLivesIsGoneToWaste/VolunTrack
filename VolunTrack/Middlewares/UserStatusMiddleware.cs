@@ -38,6 +38,14 @@ namespace VolunTrack.Middlewares
                     if (roleFromDb != roleFromClaim)
                     {
                         await loginService.LogoutAsync();
+
+                        if (context.Request.Path.StartsWithSegments("/api"))
+                        {
+                            context.Response.StatusCode = 401;
+                            await context.Response.WriteAsJsonAsync(new { reason = "role-changed" });
+                            return;
+                        }
+
                         context.Response.Redirect("/Login?reason=role-changed");
                         return;
                     }
