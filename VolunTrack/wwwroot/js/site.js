@@ -106,7 +106,8 @@ async function loadEvents(url) {
                     <input type="file" class="photo-input" data-event-id="${e.id}" accept="image/*" multiple style="display: none;">
                 `
                 
-            } else if (isRegionalCoordinator) {
+            }
+            if (isAdmin || isRegionalCoordinator) {
                 documentsCounterHtml = `
                     <span class="event-documents-count"><img src="images/ui/buttons/document.png">${e.documentsCount || 0}</span>
                 `

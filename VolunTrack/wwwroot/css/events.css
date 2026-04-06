@@ -181,7 +181,7 @@
 
 .event-footer {
     display: flex;
-    align-items: end;
+    align-items: center;
     gap: 20px;
 }
 
@@ -218,7 +218,7 @@
 .media-counters {
     display: inherit;
     gap: 12px;
-    padding: 10px;
+    padding: 5px 12px;
     border-radius: 16px;
     background-color: rgb(158, 158, 158);
 }
@@ -279,7 +279,7 @@
 .upload-photo-btn {
     font-size: 22px;
     color: white;
-    padding: 6px 20px;
+    padding: 6px 12px;
     border-radius: 12px;
     border: 0;
     background-color: rgb(179, 17, 49);
@@ -293,7 +293,7 @@
 .toggle-media-btn {
     font-size: 22px;
     color: white;
-    padding: 6px 20px;
+    padding: 3px 12px;
     border-radius: 16px;
     border: 0;
     background-color: rgb(179, 17, 49);
