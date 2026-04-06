@@ -4,13 +4,14 @@ document.body.addEventListener("click", async (e) => {
     if (btn) {
         const eventId = btn.dataset.eventId;
         const section = document.getElementById(`event-media-section-${eventId}`);
-        if (section.style.display === "none") {
-            section.style.display = "block";
+
+        if (section.classList.contains("show")) {
+            section.classList.remove("show");
+            btn.textContent = "Показать медиа";
+        } else {
+            section.classList.add("show");
             btn.textContent = "Скрыть медиа";
             await loadEventPhotos(eventId);
-        } else {
-            section.style.display = "none";
-            btn.textContent = "Показать медиа";
         }
     }
 });

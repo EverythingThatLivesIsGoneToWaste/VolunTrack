@@ -131,7 +131,7 @@ async function loadEvents(url) {
                     </div>
                 </div>
 
-                <div class="event-media-section" id="event-media-section-${e.id}" style="display: none;">
+                <div class="event-media-section" id="event-media-section-${e.id}">
                     <div class="event-photos">
                         <h4>Фотографии мероприятия</h4>
                         <div class="photos-grid" id="photos-${e.id}">
@@ -148,10 +148,12 @@ async function loadEvents(url) {
                     </div>
                 </div>
 
-                <div class="media-buttons-section">
+                <div class="media-controls-section">
                     <button class="toggle-media-btn" data-event-id="${e.id}">Показать медиа</button>
-                    <span class="event-photos-count"><img src="images/ui/buttons/photo.png">${e.photosCount || 0}</span>
-                    <span class="event-documents-count"><img src="images/ui/buttons/document.png">${e.documentsCount || 0}</span>
+                    <div class="media-counters">
+                        <span class="event-photos-count"><img src="images/ui/buttons/photo.png">${e.photosCount || 0}</span>
+                        <span class="event-documents-count"><img src="images/ui/buttons/document.png">${e.documentsCount || 0}</span>
+                    </div>
                 </div>
             `;
 
