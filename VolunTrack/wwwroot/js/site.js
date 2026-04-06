@@ -68,6 +68,7 @@ async function loadEvents(url) {
             const isAdmin = window.userRole === 'Administrator';
             const isCoordinator = window.userRole === 'EventCoordinator';
             const isCreator = Number(e.createdByUserId) === Number(window.currentUserId);
+            const isRegionalCoordinator = window.userRole === 'RegionCoordinator';
 
             let statusSelectHtml = '';
             let templateHtml = '';
@@ -81,6 +82,8 @@ async function loadEvents(url) {
             }
 
             let participantsButtonHtml = '';
+            let documentsCounterHtml = '';
+            let photosUploadButtonHtml = '';
 
             if (isAdmin || (isCoordinator && isCreator)) {
                 statusSelectHtml = `
@@ -99,6 +102,15 @@ async function loadEvents(url) {
                         <img src="/images/ui/buttons/user.png">
                     </button>
                 `;
+                photosUploadButtonHtml = `
+                    <button class="upload-photo-btn" data-event-id="${e.id}">Загрузить фото</button>
+                    <input type="file" class="photo-input" data-event-id="${e.id}" accept="image/*" multiple style="display: none;">
+                `
+                
+            } else if (isRegionalCoordinator) {
+                documentsCounterHtml = `
+                    <span class="event-documents-count"><img src="images/ui/buttons/document.png">${e.documentsCount || 0}</span>
+                `
             }
 
             div.innerHTML = `
@@ -131,13 +143,12 @@ async function loadEvents(url) {
                     </div>
                 </div>
 
-                <div class="event-media-section" id="event-media-section-${e.id}">
+                <div class="event-media-section" id="event-media-section-${e.id}" data-creator-id="${e.createdByUserId}">
                     <div class="event-photos">
                         <h4>Фотографии мероприятия</h4>
                         <div class="photos-grid" id="photos-${e.id}">
                         </div>
-                        <button class="upload-photo-btn" data-event-id="${e.id}">Загрузить фото</button>
-                        <input type="file" class="photo-input" data-event-id="${e.id}" accept="image/*" multiple style="display: none;">
+                        ${photosUploadButtonHtml}
                     </div>
         
                     <div class="event-documents" style="display: none;">
@@ -152,7 +163,7 @@ async function loadEvents(url) {
                     <button class="toggle-media-btn" data-event-id="${e.id}">Показать медиа</button>
                     <div class="media-counters">
                         <span class="event-photos-count"><img src="images/ui/buttons/photo.png">${e.photosCount || 0}</span>
-                        <span class="event-documents-count"><img src="images/ui/buttons/document.png">${e.documentsCount || 0}</span>
+                        ${documentsCounterHtml}
                     </div>
                 </div>
             `;

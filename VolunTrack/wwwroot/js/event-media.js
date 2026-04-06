@@ -20,6 +20,12 @@ async function loadEventPhotos(eventId) {
     const container = document.getElementById(`photos-${eventId}`);
     if (!container) return;
 
+    const mediaSection = document.getElementById(`event-media-section-${eventId}`);
+    const eventCreatorId = parseInt(mediaSection?.dataset.creatorId);
+
+    const canDelete = window.userRole === 'Administrator' ||
+        (window.userRole === 'EventCoordinator' && parseInt(window.currentUserId) === eventCreatorId);
+
     try {
         const response = await fetch(`/api/events/${eventId}/photos`);
         const photos = await response.json();
@@ -31,7 +37,11 @@ async function loadEventPhotos(eventId) {
             imgDiv.className = 'photo-item';
             imgDiv.innerHTML = `
                 <img src="${photo.filePath}" alt="${photo.title}" class="event-photo-thumb">
-                <button class="delete-photo-btn" data-event-id=${eventId} data-photo-id="${photo.id}"><img src="images/ui/buttons/delete-bin.png"></button>
+                ${canDelete ? `<button class="delete-photo-btn" 
+                    data-event-id="${eventId}" 
+                    data-photo-id="${photo.id}">
+                    <img src="images/ui/buttons/delete-bin.png">
+                </button>` : ''}
             `;
             container.appendChild(imgDiv);
         });
