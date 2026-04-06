@@ -105,5 +105,99 @@ namespace VolunTrack.Controllers.Api
                 return StatusCode(500, new { message = "Internal server error" });
             }
         }
+
+        [Authorize(Roles = "EventCoordinator,RegionCoordinator,Administrator")]
+        [HttpGet("/api/events/{eventId}/documents")]
+        public async Task<IActionResult> GetDocuments(int eventId)
+        {
+            try
+            {
+                var claimsUserIdString = User.FindFirstValue(ClaimTypes.NameIdentifier);
+                if (!int.TryParse(claimsUserIdString, out int userId))
+                    return BadRequest("Invalid user ID in token");
+
+                var userRole = User.FindFirstValue(ClaimTypes.Role)!;
+
+                var photos = await _eventService.GetEventDocumentsAsync(eventId, userId, userRole);
+                return Ok(photos);
+            }
+            catch (NotFoundException ex)
+            {
+                return NotFound(new { message = ex.Message });
+            }
+            catch (Exceptions.UnauthorizedAccessException ex)
+            {
+                return StatusCode(403, new { message = ex.Message });
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error getting documents for event {EventId}", eventId);
+                return StatusCode(500, new { message = $"Internal server error : {ex.Message}" });
+            }
+        }
+
+        [Authorize(Roles = "EventCoordinator,RegionCoordinator,Administrator")]
+        [HttpPost("/api/events/{eventId}/documents")]
+        public async Task<IActionResult> UploadDocument(int eventId, [FromForm] UploadDocumentDto dto) 
+        {
+            try
+            {
+                var claimsUserIdString = User.FindFirstValue(ClaimTypes.NameIdentifier);
+                if (!int.TryParse(claimsUserIdString, out int userId))
+                    return BadRequest("Invalid user ID in token");
+
+                var userRole = User.FindFirstValue(ClaimTypes.Role)!;
+
+                var addedDocument = await _eventService.AddEventDocumentAsync(eventId, dto, userId, userRole);
+                return Ok(addedDocument);
+            }
+            catch (NotFoundException ex)
+            {
+                return NotFound(new { message = ex.Message });
+            }
+            catch (Exceptions.UnauthorizedAccessException ex)
+            {
+                return StatusCode(403, new { message = ex.Message });
+            }
+            catch (ArgumentException ex)
+            {
+                return BadRequest(new { message = ex.Message });
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error uploading document for event {EventId}", eventId);
+                return StatusCode(500, new { message = $"Internal server error : {ex.Message}" });
+            }
+        }
+
+        [Authorize(Roles = "EventCoordinator,RegionCoordinator,Administrator")]
+        [HttpDelete("/api/events/documents/{documentId}")]
+        public async Task<IActionResult> DeleteDocument(int documentId) 
+        {
+            try
+            {
+                var claimsUserIdString = User.FindFirstValue(ClaimTypes.NameIdentifier);
+                if (!int.TryParse(claimsUserIdString, out int userId))
+                    return BadRequest("Invalid user ID in token");
+
+                var userRole = User.FindFirstValue(ClaimTypes.Role)!;
+
+                await _eventService.RemoveEventDocumentAsync(documentId, userId, userRole);
+                return NoContent();
+            }
+            catch (NotFoundException ex)
+            {
+                return NotFound(new { message = ex.Message });
+            }
+            catch (Exceptions.UnauthorizedAccessException ex)
+            {
+                return StatusCode(403, new { message = ex.Message });
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error removing document {documentId}", documentId);
+                return StatusCode(500, new { message = $"Internal server error : {ex.Message}" });
+            }
+        }
     }
 }

@@ -8,6 +8,7 @@ namespace VolunTrack.Repositories
         Task<User?> GetByIdAsync(int id);
         Task<User?> GetByLoginAsync(string login);
         Task<List<User>> GetAllAsync();
+        Task<List<User>> GetByIdsAsync(IEnumerable<int> ids);
         Task<UserCategory?> GetUserCategoryAsync(int userId, int categoryId);
         Task<List<Category>> GetUserCategoriesAsync(int id);
 

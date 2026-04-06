@@ -12,17 +12,20 @@ namespace VolunTrack.Services
         private readonly ICategoryRepository _categoryRepository;
         private readonly IParticipationRepository _participationRepository;
         private readonly IUserRepository _userRepository;
+        private readonly ILogger<EventService> _logger;
 
         public EventService(
             IEventRepository eventRepository, 
             ICategoryRepository categoryRepository,
             IParticipationRepository participationRepository,
-            IUserRepository userRepository)
+            IUserRepository userRepository,
+            ILogger<EventService> logger)
         {
             _eventRepository = eventRepository;
             _categoryRepository = categoryRepository;
             _participationRepository = participationRepository;
             _userRepository = userRepository;
+            _logger = logger;
         }
 
         public async Task<EventDto> AddAsync(CreateEventDto model)
@@ -205,6 +208,113 @@ namespace VolunTrack.Services
                 File.Delete(fullPath);
 
             await _eventRepository.DeletePhotoAsync(photo);
+        }
+
+        public async Task<List<DocumentDto>> GetEventDocumentsAsync(int eventId, int userId, string userRole)
+        {
+            var eventEntity = await _eventRepository.GetByIdAsync(eventId)
+                ?? throw new NotFoundException($"Event {eventId} not found");
+
+            bool canAccess = userRole == nameof(UserRole.Administrator) ||
+                 userRole == nameof(UserRole.RegionCoordinator) ||
+                 (userRole == nameof(UserRole.EventCoordinator) && eventEntity.CreatedByUserId == userId);
+
+            if (!canAccess)
+                throw new Exceptions.UnauthorizedAccessException("You cannot request documents related to this event");
+
+            var documents = await _eventRepository.GetDocumentsByEventIdAsync(eventId);
+            var dtos = new List<DocumentDto>();
+
+            var userIds = documents.Select(d => d.UploadedByUserId).Where(id => id.HasValue).Select(id => id!.Value).Distinct();
+            var users = await _userRepository.GetByIdsAsync(userIds);
+            var userDict = users.ToDictionary(u => u.Id, u => u);
+
+            foreach (var document in documents)
+            {
+                var uploadedBy = document.UploadedByUserId.HasValue
+                    ? userDict.GetValueOrDefault(document.UploadedByUserId.Value)
+                    : null;
+                dtos.Add(DocumentDto.FromEntity(document, uploadedBy));
+            }
+
+            return dtos;
+        }
+
+        public async Task<DocumentDto> AddEventDocumentAsync(int eventId, UploadDocumentDto dto, int userId, string userRole)
+        {
+            var eventEntity = await _eventRepository.GetByIdAsync(eventId)
+                ?? throw new NotFoundException($"Event {eventId} not found");
+
+            bool canUpload = userRole == nameof(UserRole.Administrator) ||
+                userRole == nameof(UserRole.RegionCoordinator) ||
+                (userRole == nameof(UserRole.EventCoordinator) && eventEntity.CreatedByUserId == userId);
+            
+            if (!canUpload)
+                throw new Exceptions.UnauthorizedAccessException("No permission to upload documents to this event");
+
+            var fileName = $"{Guid.NewGuid()}_{dto.File.FileName}";
+            var filePath = Path.Combine("wwwroot", "uploads", "events", eventId.ToString(), fileName);
+
+            var allowedExtensions = new[] { ".docx", ".pdf", ".xlsx", ".xls", ".xlsm" };
+            var extension = Path.GetExtension(dto.File.FileName).ToLowerInvariant();
+            if (!allowedExtensions.Contains(extension))
+                throw new ArgumentException("Unsupported file format. Allowed: docx, pdf, xlsx, xls, xlsm");
+
+            if (dto.File.Length > 20 * 1024 * 1024)
+                throw new ArgumentException("File size exceeds 20 MB limit");
+
+            Directory.CreateDirectory(Path.GetDirectoryName(filePath)!);
+            using (var stream = new FileStream(filePath, FileMode.Create))
+            {
+                await dto.File.CopyToAsync(stream);
+            }
+
+            var document = new Attachment
+            {
+                Description = dto.Description,
+                FileName = dto.FileName ?? dto.File.FileName,
+                FilePath = $"/uploads/events/{eventId}/{fileName}",
+                EntityId = eventId,
+                EntityType = EntityType.Event,
+                UploadedByUserId = userId,
+                UploadedAtUtc = DateTime.UtcNow
+            };
+
+            await _eventRepository.AddDocumentAsync(document);
+
+            _logger.LogInformation("Document {FileName} uploaded to event {EventId} by user {UserId}",
+                document.FileName, eventId, userId);
+
+            return DocumentDto.FromEntity(document);
+        }
+
+        public async Task RemoveEventDocumentAsync(int documentId, int userId, string userRole)
+        {
+            var document = await _eventRepository.GetDocumentByIdAsync(documentId)
+                ?? throw new NotFoundException($"Document {documentId} not found");
+
+            var eventEntity = await _eventRepository.GetByIdAsync(document.EntityId)
+                ?? throw new NotFoundException($"Event {document.EntityId} not found");
+
+            bool canDelete = userRole == nameof(UserRole.Administrator) ||
+                userRole == nameof(UserRole.RegionCoordinator) ||
+                (userRole == nameof(UserRole.EventCoordinator) && eventEntity.CreatedByUserId == userId);
+
+            if (!canDelete)
+                throw new Exceptions.UnauthorizedAccessException("No permission to delete this document");
+
+            var fullPath = Path.Combine("wwwroot", document.FilePath.TrimStart('/'));
+            if (File.Exists(fullPath))
+            {
+                File.Delete(fullPath);
+            }
+            else
+            {
+                _logger.LogWarning("Document file not found at path: {FilePath} for document {DocumentId}", fullPath, documentId);
+            }
+
+            await _eventRepository.DeleteDocumentAsync(document);
+            _logger.LogInformation("Document {DocumentId} deleted from database by user {UserId}", documentId, userId);
         }
     }
 }

@@ -76,6 +76,11 @@ namespace VolunTrack.Repositories
             return await _context.EventPhotos.FirstOrDefaultAsync(p => p.Id == photoId);
         }
 
+        public async Task<Attachment?> GetDocumentByIdAsync(int documentId)
+        {
+            return await _context.Attachments.FirstOrDefaultAsync(d => d.Id == documentId);
+        }
+
         public async Task AddAsync(Event @event)
         {
             await _context.Events.AddAsync(@event);
@@ -117,6 +122,26 @@ namespace VolunTrack.Repositories
         public async Task DeletePhotoAsync(EventPhoto photo)
         {
             _context.EventPhotos.Remove(photo);
+            await _context.SaveChangesAsync();
+        }
+
+        public async Task<List<Attachment>> GetDocumentsByEventIdAsync(int eventId)
+        {
+            return await _context.Attachments
+                .Where(p => p.EntityId == eventId && p.EntityType == EntityType.Event)
+                .OrderByDescending(p => p.UploadedAtUtc)
+                .ToListAsync();
+        }
+
+        public async Task AddDocumentAsync(Attachment attachment)
+        {
+            await _context.Attachments.AddAsync(attachment);
+            await _context.SaveChangesAsync();
+        }
+
+        public async Task DeleteDocumentAsync(Attachment attachment)
+        {
+            _context.Attachments.Remove(attachment);
             await _context.SaveChangesAsync();
         }
     }

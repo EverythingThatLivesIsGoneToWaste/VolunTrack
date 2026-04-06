@@ -36,6 +36,13 @@ namespace VolunTrack.Repositories
                 .ToListAsync();
         }
 
+        public async Task<List<User>> GetByIdsAsync(IEnumerable<int> ids)
+        {
+            return await _context.Users
+                .Where(u => ids.Contains(u.Id))
+                .ToListAsync();
+        }
+
         public async Task<UserCategory?> GetUserCategoryAsync(int userId, int categoryId)
         {
             return await _context.UserCategories.FirstOrDefaultAsync(
