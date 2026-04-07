@@ -142,7 +142,7 @@ async function loadEventDocuments(eventId) {
                 <div class="document-info">
                     <span class="document-name">${escapeHtml(doc.fileName)}</span>
                     <span class="document-meta">
-                        Загрузил: ${escapeHtml(doc.uploadedByUserName)} • 
+                        Загрузил: ${escapeHtml(doc.uploadedByUserName)} — 
                         ${new Date(doc.uploadedAtUtc).toLocaleString()}
                     </span>
                     ${doc.description ? `<p class="document-description">${escapeHtml(doc.description)}</p>` : ''}

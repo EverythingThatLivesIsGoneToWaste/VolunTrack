@@ -118,12 +118,10 @@ async function loadEvents(url) {
             if (isAdmin || (isCoordinator && isCreator) || isRegionalCoordinator) {
                 documentsHtml = `
                     <div class="event-documents">
-                        <div class="event-documents-header">
-                            <h4>Документы события</h4>
-                            <div class="documents-list" id="docs-${e.id}"></div>
-                            <button class="upload-doc-btn" data-event-id="${e.id}">Загрузить документ</button>
-                            <input type="file" class="doc-input" data-event-id="${e.id}" accept=".pdf,.docx" style="display: none;">
-                        </div>
+                        <h4>Документы события</h4>
+                        <div class="documents-list" id="docs-${e.id}"></div>
+                        <button class="upload-doc-btn" data-event-id="${e.id}">Загрузить документ</button>
+                        <input type="file" class="doc-input" data-event-id="${e.id}" accept=".pdf,.docx" style="display: none;">
                     </div>
                 `;
             }

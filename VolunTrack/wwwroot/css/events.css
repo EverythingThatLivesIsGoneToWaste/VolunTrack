@@ -293,10 +293,6 @@
     background-color: rgb(140, 17, 49);
 }
 
-.event-documents-header h4 {
-    margin-bottom: 20px;
-}
-
 .toggle-media-btn {
     font-size: 22px;
     color: white;
@@ -309,4 +305,66 @@
 
 .toggle-media-btn:hover {
     background-color: rgb(140, 17, 49);
+}
+
+.document-info {
+    display: flex;
+    flex-direction: column;
+}
+
+.documents-list {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    padding-block: 10px;
+    padding-inline-end: 10px;
+    margin-bottom: 10px;
+    max-height: 310px;
+
+    overflow: hidden;
+    overflow-y: auto;
+
+    mask-image: linear-gradient(to bottom, 
+    transparent 0%, 
+    black 10px, 
+    black calc(100% - 30px), 
+    transparent 100%);
+    -webkit-mask-image: linear-gradient(to bottom, 
+    transparent 0%, 
+    black 10px, 
+    black calc(100% - 30px), 
+    transparent 100%);
+}
+
+.document-item {
+    background-color: #e0e0e0;
+    border-radius: 30px;
+    padding: 10px 20px;
+}
+
+.document-actions {
+    display: flex;
+    justify-content: space-between;
+    align-items: end;
+}
+
+.delete-doc-btn {
+    width: 50px;
+    height: 50px;
+    border: 0;
+    padding: 8px 5px;
+    border-radius: 12px;
+    background-color: rgb(179, 17, 49);
+    transition: all 200ms ease-in-out;
+}
+
+.delete-doc-btn:hover {
+    background-color: rgb(140, 17, 49);
+}
+
+.delete-doc-btn img {
+    object-fit: contain;
+    overflow: hidden;
+    height: 100%;
+    width: 100%;
 }
