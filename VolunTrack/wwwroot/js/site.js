@@ -113,6 +113,21 @@ async function loadEvents(url) {
                 `
             }
 
+            let documentsHtml = '';
+
+            if (isAdmin || (isCoordinator && isCreator) || isRegionalCoordinator) {
+                documentsHtml = `
+                    <div class="event-documents">
+                        <div class="event-documents-header">
+                            <h4>Документы события</h4>
+                            <div class="documents-list" id="docs-${e.id}"></div>
+                            <button class="upload-doc-btn" data-event-id="${e.id}">Загрузить документ</button>
+                            <input type="file" class="doc-input" data-event-id="${e.id}" accept=".pdf,.docx" style="display: none;">
+                        </div>
+                    </div>
+                `;
+            }
+
             div.innerHTML = `
                 <div class="event-header">
                     <div class="header-top-section">
@@ -145,18 +160,11 @@ async function loadEvents(url) {
 
                 <div class="event-media-section" id="event-media-section-${e.id}" data-creator-id="${e.createdByUserId}">
                     <div class="event-photos">
-                        <h4>Фотографии мероприятия</h4>
-                        <div class="photos-grid" id="photos-${e.id}">
-                        </div>
+                        <h4>Фотографии события</h4>
+                        <div class="photos-grid" id="photos-${e.id}"></div>
                         ${photosUploadButtonHtml}
                     </div>
-        
-                    <div class="event-documents" style="display: none;">
-                        <h4>Документы</h4>
-                        <div class="documents-list" id="docs-${e.id}"></div>
-                        <button class="upload-doc-btn" data-event-id="${e.id}">Загрузить документ</button>
-                        <input type="file" class="doc-input" data-event-id="${e.id}" accept=".pdf,.docx" style="display: none;">
-                    </div>
+                    ${documentsHtml}
                 </div>
 
                 <div class="media-controls-section">

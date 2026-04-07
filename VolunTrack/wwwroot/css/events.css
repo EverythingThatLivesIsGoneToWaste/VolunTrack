@@ -197,6 +197,9 @@
 
 /*Event media*/
 .event-media-section {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
     max-height: 0;
     opacity: 0;
     overflow: hidden;
@@ -276,7 +279,7 @@
     width: 100%;
 }
 
-.upload-photo-btn {
+.upload-photo-btn, .upload-doc-btn {
     font-size: 22px;
     color: white;
     padding: 6px 12px;
@@ -286,8 +289,12 @@
     transition: all 200ms ease-in-out;
 }
 
-.upload-photo-btn:hover {
+.upload-photo-btn:hover, upload-doc-btn:hover {
     background-color: rgb(140, 17, 49);
+}
+
+.event-documents-header h4 {
+    margin-bottom: 20px;
 }
 
 .toggle-media-btn {
