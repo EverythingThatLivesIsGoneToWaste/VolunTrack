@@ -105,6 +105,7 @@ namespace VolunTrack.Services
             {
                 var dto = EventDto.FromEntity(e);
                 dto.IsJoined = await _participationRepository.ExistsAsync(userId, e.Id);
+                dto.DocumentsCount = await _eventRepository.GetEventDocumentsCountAsync(e.Id);
                 eventDtos.Add(dto);
             }
 

@@ -128,9 +128,16 @@ namespace VolunTrack.Repositories
         public async Task<List<Attachment>> GetDocumentsByEventIdAsync(int eventId)
         {
             return await _context.Attachments
-                .Where(p => p.EntityId == eventId && p.EntityType == EntityType.Event)
-                .OrderByDescending(p => p.UploadedAtUtc)
+                .Where(a => a.EntityId == eventId && a.EntityType == EntityType.Event)
+                .OrderByDescending(a => a.UploadedAtUtc)
                 .ToListAsync();
+        }
+
+        public async Task<int> GetEventDocumentsCountAsync(int eventId)
+        {
+            return await _context.Attachments
+                .Where(a => a.EntityId == eventId && a.EntityType == EntityType.Event)
+                .CountAsync();
         }
 
         public async Task AddDocumentAsync(Attachment attachment)

@@ -23,6 +23,7 @@ namespace VolunTrack.Repositories
         Task DeletePhotoAsync(EventPhoto photo);
 
         Task<List<Attachment>> GetDocumentsByEventIdAsync(int eventId);
+        Task<int> GetEventDocumentsCountAsync(int eventId);
         Task AddDocumentAsync(Attachment attachment);
         Task DeleteDocumentAsync(Attachment attachment);
     }
