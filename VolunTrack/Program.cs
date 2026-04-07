@@ -119,6 +119,7 @@ app.UseRouting();
 app.UseAuthentication();
 app.UseAuthorization();
 app.UseMiddleware<UserStatusMiddleware>();
+app.UseMiddleware<ValidationExceptionMiddleware>();
 
 app.MapStaticAssets();
 
