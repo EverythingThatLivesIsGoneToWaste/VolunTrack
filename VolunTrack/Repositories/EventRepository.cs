@@ -151,5 +151,24 @@ namespace VolunTrack.Repositories
             _context.Attachments.Remove(attachment);
             await _context.SaveChangesAsync();
         }
+
+        public async Task<bool> IsUserLeaderOfEventAsync(int eventId, int userId)
+        {
+            return await _context.UserLeaderAssignments
+                .AnyAsync(ula => ula.EventId == eventId && ula.UserId == userId);
+        }
+
+        public async Task<int> GetEventLeadersCountAsync(int eventId)
+        {
+            return await _context.UserLeaderAssignments
+                .Where(ula => ula.EventId == eventId)
+                .CountAsync();
+        }
+
+        public async Task AssignLeaderAsync(UserLeaderAssignment assignment)
+        {
+            await _context.UserLeaderAssignments.AddAsync(assignment);
+            await _context.SaveChangesAsync();
+        }
     }
 }

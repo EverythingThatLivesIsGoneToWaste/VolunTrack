@@ -113,5 +113,54 @@ namespace VolunTrack.Controllers.Api
             var events = await _eventService.GetEventParticipantsAsync(eventId);
             return Ok(events);
         }
+
+        [Authorize(Roles = "EventCoordinator,Administrator")]
+        [HttpPost("{eventId}/leader")]
+        public async Task<IActionResult> AssignEventLeader(int eventId, [FromBody] AssignLeaderDto dto)
+        {
+            try
+            {
+                var claimsUserIdString = User.FindFirstValue(ClaimTypes.NameIdentifier);
+                if (!int.TryParse(claimsUserIdString, out int claimsUserId))
+                    return BadRequest("Invalid user ID in token");
+
+                if (claimsUserId == dto.UserId)
+                {
+                    return Conflict(new { message = "Authorized user cannot assign leader role to themselves" });
+                }
+
+                var userRole = User.FindFirstValue(ClaimTypes.Role)!;
+
+                var leader = await _eventService.AssignEventLeaderAsync(eventId, dto.UserId, claimsUserId, userRole);
+                return Ok(leader);
+            }
+            catch (NotFoundException ex)
+            {
+                _logger.LogError(ex, "Some data not found");
+                return NotFound(new { message = ex.Message });
+            }
+            catch (Exceptions.UnauthorizedAccessException ex)
+            {
+                _logger.LogError(ex, "Unauthorized attempt to asign event leader");
+                return StatusCode(403, new { message = ex.Message });
+            }
+            catch (AlreadyLeaderException ex)
+            {
+                return Conflict(new { message = ex.Message });
+            }
+            catch (ArgumentException ex)
+            {
+                return BadRequest(new { message = ex.Message });
+            }
+            catch (EventLeaderLimitExceededException ex)
+            {
+                return Conflict(new { message = ex.Message });
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error assigning event leader");
+                return StatusCode(500, new { message = "Internal server error" });
+            }
+        }
     }
 }

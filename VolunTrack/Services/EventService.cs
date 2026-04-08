@@ -317,5 +317,42 @@ namespace VolunTrack.Services
             await _eventRepository.DeleteDocumentAsync(document);
             _logger.LogInformation("Document {DocumentId} deleted from database by user {UserId}", documentId, userId);
         }
+
+        public async Task<UserDto> AssignEventLeaderAsync(int eventId, int targetUserId, int currentUserId, string currentUserRole)
+        {
+            var eventEntity = await _eventRepository.GetByIdAsync(eventId)
+                ?? throw new NotFoundException($"Event {eventId} not found");
+
+            var targetUser = await _userRepository.GetByIdAsync(targetUserId)
+                ?? throw new NotFoundException($"User {targetUserId} not found");
+
+            bool canAssign = currentUserRole == nameof(UserRole.Administrator) ||
+                (currentUserRole == nameof(UserRole.EventCoordinator) && eventEntity.CreatedByUserId == currentUserId);
+
+            if (!canAssign)
+                throw new Exceptions.UnauthorizedAccessException("No permission to assign leaders to this event");
+
+            if (targetUser.Role == UserRole.Administrator || targetUser.Role == UserRole.EventCoordinator)
+                throw new ArgumentException("Administrators and event coordinators cannot be assigned as leaders");
+
+            var alreadyLeader = await _eventRepository.IsUserLeaderOfEventAsync(eventId, targetUserId);
+            if (alreadyLeader)
+                throw new AlreadyLeaderException($"User {targetUserId} is already a leader of event {eventId}");
+
+            var leadersCount = await _eventRepository.GetEventLeadersCountAsync(eventId);
+            int maxLeaders = 2;
+            if (leadersCount >= maxLeaders)
+                throw new EventLeaderLimitExceededException(eventId, maxLeaders);
+
+            var assignment = new UserLeaderAssignment
+            {
+                EventId = eventId,
+                UserId = targetUserId,
+            };
+
+            await _eventRepository.AssignLeaderAsync(assignment);
+
+            return UserDto.FromEntity(targetUser);
+        }
     }
 }

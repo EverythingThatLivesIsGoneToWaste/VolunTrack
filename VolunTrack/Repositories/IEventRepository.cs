@@ -1,4 +1,5 @@
-﻿using VolunTrack.Models;
+﻿using Microsoft.Extensions.Logging;
+using VolunTrack.Models;
 
 namespace VolunTrack.Repositories
 {
@@ -26,5 +27,9 @@ namespace VolunTrack.Repositories
         Task<int> GetEventDocumentsCountAsync(int eventId);
         Task AddDocumentAsync(Attachment attachment);
         Task DeleteDocumentAsync(Attachment attachment);
+
+        Task<bool> IsUserLeaderOfEventAsync(int eventId, int userId);
+        Task<int> GetEventLeadersCountAsync(int eventId);
+        Task AssignLeaderAsync(UserLeaderAssignment assignment);
     }
 }
