@@ -1,6 +1,7 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Logging;
 using Testcontainers.PostgreSql;
 using VolunTrack.Data;
 using VolunTrack.Models;
@@ -67,6 +68,13 @@ public class PostgreSqlContainerFixture : IAsyncLifetime
                 npgsqlOptions.EnableRetryOnFailure(5);
             })
         );
+
+        // Registering login
+        services.AddLogging(builder =>
+        {
+            builder.AddConsole();
+            builder.AddDebug();
+        });
 
         // Registering dependencies (must match main project)
         services.AddScoped<IUserRepository, UserRepository>();

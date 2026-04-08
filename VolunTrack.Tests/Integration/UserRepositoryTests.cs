@@ -100,10 +100,10 @@ namespace VolunTrack.Tests.Integration
             var searchTerm = "Ni";
             var expectedCount = _testUsers
                 .Count(u =>
-                    u.Login.Contains(searchTerm) ||
-                    u.FullName.Contains(searchTerm) ||
-                    u.Email.Contains(searchTerm) ||
-                    u.Phone.Contains(searchTerm));
+                    u.Login.Contains(searchTerm, StringComparison.OrdinalIgnoreCase) ||
+                    u.FullName.Contains(searchTerm, StringComparison.OrdinalIgnoreCase) ||
+                    u.Email.Contains(searchTerm, StringComparison.OrdinalIgnoreCase) ||
+                    u.Phone.Contains(searchTerm, StringComparison.OrdinalIgnoreCase));
 
             var users = await _repository.SearchAsync(searchTerm);
 
@@ -180,7 +180,6 @@ namespace VolunTrack.Tests.Integration
         {
             var userToAdd = new User()
             {
-                Id = 1,
                 Login = "ChromeUser",
                 FullName = "Freya Karr",
                 Phone = "+7(982)545-12-22",

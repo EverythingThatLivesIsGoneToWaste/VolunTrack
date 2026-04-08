@@ -293,5 +293,110 @@ namespace VolunTrack.Tests.Integration
             var count = _testEvents.Count;
             Assert.Equal(allEvents.Count, count);
         }
+
+        // Tests for AssignEventLeaderAsync
+        [Fact]
+        public async Task AssignEventLeaderAsync_WhenTargetIsVolunteer_ShouldAssignLeader()
+        {
+            var @event = _testEvents[0];
+            var targetUserId = _testUsers.FirstOrDefault(u => u.Role == UserRole.Volunteer)!.Id;
+            var currentUserId = (int)@event.CreatedByUserId!;
+            var userRole = nameof(UserRole.EventCoordinator);
+
+            var assignedUser = await _eventService.AssignEventLeaderAsync(@event.Id, targetUserId, currentUserId, userRole);
+
+            Assert.NotNull(assignedUser);
+            Assert.Equal(targetUserId, assignedUser.Id);
+
+            var isLeader = await _eventRepository.IsUserLeaderOfEventAsync(@event.Id, targetUserId);
+            Assert.True(isLeader);
+        }
+
+        [Fact]
+        public async Task AssignEventLeaderAsync_WhenTargetIsEventCoordinator_ShouldThrowArgumentException()
+        {
+            var targetUser = _testUsers.FirstOrDefault(u => u.Role == UserRole.EventCoordinator)!;
+            var targetUserId = targetUser.Id;
+
+            var @event = _testEvents[0];
+            var currentUserId = (int)@event.CreatedByUserId!;
+            var currentUserRole = nameof(UserRole.EventCoordinator);
+
+            var exception = await Assert.ThrowsAsync<ArgumentException>(
+                () => _eventService.AssignEventLeaderAsync(@event.Id, targetUserId, currentUserId, currentUserRole)
+            );
+
+            Assert.Equal("Administrators and event coordinators cannot be assigned as leaders", exception.Message);
+        }
+
+        [Fact]
+        public async Task AssignEventLeaderAsync_WhenCoordinatorNotAuthor_ShouldThrowUnauthorizedAccessException()
+        {
+            var targetUser = _testUsers.FirstOrDefault(u => u.Role == UserRole.Volunteer)!;
+            var targetUserId = targetUser.Id;
+
+            var @event = _testEvents[0];
+            var idNotAuthoredByCurrentUser = 500;
+            var currentUserId = idNotAuthoredByCurrentUser;
+            var currentUserRole = nameof(UserRole.EventCoordinator);
+
+            var exception = await Assert.ThrowsAsync<Exceptions.UnauthorizedAccessException>(
+                () => _eventService.AssignEventLeaderAsync(@event.Id, targetUserId, currentUserId, currentUserRole)
+            );
+
+            Assert.Equal("No permission to assign leaders to this event", exception.Message);
+        }
+
+        [Fact]
+        public async Task AssignEventLeaderAsync_WhenTargetIsAlreadyLeader_ShouldThrowAlreadyLeaderException()
+        {
+            var @event = _testEvents[0];
+            var targetUserId = _testUsers.FirstOrDefault(u => u.Role == UserRole.Volunteer)!.Id;
+            var currentUserId = (int)@event.CreatedByUserId!;
+            var currentUserRole = nameof(UserRole.EventCoordinator);
+
+            var assignedUser = await _eventService.AssignEventLeaderAsync(@event.Id, targetUserId, currentUserId, currentUserRole);
+
+            Assert.NotNull(assignedUser);
+            Assert.Equal(targetUserId, assignedUser.Id);
+
+            var isLeader = await _eventRepository.IsUserLeaderOfEventAsync(@event.Id, targetUserId);
+            Assert.True(isLeader);
+
+            var exception = await Assert.ThrowsAsync<AlreadyLeaderException>(
+                ()=> _eventService.AssignEventLeaderAsync(@event.Id, targetUserId, currentUserId, currentUserRole)
+            );
+
+            Assert.Equal($"User {targetUserId} is already a leader of event {@event.Id}", exception.Message);
+        }
+
+        [Fact]
+        public async Task AssignEventLeaderAsync_WhenLeaderLimitExceeded_ShouldThrowEventLeaderLimitExceededException()
+        {
+            var testVolunteers = _testUsers.Where(u => u.Role == UserRole.Volunteer).ToList();
+
+            var @event = _testEvents[0];
+            var currentUserId = (int)@event.CreatedByUserId!;
+            var currentUserRole = nameof(UserRole.EventCoordinator);
+
+            for (int i = 0; i < 2; i++)
+            {
+                var assignedUser = await _eventService.AssignEventLeaderAsync(@event.Id, testVolunteers[i].Id, currentUserId, currentUserRole);
+
+                Assert.NotNull(assignedUser);
+                Assert.Equal(testVolunteers[i].Id, assignedUser.Id);
+
+                var isLeader = await _eventRepository.IsUserLeaderOfEventAsync(@event.Id, testVolunteers[i].Id);
+                Assert.True(isLeader);
+            }
+
+            // Third leader assignment throws error
+            var thirdVolunteerId = testVolunteers[2].Id;
+            var exception = await Assert.ThrowsAsync<EventLeaderLimitExceededException>(
+                () => _eventService.AssignEventLeaderAsync(@event.Id, thirdVolunteerId, currentUserId, currentUserRole)
+            );
+
+            Assert.Equal($"Event {@event.Id} already has the maximum allowed number of leaders (2)", exception.Message);
+        }
     }
 }
