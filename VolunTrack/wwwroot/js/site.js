@@ -103,9 +103,12 @@ async function loadEvents(url) {
                     <button class="upload-photo-btn" data-event-id="${e.id}">Загрузить фото</button>
                     <input type="file" class="photo-input" data-event-id="${e.id}" accept="image/*" multiple style="display: none;">
                 `;
+                documentsCounterHtml = `
+                    <span class="event-documents-count"><img src="images/ui/buttons/document.png">${e.documentsCount || 0}</span>
+                `
             }
 
-            if (isAdmin || isRegionalCoordinator) {
+            if (isRegionalCoordinator) {
                 documentsCounterHtml = `
                     <span class="event-documents-count"><img src="images/ui/buttons/document.png">${e.documentsCount || 0}</span>
                 `

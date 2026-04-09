@@ -253,6 +253,10 @@
     margin: 10px 0;
 }
 
+.photos-grid.empty {
+    display: block;
+}
+
 .event-photo-thumb {
     width: 100%;
     height: 120px;
@@ -339,6 +343,12 @@
     black 10px, 
     black calc(100% - 30px), 
     transparent 100%);
+}
+
+.documents-list.empty {
+    mask-image: none;
+    -webkit-mask-image: none;
+    margin-bottom: 0;
 }
 
 .document-item {

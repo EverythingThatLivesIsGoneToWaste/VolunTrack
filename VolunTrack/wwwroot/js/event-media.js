@@ -37,6 +37,14 @@ async function loadEventPhotos(eventId) {
 
         container.innerHTML = '';
 
+        if (photos.length === 0) {
+            container.innerHTML = '<p class="no-pics">Нет загруженных фотографий</p>';
+            container.classList.add('empty');
+            return;
+        } else {
+            container.classList.remove('empty');
+        }
+
         photos.forEach(photo => {
             const imgDiv = document.createElement('div');
             imgDiv.className = 'photo-item';
@@ -133,7 +141,10 @@ async function loadEventDocuments(eventId) {
 
         if (documents.length === 0) {
             container.innerHTML = '<p class="no-docs">Нет загруженных документов</p>';
+            container.classList.add('empty');
             return;
+        } else {
+            container.classList.remove('empty');
         }
 
         documents.forEach(doc => {
