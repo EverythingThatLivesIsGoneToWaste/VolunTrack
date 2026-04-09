@@ -25,11 +25,18 @@ main {
 
 .user-info-card, .my-events-history {
     display: flex;
+    flex-direction: column;
     gap: 20px;
     align-items: center;
     padding: 20px;
     border-radius: 30px;
     background-color: #eeeeee;
+}
+
+.user-header {
+    display: flex;
+    gap: 20px;
+    align-items: center;
 }
 
 .my-events-history {
@@ -44,13 +51,17 @@ main {
 }
 
 .user-info p {
-    margin-bottom: 3px;
+    margin-bottom: 10px;
 }
 
 .user-email, .user-role {
     background-color: white;
     border-radius: 8px;
     padding: 2px 5px;
+}
+
+.user-categories p {
+    margin-bottom: 6px;
 }
 
 .user-categories-list {
@@ -74,9 +85,18 @@ main {
     gap: 20px;
 }
 
+.profile-buttons {
+    display: flex;
+    width: 100%;
+    justify-content: space-between;
+    gap: 15px;
+    padding-inline: 25px;
+}
+
 .events-history-header {
     width: 100%;
     display: flex;
+    gap: 15px;
     justify-content: space-between;
 }
 

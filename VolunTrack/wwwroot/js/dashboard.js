@@ -82,7 +82,7 @@ async function loadUserEvents(url) {
 
                     <div class="participants-section">
                         <h3>${e.participantsCount || 0}</h3>
-                        <button class="participants-button" data-event-id="${e.id}" title="Нажмите, чтобы просмотреть участников">
+                        <button class="participants-button" data-event-id="${e.id}" title="Посмотреть участников">
                             <img src="/images/ui/buttons/user.png">
                         </button>
                     </div>

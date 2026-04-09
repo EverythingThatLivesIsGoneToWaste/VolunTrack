@@ -56,13 +56,19 @@
     align-items: center;
 }
 
-.header-top-section {
+.event-header {
     display: flex;
     justify-content: space-between;
 }
+
+.header-controls {
+    display: inherit;
+    gap: 15px;
+}
+
 .status-select-section {
     display: flex;
-    gap: 20px;
+    gap: 15px;
     align-items: center;
 }
 
@@ -185,9 +191,9 @@
     gap: 20px;
 }
 
-.participation-section {
+.footer-controls {
     display: flex;
-    gap: 20px;
+    gap: 15px;
     margin-left: auto;
 }
 
@@ -212,8 +218,7 @@
 }
 
 .media-controls-section {
-    display: flex;
-    gap: 20px;
+    gap: 15px;
     margin-left: auto;
     display: flex;
 }

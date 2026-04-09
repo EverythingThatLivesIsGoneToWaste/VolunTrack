@@ -44,7 +44,8 @@ async function loadEventPhotos(eventId) {
                 <img src="${photo.filePath}" alt="${photo.title}" class="event-photo-thumb">
                 ${canDelete ? `<button class="delete-photo-btn" 
                     data-event-id="${eventId}" 
-                    data-photo-id="${photo.id}">
+                    data-photo-id="${photo.id}"
+                    title="Удалить фото">
                     <img src="images/ui/buttons/delete-bin.png">
                 </button>` : ''}
             `;
@@ -152,7 +153,8 @@ async function loadEventDocuments(eventId) {
                     <button 
                     class="delete-doc-btn"
                     data-document-id="${doc.id}" 
-                    data-event-id="${eventId}">
+                    data-event-id="${eventId}"
+                    title="Удалить документ">
                     <img src="images/ui/buttons/delete-bin.png">
                     </button>
                 </div>

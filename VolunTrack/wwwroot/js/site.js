@@ -73,16 +73,8 @@ async function loadEvents(url) {
             let statusSelectHtml = '';
             let templateHtml = '';
 
-            if (isAdmin || (isCoordinator && isCreator)) {
-                templateHtml = `
-                    <button class="template-button" data-event-id="${e.id}" title="Нажмите, чтобы использовать как шаблон">
-                        <img src="/images/ui/buttons/template.png">
-                    </button>
-                `;
-            }
-
             let participantsButtonHtml = `
-                <button class="participants-button" data-event-id="${e.id}" title="Нажмите, чтобы просмотреть участников">
+                <button class="participants-button" data-event-id="${e.id}" title="Посмотреть участников">
                     <img src="/images/ui/buttons/user.png">
                 </button>
             `;
@@ -97,16 +89,22 @@ async function loadEvents(url) {
                             <option value="Published" ${e.status === 'Published' ? 'selected' : ''}>Опубликовано</option>
                             <option value="Cancelled" ${e.status === 'Cancelled' ? 'selected' : ''}>Отменено</option>
                         </select>
-                        <button class="confirm-button"><img src="/images/ui/buttons/checkmark.png"></button>
-                        ${templateHtml}
+                        <button class="confirm-button" title="Подтвердить смену статуса">
+                            <img src="/images/ui/buttons/checkmark.png">
+                        </button>
                     </div>
+                `;
+                templateHtml = `
+                    <button class="template-button" data-event-id="${e.id}" title="Использовать как шаблон">
+                        <img src="/images/ui/buttons/template.png">
+                    </button>
                 `;
                 photosUploadButtonHtml = `
                     <button class="upload-photo-btn" data-event-id="${e.id}">Загрузить фото</button>
                     <input type="file" class="photo-input" data-event-id="${e.id}" accept="image/*" multiple style="display: none;">
-                `
-                
+                `;
             }
+
             if (isAdmin || isRegionalCoordinator) {
                 documentsCounterHtml = `
                     <span class="event-documents-count"><img src="images/ui/buttons/document.png">${e.documentsCount || 0}</span>
@@ -128,13 +126,14 @@ async function loadEvents(url) {
 
             div.innerHTML = `
                 <div class="event-header">
-                    <div class="header-top-section">
-                        <h3 class="event-name">${escapeHtml(e.name)}</h3>
+                    <h3 class="event-name">${escapeHtml(e.name)}</h3>
+                    <div class="header-controls">
                         ${statusSelectHtml}
+                        ${templateHtml}
                     </div>
-                    
-                    <span class="event-status" data-status="${e.status}">Статус: ${getStatusText(e.status)}</span>
                 </div>
+
+                <span class="event-status" data-status="${e.status}">Статус: ${getStatusText(e.status)}</span>
         
                 <p class="event-description">${escapeHtml(e.description)}</p>
         
@@ -150,7 +149,7 @@ async function loadEvents(url) {
         
                 <div class="event-footer">
                     <span class="event-participants">Участников: ${e.participantsCount || 0}</span>
-                    <div class="participation-section">
+                    <div class="footer-controls">
                         ${participantsButtonHtml}
                         ${buttonHtml}
                     </div>
