@@ -165,6 +165,10 @@ form h1 {
     border: 2px solid #888;
 }
 
+.assign-leader-button {
+    margin-left: auto;
+}
+
 .modal-body {
     display: flex;
     flex-direction: column;

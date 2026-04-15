@@ -463,15 +463,16 @@ document.body.addEventListener("click", async (e) => {
     const button = e.target.closest(".participants-button");
     if (!button) return;
 
-    const eventId = button.dataset.eventId;
-    const eventItem = button.closest(".user-event-item, .event-item");
-    const eventName = eventItem?.querySelector(".event-name")?.textContent || "Событие";
-
     const modal = document.getElementById("participantsModal");
+    modal.setAttribute('data-event-id', button.dataset.eventId);
+    modal.setAttribute('data-created-by-id', button.dataset.createdById);
+
+    const eventName = button.closest(".user-event-item, .event-item")
+        ?.querySelector(".event-name")?.textContent || "Событие";
     document.getElementById("modalEventName").textContent = eventName;
     modal.style.display = "flex";
 
-    await loadParticipants(button.dataset.createdById, eventId);
+    await loadParticipants();
 });
 
 // Closing modal
@@ -490,7 +491,11 @@ window.addEventListener("click", (e) => {
 });
 
 // Loading participants for modal
-async function loadParticipants(createdById, eventId) {
+async function loadParticipants() {
+    const modal = document.getElementById("participantsModal");
+    const eventId = modal.getAttribute('data-event-id');
+    const createdById = modal.getAttribute('data-created-by-id');
+
     const container = document.getElementById("participantsList");
     container.innerHTML = '<div class="loading">Загрузка...</div>';
 
@@ -515,19 +520,15 @@ async function loadParticipants(createdById, eventId) {
             const div = document.createElement('div');
 
             if (isAdmin || (isCoordinator && isCreator)) {
-                if (p.isLeader) {
-                    leaderAssignmentHtml = `
-                        <button class="assign-leader-button" data-event-id="${eventId}" title="Назначить лидера">
-                            <img src="/images/ui/buttons/leader.png">
-                        </button>
-                    `;
-                } else {
-                    leaderAssignmentHtml = `
-                        <button class="assign-leader-button" data-event-id="${eventId}" title="Убрать лидера">
-                            <img src="/images/ui/buttons/leader_inactive.png">
-                        </button>
-                    `;
-                }
+                const isLeader = p.isLeader;
+                leaderAssignmentHtml = `
+                    <button class="assign-leader-button" 
+                            data-event-id="${eventId}" 
+                            data-user-id="${p.userId}" 
+                            title="${isLeader ? 'Убрать лидера' : 'Назначить лидера'}">
+                        <img src="/images/ui/buttons/${isLeader ? 'leader.png' : 'leader_inactive.png'}">
+                    </button>
+                `;
             }
 
             div.innerHTML = `
@@ -545,6 +546,35 @@ async function loadParticipants(createdById, eventId) {
         });
     } catch (error) {
         container.innerHTML = '<p>Ошибка загрузки</p>';
-        console.error(error);
     }
 }
+
+document.body.addEventListener("click", async (e) => {
+    const button = e.target.closest(".assign-leader-button");
+    if (!button) return;
+
+    const modal = document.getElementById("participantsModal");
+    const eventId = modal.getAttribute('data-event-id');
+    const userId = button.dataset.userId;
+
+    try {
+        const response = await fetch(`/api/events/${eventId}/leader`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ UserId: userId })
+        });
+
+        if (response.ok) {
+            const leader = await response.json();
+            showToast(`Лидерский статус пользователя ${leader.login} успешно изменен`, "success");
+            await loadParticipants();
+        } else {
+            const error = await response.json();
+            showToast(error.message || "Ошибка", "error");
+            console.error(error.message);
+        }
+    } catch (error) {
+        showToast(error.message || "Ошибка назначения/снятия лидера", "error");
+        console.error(error.message);
+    }
+});
