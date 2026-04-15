@@ -1,5 +1,4 @@
-﻿using Microsoft.Extensions.Logging;
-using VolunTrack.DTO;
+﻿using VolunTrack.DTO;
 using VolunTrack.Enums;
 
 namespace VolunTrack.Services
@@ -19,6 +18,6 @@ namespace VolunTrack.Services
         Task<DocumentDto> AddEventDocumentAsync(int eventId, UploadDocumentDto dto, int userId, string userRole);
         Task RemoveEventDocumentAsync(int documentId, int userId, string userRole);
 
-        Task<UserDto> AssignEventLeaderAsync(int eventId, int targetUserId, int currentUserId, string currentUserRole);
+        Task<UserDto> ToggleEventLeaderAsync(int eventId, int targetUserId, int currentUserId, string currentUserRole);
     }
 }

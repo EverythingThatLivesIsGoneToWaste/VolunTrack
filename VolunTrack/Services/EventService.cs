@@ -320,7 +320,7 @@ namespace VolunTrack.Services
             _logger.LogInformation("Document {DocumentId} deleted from database by user {UserId}", documentId, userId);
         }
 
-        public async Task<UserDto> AssignEventLeaderAsync(int eventId, int targetUserId, int currentUserId, string currentUserRole)
+        public async Task<UserDto> ToggleEventLeaderAsync(int eventId, int targetUserId, int currentUserId, string currentUserRole)
         {
             var eventEntity = await _eventRepository.GetByIdAsync(eventId)
                 ?? throw new NotFoundException($"Event {eventId} not found");
@@ -328,31 +328,35 @@ namespace VolunTrack.Services
             var targetUser = await _userRepository.GetByIdAsync(targetUserId)
                 ?? throw new NotFoundException($"User {targetUserId} not found");
 
-            bool canAssign = currentUserRole == nameof(UserRole.Administrator) ||
+            bool canToggle = currentUserRole == nameof(UserRole.Administrator) ||
                 (currentUserRole == nameof(UserRole.EventCoordinator) && eventEntity.CreatedByUserId == currentUserId);
 
-            if (!canAssign)
-                throw new Exceptions.UnauthorizedAccessException("No permission to assign leaders to this event");
+            if (!canToggle)
+                throw new Exceptions.UnauthorizedAccessException("No permission to assign/remove leaders of this event");
 
             if (targetUser.Role == UserRole.Administrator || targetUser.Role == UserRole.EventCoordinator)
                 throw new ArgumentException("Administrators and event coordinators cannot be assigned as leaders");
 
             var alreadyLeader = await _eventRepository.IsUserLeaderOfEventAsync(eventId, targetUserId);
+
             if (alreadyLeader)
-                throw new AlreadyLeaderException($"User {targetUserId} is already a leader of event {eventId}");
+            {
+                await _eventRepository.RemoveLeaderAsync(targetUserId, eventId);
+                return UserDto.FromEntity(targetUser);
+            }
 
             var leadersCount = await _eventRepository.GetEventLeadersCountAsync(eventId);
             int maxLeaders = 2;
             if (leadersCount >= maxLeaders)
                 throw new EventLeaderLimitExceededException(eventId, maxLeaders);
 
-            var assignment = new UserLeaderAssignment
+            var newAssignment = new UserLeaderAssignment
             {
                 EventId = eventId,
                 UserId = targetUserId,
             };
 
-            await _eventRepository.AssignLeaderAsync(assignment);
+            await _eventRepository.AssignLeaderAsync(newAssignment);
 
             return UserDto.FromEntity(targetUser);
         }

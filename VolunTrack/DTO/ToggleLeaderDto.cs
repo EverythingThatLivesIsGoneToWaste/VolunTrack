@@ -1,6 +1,6 @@
 ﻿namespace VolunTrack.DTO
 {
-    public class AssignLeaderDto
+    public class ToggleLeaderDto
     {
         public int UserId { get; set; }
     }

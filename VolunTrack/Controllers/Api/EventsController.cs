@@ -4,7 +4,6 @@ using System.Security.Claims;
 using VolunTrack.DTO;
 using VolunTrack.Enums;
 using VolunTrack.Exceptions;
-using VolunTrack.Models;
 using VolunTrack.Repositories;
 using VolunTrack.Services;
 
@@ -116,7 +115,7 @@ namespace VolunTrack.Controllers.Api
 
         [Authorize(Roles = "EventCoordinator,Administrator")]
         [HttpPost("{eventId}/leader")]
-        public async Task<IActionResult> AssignEventLeader(int eventId, [FromBody] AssignLeaderDto dto)
+        public async Task<IActionResult> ToggleEventLeader(int eventId, [FromBody] ToggleLeaderDto dto)
         {
             try
             {
@@ -126,12 +125,12 @@ namespace VolunTrack.Controllers.Api
 
                 if (claimsUserId == dto.UserId)
                 {
-                    return Conflict(new { message = "Authorized user cannot assign leader role to themselves" });
+                    return Conflict(new { message = "Authorized users cannot be assigned as event leaders" });
                 }
 
                 var userRole = User.FindFirstValue(ClaimTypes.Role)!;
 
-                var leader = await _eventService.AssignEventLeaderAsync(eventId, dto.UserId, claimsUserId, userRole);
+                var leader = await _eventService.ToggleEventLeaderAsync(eventId, dto.UserId, claimsUserId, userRole);
                 return Ok(leader);
             }
             catch (NotFoundException ex)
@@ -143,10 +142,6 @@ namespace VolunTrack.Controllers.Api
             {
                 _logger.LogError(ex, "Unauthorized attempt to asign event leader");
                 return StatusCode(403, new { message = ex.Message });
-            }
-            catch (AlreadyLeaderException ex)
-            {
-                return Conflict(new { message = ex.Message });
             }
             catch (ArgumentException ex)
             {

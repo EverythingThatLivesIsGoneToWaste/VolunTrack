@@ -31,5 +31,6 @@ namespace VolunTrack.Repositories
         Task<int> GetEventLeadersCountAsync(int eventId);
         Task<List<int>> GetEventLeadersIdsAsync(int eventId);
         Task AssignLeaderAsync(UserLeaderAssignment assignment);
+        Task RemoveLeaderAsync(int userId, int eventId);
     }
 }
