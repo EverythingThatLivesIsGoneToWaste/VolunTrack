@@ -165,6 +165,14 @@ namespace VolunTrack.Repositories
                 .CountAsync();
         }
 
+        public async Task<List<int>> GetEventLeadersIdsAsync(int eventId)
+        {
+            return await _context.UserLeaderAssignments
+                .Where(ula => ula.EventId == eventId)
+                .Select(ula => ula.UserId)
+                .ToListAsync();
+        }
+
         public async Task AssignLeaderAsync(UserLeaderAssignment assignment)
         {
             await _context.UserLeaderAssignments.AddAsync(assignment);

@@ -74,7 +74,7 @@ async function loadEvents(url) {
             let templateHtml = '';
 
             let participantsButtonHtml = `
-                <button class="participants-button" data-event-id="${e.id}" title="Посмотреть участников">
+                <button class="participants-button" data-event-id="${e.id}" data-created-by-id="${e.createdByUserId}" title="Посмотреть участников">
                     <img src="/images/ui/buttons/user.png">
                 </button>
             `;
@@ -471,7 +471,7 @@ document.body.addEventListener("click", async (e) => {
     document.getElementById("modalEventName").textContent = eventName;
     modal.style.display = "flex";
 
-    await loadParticipants(eventId);
+    await loadParticipants(button.dataset.createdById, eventId);
 });
 
 // Closing modal
@@ -490,7 +490,7 @@ window.addEventListener("click", (e) => {
 });
 
 // Loading participants for modal
-async function loadParticipants(eventId) {
+async function loadParticipants(createdById, eventId) {
     const container = document.getElementById("participantsList");
     container.innerHTML = '<div class="loading">Загрузка...</div>';
 
@@ -503,7 +503,34 @@ async function loadParticipants(eventId) {
             return;
         }
 
-        container.innerHTML = participants.map(p => `
+        let leaderAssignmentHtml = '';
+
+        const isAdmin = window.userRole === 'Administrator';
+        const isCoordinator = window.userRole === 'EventCoordinator';
+        const isCreator = Number(createdById) === Number(window.currentUserId);
+
+        container.innerHTML = '';
+
+        participants.forEach(p => {
+            const div = document.createElement('div');
+
+            if (isAdmin || (isCoordinator && isCreator)) {
+                if (p.isLeader) {
+                    leaderAssignmentHtml = `
+                        <button class="assign-leader-button" data-event-id="${eventId}" title="Назначить лидера">
+                            <img src="/images/ui/buttons/leader.png">
+                        </button>
+                    `;
+                } else {
+                    leaderAssignmentHtml = `
+                        <button class="assign-leader-button" data-event-id="${eventId}" title="Убрать лидера">
+                            <img src="/images/ui/buttons/leader_inactive.png">
+                        </button>
+                    `;
+                }
+            }
+
+            div.innerHTML = `
             <div class="participant-item">
                 <img src="${getAvatarByRole(p.role)}" class="participant-avatar">
                 <div class="participant-info">
@@ -511,8 +538,11 @@ async function loadParticipants(eventId) {
                     <div class="participant-login">@${escapeHtml(p.login)}</div>
                     <div class="participant-email">${escapeHtml(p.email)}</div>
                 </div>
+                ${leaderAssignmentHtml}
             </div>
-        `).join('');
+            `
+            container.appendChild(div);
+        });
     } catch (error) {
         container.innerHTML = '<p>Ошибка загрузки</p>';
         console.error(error);

@@ -11,12 +11,13 @@ namespace VolunTrack.DTO
         public string FullName { get; set; } = string.Empty;
         public string Email { get; set; } = string.Empty;
         public UserRole Role { get; set; }
+        public bool IsLeader { get; set; }
 
         public bool IsConfirmedByCoordinator { get; set; }
         public bool IsConfirmedByLeader { get; set; }
         public decimal TotalHours { get; set; }
 
-        public static ParticipantDto FromEntity(Participation participation)
+        public static ParticipantDto FromEntity(Participation participation, bool isLeader)
         {
             return new ParticipantDto
             {
@@ -26,6 +27,7 @@ namespace VolunTrack.DTO
                 FullName = participation.User.FullName,
                 Email = participation.User.Email,
                 Role = participation.User.Role,
+                IsLeader = isLeader,
 
                 IsConfirmedByCoordinator = participation.IsConfirmedByCoordinator,
                 IsConfirmedByLeader = participation.IsConfirmedByLeader,

@@ -119,7 +119,9 @@ namespace VolunTrack.Services
 
             var participants = await _participationRepository.GetByEventIdAsync(eventId);
 
-            return [.. participants.Select(p => ParticipantDto.FromEntity(p))];
+            var leaders = await _eventRepository.GetEventLeadersIdsAsync(eventId);
+
+            return [.. participants.Select(p => ParticipantDto.FromEntity(p, leaders.Contains(p.UserId)))];
         }
 
         public async Task<List<EventPhotoDto>> GetEventPhotosAsync(int eventId)
