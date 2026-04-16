@@ -19,6 +19,7 @@ namespace VolunTrack.DTO
         public int DocumentsCount { get; set; }
         public int MaxParticipants { get; set; }
         public bool IsJoined { get; set; }
+        public bool IsLeader { get; set; }
         public List<CategoryDto> Categories { get; set; } = [];
 
         public static EventDto FromEntity(Event @event, List<Category>? categories = null)
@@ -38,6 +39,7 @@ namespace VolunTrack.DTO
                 PhotosCount = @event.EventPhotos?.Count ?? 0,
                 MaxParticipants = @event.EstimatedParticipantsCount,
                 IsJoined = false,
+                IsLeader = false,
                 Categories = @event.EventCategories?.Select(ec => new CategoryDto
                 {
                     Id = ec.Category.Id,

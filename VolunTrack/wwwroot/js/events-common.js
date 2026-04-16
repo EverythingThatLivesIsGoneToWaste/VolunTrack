@@ -43,6 +43,7 @@
             const isCoordinator = window.userRole === 'EventCoordinator';
             const isCreator = Number(e.createdByUserId) === Number(window.currentUserId);
             const isRegionalCoordinator = window.userRole === 'RegionCoordinator';
+            const isLeader = e.isLeader;
 
             let statusSelectHtml = '';
             let templateHtml = '';
@@ -80,6 +81,13 @@
                 documentsCounterHtml = `
                     <span class="event-documents-count"><img src="images/ui/buttons/document.png">${e.documentsCount || 0}</span>
                 `
+            }
+
+            if (isLeader) {
+                photosUploadButtonHtml = `
+                    <button class="upload-photo-btn" data-event-id="${e.id}">Загрузить фото</button>
+                    <input type="file" class="photo-input" data-event-id="${e.id}" accept="image/*" multiple style="display: none;">
+                `;
             }
 
             if (isRegionalCoordinator) {
@@ -162,7 +170,6 @@
         console.error('Failed to load events:', error);
     }
 }
-
 
 async function changeEventStatus() {
     const button = event.currentTarget;

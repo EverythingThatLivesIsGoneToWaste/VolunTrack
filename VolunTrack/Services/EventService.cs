@@ -105,6 +105,7 @@ namespace VolunTrack.Services
             {
                 var dto = EventDto.FromEntity(e);
                 dto.IsJoined = await _participationRepository.ExistsAsync(userId, e.Id);
+                dto.IsLeader = await _eventRepository.IsUserLeaderOfEventAsync(e.Id, userId);
                 dto.DocumentsCount = await _eventRepository.GetEventDocumentsCountAsync(e.Id);
                 eventDtos.Add(dto);
             }
@@ -200,10 +201,11 @@ namespace VolunTrack.Services
             var user = await _userRepository.GetByIdAsync(userId);
             var isAdmin = user?.Role == UserRole.Administrator;
             var isCreator = eventEntity.CreatedByUserId == userId;
-            var isLeader = await _userRepository.IsLeaderOfEventAsync(userId, photo.EventId);
             var isUploader = photo.UploadedByUserId == userId;
 
-            if (!isAdmin && !isCreator && !isLeader && !isUploader)
+            bool canDelete = isAdmin || isCreator || isUploader;
+
+            if (!canDelete)
                 throw new Exceptions.UnauthorizedAccessException("No permission to delete this photo");
 
             var fullPath = Path.Combine("wwwroot", photo.FilePath.TrimStart('/'));

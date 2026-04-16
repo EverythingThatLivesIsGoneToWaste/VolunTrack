@@ -28,9 +28,6 @@ async function loadEventPhotos(eventId) {
     const mediaSection = document.getElementById(`event-media-section-${eventId}`);
     const eventCreatorId = parseInt(mediaSection?.dataset.creatorId);
 
-    const canDelete = window.userRole === 'Administrator' ||
-        (window.userRole === 'EventCoordinator' && parseInt(window.currentUserId) === eventCreatorId);
-
     try {
         const response = await fetch(`/api/events/${eventId}/photos`);
         const photos = await response.json();
@@ -46,6 +43,10 @@ async function loadEventPhotos(eventId) {
         }
 
         photos.forEach(photo => {
+            const canDelete = window.userRole === 'Administrator' ||
+                (window.userRole === 'EventCoordinator' && parseInt(window.currentUserId) === eventCreatorId) ||
+                parseInt(window.currentUserId) === photo.uploadedByUserId;
+
             const imgDiv = document.createElement('div');
             imgDiv.className = 'photo-item';
             imgDiv.innerHTML = `
