@@ -157,5 +157,41 @@ namespace VolunTrack.Controllers.Api
                 return StatusCode(500, new { message = "Internal server error" });
             }
         }
+
+        [Authorize]
+        [HttpPost("/api/events/{eventId}/participantion/time")]
+        public async Task<IActionResult> RecordEventParticipationTime(int eventId, [FromBody] ParticipationTimeDto dto)
+        {
+            try
+            {
+                var claimsUserIdString = User.FindFirstValue(ClaimTypes.NameIdentifier);
+                if (!int.TryParse(claimsUserIdString, out int claimsUserId))
+                    return BadRequest("Invalid user ID in token");
+
+                if (claimsUserId != dto.UserId)
+                    return Forbid();
+
+                var participation = await _eventService.RecordEventParticipationTime(eventId, dto.UserId, dto.StartDateTime, dto.EndDateTime);
+                return Ok(participation);
+            }
+            catch (NotFoundException ex)
+            {
+                _logger.LogError(ex, "Some data not found");
+                return NotFound(new { message = ex.Message });
+            }
+            catch (ArgumentException ex)
+            {
+                return BadRequest(new { message = ex.Message });
+            }
+            catch (TimeAlreadyRecordedException ex)
+            {
+                return Conflict(new { message = ex.Message });
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error recording participation time");
+                return StatusCode(500, new { message = "Internal server error" });
+            }
+        }
     }
 }

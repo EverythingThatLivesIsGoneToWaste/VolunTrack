@@ -362,5 +362,33 @@ namespace VolunTrack.Services
 
             return UserDto.FromEntity(targetUser);
         }
+        
+        public async Task<ParticipationDto> RecordEventParticipationTime(int eventId, int userId, DateTime startDateTime, DateTime endDateTime)
+        {
+            var eventEntity = await _eventRepository.GetByIdAsync(eventId)
+                ?? throw new NotFoundException($"Event {eventId} not found");
+
+            if (eventEntity.Status != EventStatus.Completed)
+                throw new ArgumentException("Hours can only be recorded for completed events");
+
+            var participationEntity = await _participationRepository.GetByUserAndEventAsync(userId, eventId)
+                ?? throw new NotFoundException($"Participation for user {userId} not found");
+
+            if (participationEntity.CheckInTime != null || participationEntity.CheckOutTime != null)
+                throw new TimeAlreadyRecordedException("Hours already recorded");
+
+            if (startDateTime < eventEntity.StartDateTime || endDateTime > eventEntity.EndDateTime)
+                throw new ArgumentException("Time must be within event boundaries");
+
+            participationEntity.CheckInTime = startDateTime;
+            participationEntity.CheckOutTime = endDateTime;
+            participationEntity.TotalHours = (decimal)endDateTime.Subtract(startDateTime).TotalHours;
+
+            participationEntity.HoursModerated = false;
+
+            await _participationRepository.UpdateAsync(participationEntity);
+
+            return ParticipationDto.FromEntity(participationEntity);
+        }
     }
 }

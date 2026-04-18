@@ -44,19 +44,9 @@ namespace VolunTrack.Repositories
             await _context.SaveChangesAsync();
         }
 
-        public async Task UpdateCheckInAsync(Participation participation, DateTime checkInTime)
+        public async Task UpdateAsync(Participation participation)
         {
-            participation.CheckInTime = checkInTime;
-            await _context.SaveChangesAsync();
-        }
-
-        public async Task UpdateCheckOutAsync(Participation participation, DateTime checkOutTime)
-        {
-            participation.CheckOutTime = checkOutTime;
-            if (participation.CheckInTime.HasValue)
-            {
-                participation.TotalHours = (decimal)(checkOutTime - participation.CheckInTime.Value).TotalHours;
-            }
+            _context.Participations.Update(participation);
             await _context.SaveChangesAsync();
         }
 

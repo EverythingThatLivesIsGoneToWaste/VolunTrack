@@ -19,5 +19,6 @@ namespace VolunTrack.Services
         Task RemoveEventDocumentAsync(int documentId, int userId, string userRole);
 
         Task<UserDto> ToggleEventLeaderAsync(int eventId, int targetUserId, int currentUserId, string currentUserRole);
+        Task<ParticipationDto> RecordEventParticipationTime(int eventId, int userId, DateTime startDateTime, DateTime endDateTime);
     }
 }
