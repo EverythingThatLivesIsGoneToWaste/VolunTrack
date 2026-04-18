@@ -76,13 +76,40 @@ async function loadUserEvents(url) {
 
             const isCompleted = url.includes('/completed');
 
+            let hoursDisplayHtml = '';
             let hoursButtonHtml = '';
             if (isCompleted) {
-                hoursButtonHtml = `
-                    <button class="record-hours-button" data-event-id="${e.id}" data-start-date-time="${e.startDateTime}" data-end-date-time="${e.endDateTime}" title="Записать часы">
-                        <img src="/images/ui/buttons/clock.png">
-                    </button>
-                `;
+                if (e.isHoursRecorded) {
+                    let statusText = '';
+                    let statusClass = '';
+
+                    if (e.isConfirmedByCoordinator && e.isConfirmedByLeader) {
+                        statusText = 'Подтверждено';
+                        statusClass = 'hours-confirmed';
+                    } else if (e.isConfirmedByCoordinator || e.isConfirmedByLeader) {
+                        statusText = 'Частично подтверждено';
+                        statusClass = 'hours-partial';
+                    } else {
+                        statusText = 'На проверке';
+                        statusClass = 'hours-pending';
+                    }
+
+                    hoursDisplayHtml = `
+                        <div class="hours-status ${statusClass}" title="${statusText}">
+                            ${e.totalHours?.toFixed(1)} ч
+                        </div>
+                    `;
+                } else {
+                    hoursButtonHtml = `
+                        <button class="record-hours-button"
+                        data-event-id="${e.id}" 
+                        data-start-date-time="${e.startDateTime}" 
+                        data-end-date-time="${e.endDateTime}" 
+                        title="Записать часы">
+                            <img src="/images/ui/buttons/clock.png">
+                        </button>
+                    `;
+                }
             }
 
             div.innerHTML = `
@@ -97,6 +124,7 @@ async function loadUserEvents(url) {
                             <img src="/images/ui/buttons/user.png">
                         </button>
                         ${hoursButtonHtml}
+                        ${hoursDisplayHtml}
                     </div>
                 </div>
         

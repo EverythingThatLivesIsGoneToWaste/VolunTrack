@@ -223,6 +223,26 @@ main {
     background-color: rgb(140, 17, 49);
 }
 
+.hours-status {
+    background-color: white;
+    padding: 6px 4px;
+    border-radius: 12px;
+    transition: all 200ms ease-in-out;
+    border: 4px solid white
+}
+
+.hours-confirmed:hover {
+    border: 4px solid #4caf50;
+}
+
+.hours-partial:hover {
+    border: 4px solid #eac54b
+}
+
+.hours-pending:hover {
+    border: 4px solid #9e9e9e
+}
+
 /*Custom events toggle switch*/
 .toggle-switch {
     position: relative;

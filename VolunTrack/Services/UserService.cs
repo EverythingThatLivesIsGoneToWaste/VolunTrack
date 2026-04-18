@@ -99,7 +99,24 @@ namespace VolunTrack.Services
         public async Task<List<EventDto>> GetCompletedEventsAsync(int userId)
         {
             var events = await _participationRepository.GetCompletedEventsByUserIdAsync(userId);
-            return events.Select(e => EventDto.FromEntity(e)).ToList();
+
+            var eventDtos = new List<EventDto>();
+            foreach (var e in events)
+            {
+                var dto = EventDto.FromEntity(e);
+                var participation = await _participationRepository.GetByUserAndEventAsync(userId, e.Id);
+                if (participation != null)
+                {
+                    dto.IsHoursRecorded = participation.CheckInTime != null;
+                    dto.TotalHours = participation.TotalHours;
+                    dto.IsConfirmedByCoordinator = participation.IsConfirmedByCoordinator;
+                    dto.IsConfirmedByLeader = participation.IsConfirmedByLeader;
+                }
+
+                eventDtos.Add(dto);
+            }
+
+            return eventDtos;
         }
     }
 }
