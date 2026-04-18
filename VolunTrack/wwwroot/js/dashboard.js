@@ -74,6 +74,17 @@ async function loadUserEvents(url) {
                 </span>`
             ).join('') || '';
 
+            const isCompleted = url.includes('/completed');
+
+            let hoursButtonHtml = '';
+            if (isCompleted) {
+                hoursButtonHtml = `
+                    <button class="record-hours-button" data-event-id="${e.id}" data-start-date-time="${e.startDateTime}" data-end-date-time="${e.endDateTime}" title="Записать часы">
+                        <img src="/images/ui/buttons/clock.png">
+                    </button>
+                `;
+            }
+
             div.innerHTML = `
                 <div class="user-event-header">
                     <div class="header-top-section">
@@ -85,6 +96,7 @@ async function loadUserEvents(url) {
                         <button class="participants-button" data-event-id="${e.id}" data-created-by-id="${e.createdByUserId}" title="Посмотреть участников">
                             <img src="/images/ui/buttons/user.png">
                         </button>
+                        ${hoursButtonHtml}
                     </div>
                 </div>
         
@@ -109,5 +121,174 @@ async function loadUserEvents(url) {
 
     } catch (error) {
         container.innerHTML = `<p>Ошибка загрузки истории событий</p>`;
+    }
+}
+
+function formatToLocalDateTime(utcDateString) {
+    const date = new Date(utcDateString);
+    const year = date.getFullYear();
+    const month = String(date.getMonth() + 1).padStart(2, '0');
+    const day = String(date.getDate()).padStart(2, '0');
+    const hours = String(date.getHours()).padStart(2, '0');
+    const minutes = String(date.getMinutes()).padStart(2, '0');
+    return `${year}-${month}-${day}T${hours}:${minutes}`;
+}
+
+// Opening modal
+document.body.addEventListener("click", async (e) => {
+    const button = e.target.closest(".record-hours-button");
+    if (!button) return;
+
+    const modal = document.getElementById("recordTimeModal");
+    const eventId = button.dataset.eventId;
+    const eventStart = button.dataset.startDateTime;
+    const eventEnd = button.dataset.endDateTime;
+    const userId = window.currentUserId;
+
+    modal.setAttribute('data-event-id', eventId);
+    modal.setAttribute('data-user-id', userId);
+    modal.setAttribute('data-event-start', eventStart);
+    modal.setAttribute('data-event-end', eventEnd);
+
+    const eventName = button.closest(".user-event-item, .event-item")
+        ?.querySelector(".event-name")?.textContent || "Событие";
+    document.getElementById("modalEventName").textContent = eventName;
+   
+    const startLocal = formatToLocalDateTime(eventStart);
+    const endLocal = formatToLocalDateTime(eventEnd);
+
+    const container = document.getElementById("hours-form");
+    container.innerHTML = `
+        <div class="input-group-period">
+            <div class="date-group">
+                <label for="inputStartDateTime">Начало</label>
+                <input type="datetime-local" id="inputStartDateTime" 
+                       value="${startLocal}"
+                       min="${startLocal}"
+                       max="${endLocal}">
+            </div>
+
+            <div class="date-group">
+                <label for="inputEndDateTime">Окончание</label>
+                <input type="datetime-local" id="inputEndDateTime"
+                       value="${endLocal}"
+                       min="${startLocal}"
+                       max="${endLocal}">
+            </div>
+        </div>
+        <button class="reset-hours-button">Сбросить</button>
+        <button class="submit-hours-button">Подтвердить</button>
+    `;
+
+    const startInput = document.getElementById("inputStartDateTime");
+    const endInput = document.getElementById("inputEndDateTime");
+
+    startInput.addEventListener("change", () => {
+        if (startInput.value < startLocal) {
+            startInput.value = startLocal;
+        }
+        if (startInput.value > endLocal) {
+            startInput.value = endLocal;
+        }
+        if (startInput.value > endInput.value) {
+            startInput.value = endInput.value;
+        }
+    });
+
+    endInput.addEventListener("change", () => {
+        if (endInput.value > endLocal) {
+            endInput.value = endLocal;
+        }
+        if (endInput.value < startLocal) {
+            endInput.value = startLocal;
+        }
+        if (endInput.value < startInput.value) {
+            endInput.value = startInput.value;
+        }
+    });
+
+    modal.style.display = "flex";
+});
+
+// Closing modal
+document.body.addEventListener("click", (e) => {
+    const closeButton = e.target.closest(".close-modal-button");
+    if (closeButton) {
+        document.getElementById("recordTimeModal").style.display = "none";
+    }
+});
+
+window.addEventListener("click", (e) => {
+    const modal = document.getElementById("recordTimeModal");
+    if (e.target === modal) {
+        modal.style.display = "none";
+    }
+});
+
+document.body.addEventListener("click", async (e) => {
+    const button = e.target.closest(".submit-hours-button");
+    if (!button) return;
+
+    await recordHours();
+});
+
+// Reset time form
+document.body.addEventListener("click", (e) => {
+    const button = e.target.closest(".reset-hours-button");
+    if (!button) return;
+
+    resetHours();
+});
+
+function resetHours() {
+    const startInput = document.getElementById("inputStartDateTime");
+    const endInput = document.getElementById("inputEndDateTime");
+
+    const modal = document.getElementById("recordTimeModal");
+
+    const startDateTime = modal.getAttribute('data-event-start');
+    const endDateTime = modal.getAttribute('data-event-end');
+
+    startInput.value = formatToLocalDateTime(startDateTime);
+    endInput.value = formatToLocalDateTime(endDateTime);
+
+    showToast(`Сброшено`, "success");
+}
+
+// Time form submission
+async function recordHours() {
+    const modal = document.getElementById("recordTimeModal");
+    
+    const eventId = modal.getAttribute('data-event-id');
+    const userId = modal.getAttribute('data-user-id');
+    const startDateTime = document.getElementById("inputStartDateTime").value;
+    const endDateTime = document.getElementById("inputEndDateTime").value;
+
+    if (!startDateTime || !endDateTime) {
+        showToast("Заполните время начала и окончания", "error");
+        return;
+    }
+
+    try {
+        const response = await fetch(`/api/events/${eventId}/participantion/time`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+                userId: parseInt(userId),
+                startDateTime: new Date(startDateTime).toISOString(),
+                endDateTime: new Date(endDateTime).toISOString()
+            })
+        });
+
+        if (response.ok) {
+            const leader = await response.json();
+            showToast(`Часы усепшно отправлены на проверку`, "success");
+        } else {
+            const error = await response.json();
+            showToast(error.message || "Ошибка", "error");
+            console.error(error.message);
+        }
+    } catch (error) {
+        showToast("Ошибка соединения", "error");
     }
 }
