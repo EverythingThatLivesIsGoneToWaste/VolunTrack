@@ -59,11 +59,13 @@
 .event-header {
     display: flex;
     justify-content: space-between;
+    gap: 20px;
 }
 
 .header-controls {
     display: inherit;
     gap: 15px;
+    align-items: baseline;
 }
 
 .status-select-section {
@@ -100,6 +102,7 @@
     border-radius: 12px;
     background-color: rgb(179, 17, 49);
     transition: all 200ms ease-in-out;
+    align-self: flex-start;
 }
 
 .template-button:hover {
