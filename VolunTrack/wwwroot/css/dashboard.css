@@ -231,6 +231,10 @@ main {
     border: 4px solid white
 }
 
+.hours-rejected:hover {
+    border: 4px solid #f44336;
+}
+
 .hours-confirmed:hover {
     border: 4px solid #4caf50;
 }

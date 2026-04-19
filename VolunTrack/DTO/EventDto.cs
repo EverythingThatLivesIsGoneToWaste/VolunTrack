@@ -24,6 +24,7 @@ namespace VolunTrack.DTO
         public decimal? TotalHours { get; set; }
         public bool IsConfirmedByCoordinator { get; set; }
         public bool IsConfirmedByLeader { get; set; }
+        public ParticipationStatus ParticipationStatus { get; set; }
         public List<CategoryDto> Categories { get; set; } = [];
 
         public static EventDto FromEntity(Event @event, List<Category>? categories = null)

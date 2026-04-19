@@ -82,14 +82,17 @@ async function loadUserEvents(url) {
                 if (e.isHoursRecorded) {
                     let statusText = '';
                     let statusClass = '';
-
-                    if (e.isConfirmedByCoordinator && e.isConfirmedByLeader) {
+                    
+                    if (e.participationStatus === "Rejected") {
+                        statusText = 'Отклонено';
+                        statusClass = 'hours-rejected';
+                    } else if (e.isConfirmedByCoordinator && e.isConfirmedByLeader) {
                         statusText = 'Подтверждено';
                         statusClass = 'hours-confirmed';
                     } else if (e.isConfirmedByCoordinator || e.isConfirmedByLeader) {
                         statusText = 'Частично подтверждено';
                         statusClass = 'hours-partial';
-                    } else {
+                    } else { 
                         statusText = 'На проверке';
                         statusClass = 'hours-pending';
                     }

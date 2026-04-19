@@ -111,6 +111,7 @@ namespace VolunTrack.Services
                     dto.TotalHours = participation.TotalHours;
                     dto.IsConfirmedByCoordinator = participation.IsConfirmedByCoordinator;
                     dto.IsConfirmedByLeader = participation.IsConfirmedByLeader;
+                    dto.ParticipationStatus = participation.Status;
                 }
 
                 eventDtos.Add(dto);
