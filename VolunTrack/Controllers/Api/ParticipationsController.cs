@@ -57,7 +57,7 @@ namespace VolunTrack.Controllers.Api
         }
 
         [Authorize]
-        [HttpPut("/api/participations/{participationId}/hours")]
+        [HttpPatch("/api/participations/{participationId}/hours")]
         public async Task<IActionResult> UpdateParticipationHours(int participationId, [FromBody] UpdateHoursDto dto)
         {
             try
