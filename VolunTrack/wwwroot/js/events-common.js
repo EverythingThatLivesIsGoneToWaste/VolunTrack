@@ -49,7 +49,12 @@
             let templateHtml = '';
 
             let participantsButtonHtml = `
-                <button class="participants-button" data-event-id="${e.id}" data-created-by-id="${e.createdByUserId}" title="Посмотреть участников">
+                <button class="participants-button"
+                data-event-id="${e.id}" 
+                data-created-by-id="${e.createdByUserId}"
+                data-start-date-time="${e.startDateTime}" 
+                data-end-date-time="${e.endDateTime}" 
+                title="Посмотреть участников">
                     <img src="/images/ui/buttons/user.png">
                 </button>
             `;
@@ -255,8 +260,13 @@ document.body.addEventListener("click", async (e) => {
     if (!button) return;
 
     const modal = document.getElementById("participantsModal");
+    const eventStart = button.dataset.startDateTime;
+    const eventEnd = button.dataset.endDateTime;
+
     modal.setAttribute('data-event-id', button.dataset.eventId);
     modal.setAttribute('data-created-by-id', button.dataset.createdById);
+    modal.setAttribute('data-event-start', eventStart);
+    modal.setAttribute('data-event-end', eventEnd);
 
     const eventName = button.closest(".user-event-item, .event-item")
         ?.querySelector(".event-name")?.textContent || "Событие";
@@ -285,6 +295,8 @@ window.addEventListener("click", (e) => {
 async function loadParticipants() {
     const modal = document.getElementById("participantsModal");
     const eventId = modal.getAttribute('data-event-id');
+    const eventStart = modal.getAttribute('data-event-start');
+    const eventEnd = modal.getAttribute('data-event-end');
     const createdById = modal.getAttribute('data-created-by-id');
 
     const container = document.getElementById("participantsList");
@@ -300,6 +312,7 @@ async function loadParticipants() {
         }
 
         let leaderAssignmentHtml = '';
+        let hoursModifyingHtml = '';
 
         const isAdmin = window.userRole === 'Administrator';
         const isCoordinator = window.userRole === 'EventCoordinator';
@@ -309,6 +322,7 @@ async function loadParticipants() {
 
         participants.forEach(p => {
             const div = document.createElement('div');
+            div.className = 'participant-item';
 
             if (isAdmin || (isCoordinator && isCreator)) {
                 const isLeader = p.isLeader;
@@ -320,10 +334,40 @@ async function loadParticipants() {
                         <img src="/images/ui/buttons/${isLeader ? 'leader.png' : 'leader_inactive.png'}">
                     </button>
                 `;
+
+                const startLocal = formatToLocalDateTime(eventStart);
+                const endLocal = formatToLocalDateTime(eventEnd);
+
+                hoursModifyingHtml = `
+                    <div class="input-group-period">
+                        <div class="date-group">
+                            <label for="inputStartDateTime">Начало</label>
+                            <input type="datetime-local"
+                                id="inputStartDateTime"
+                                class="start-datetime"
+                                   value="${startLocal}"
+                                   min="${startLocal}"
+                                   max="${endLocal}">
+                        </div>
+
+                        <div class="date-group">
+                            <label for="inputEndDateTime">Окончание</label>
+                            <input type="datetime-local" id="inputEndDateTime"
+                                   value="${endLocal}"
+                                   min="${startLocal}"
+                                   max="${endLocal}">
+                        </div>
+                    </div>
+                    <button class="update-hours-button" title="Модерировать часы">
+                        <img src="/images/ui/buttons/clock.png">
+                    </button>
+                    <button class="hours-status-button" title="Подтвердить часы">
+                        <img src="/images/ui/buttons/checkmark.png">
+                    </button>
+                `;
             }
 
             div.innerHTML = `
-            <div class="participant-item">
                 <img src="${getAvatarByRole(p.role)}" class="participant-avatar">
                 <div class="participant-info">
                     <div class="participant-name">${escapeHtml(p.fullName)}</div>
@@ -331,12 +375,39 @@ async function loadParticipants() {
                     <div class="participant-email">${escapeHtml(p.email)}</div>
                 </div>
                 ${leaderAssignmentHtml}
-            </div>
+                ${hoursModifyingHtml}
             `
+
             container.appendChild(div);
+
+            const startInput = div.querySelector("#inputStartDateTime");
+            const endInput = div.querySelector("#inputEndDateTime");
+
+            if (startInput && endInput) {
+                const startLocal = formatToLocalDateTime(eventStart);
+                const endLocal = formatToLocalDateTime(eventEnd);
+
+                startInput.min = startLocal;
+                startInput.max = endLocal;
+                endInput.min = startLocal;
+                endInput.max = endLocal;
+
+                startInput.addEventListener("change", () => {
+                    if (startInput.value < startLocal) startInput.value = startLocal;
+                    if (startInput.value > endLocal) startInput.value = endLocal;
+                    if (startInput.value > endInput.value) startInput.value = endInput.value;
+                });
+
+                endInput.addEventListener("change", () => {
+                    if (endInput.value > endLocal) endInput.value = endLocal;
+                    if (endInput.value < startLocal) endInput.value = startLocal;
+                    if (endInput.value < startInput.value) endInput.value = startInput.value;
+                });
+            }
         });
     } catch (error) {
         container.innerHTML = '<p>Ошибка загрузки</p>';
+        console.error(error.message);
     }
 }
 

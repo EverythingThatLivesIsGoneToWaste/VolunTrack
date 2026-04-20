@@ -123,7 +123,12 @@ async function loadUserEvents(url) {
 
                     <div class="participants-section">
                         <h3>${e.participantsCount || 0}</h3>
-                        <button class="participants-button" data-event-id="${e.id}" data-created-by-id="${e.createdByUserId}" title="Посмотреть участников">
+                        <button class="participants-button"
+                        data-event-id="${e.id}" 
+                        data-created-by-id="${e.createdByUserId}" 
+                        data-start-date-time="${e.startDateTime}" 
+                        data-end-date-time="${e.endDateTime}" 
+                        title="Посмотреть участников">
                             <img src="/images/ui/buttons/user.png">
                         </button>
                         ${hoursButtonHtml}
