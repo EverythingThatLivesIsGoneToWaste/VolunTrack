@@ -110,6 +110,7 @@ form h1 {
     background: white;
     border-radius: 30px;
     max-width: fit-content;
+    min-width: fit-content;
     width: 90%;
     max-height: 80vh;
     overflow-y: auto;
@@ -185,7 +186,7 @@ form h1 {
     gap: 12px;
 }
 
-.participant-item button {
+.assign-leader-button, .update-hours-button {
     border: 0;
     width: 50px;
     height: 50px;
@@ -195,27 +196,22 @@ form h1 {
     transition: all 200ms ease-in-out;
 }
 
-.participant-item button:hover {
+.assign-leader-button:hover, .update-hours-button:hover {
     background-color: rgb(140, 17, 49);
 }
 
 .participant-item button img {
     height: 100%;
-    width: 100%;
     object-fit: cover;
-    overflow: visible;
 }
 
-.update-hours-button {
-    padding: 5px;
-}
-
-.hours-status-button {
-    padding: 8px 5px !important;
-}
-
-.participant-item .assign-leader-button {
-    padding: 5px 8px;
+.participant-item .hours-confirm-button {
+    color: white;
+    padding: 6px 10px;
+    border: 0;
+    border-radius: 12px;
+    background-color: rgb(158, 158, 158);
+    transition: all 200ms ease-in-out;
 }
 
 /*Modal for event time management*/

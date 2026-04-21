@@ -338,6 +338,24 @@ async function loadParticipants() {
                 const startLocal = formatToLocalDateTime(eventStart);
                 const endLocal = formatToLocalDateTime(eventEnd);
 
+                const checkInTime = p.checkInTime ? formatToLocalDateTime(p.checkInTime) : '';
+                const checkOutTime = p.checkOutTime ? formatToLocalDateTime(p.checkOutTime) : '';
+
+                const isApproved = p.participationStatus === 'Approved';
+                const isRejected = p.participationStatus === 'Rejected';
+
+                const buttonClass = isApproved ? 'hours-confirm-button approved' : (isRejected ? 'hours-confirm-button rejected' : 'hours-confirm-button');
+                const buttonText = isApproved ? 'Отклонить' : (isRejected ? 'Подтвердить' : 'Подтвердить часы');
+
+                const statusButtonHtml = `
+                    <button class="${buttonClass}" 
+                            data-participation-id="${p.participationId}"
+                            data-current-status="${p.participationStatus}"
+                            data-is-leader="${isLeader}">
+                        ${buttonText}
+                    </button>
+                `;
+
                 hoursModifyingHtml = `
                     <div class="input-group-period">
                         <div class="date-group">
@@ -345,25 +363,33 @@ async function loadParticipants() {
                             <input type="datetime-local"
                                 id="inputStartDateTime"
                                 class="start-datetime"
-                                   value="${startLocal}"
-                                   min="${startLocal}"
-                                   max="${endLocal}">
+
+                                value="${checkInTime}"
+                                min="${startLocal}"
+                                max="${endLocal}">
                         </div>
 
                         <div class="date-group">
                             <label for="inputEndDateTime">Окончание</label>
-                            <input type="datetime-local" id="inputEndDateTime"
-                                   value="${endLocal}"
-                                   min="${startLocal}"
-                                   max="${endLocal}">
+                            <input type="datetime-local"
+                                id="inputEndDateTime"
+                                class="end-datetime"
+
+                                value="${checkOutTime}"
+                                min="${startLocal}"
+                                max="${endLocal}">
                         </div>
                     </div>
-                    <button class="update-hours-button" title="Модерировать часы">
+
+                    <button class="update-hours-button"
+                    data-participation-id="${p.participationId}" 
+                    data-check-in-time="${checkInTime}"
+                    data-check-out-time="${checkOutTime}"
+                    title="Модерировать часы">
                         <img src="/images/ui/buttons/clock.png">
                     </button>
-                    <button class="hours-status-button" title="Подтвердить часы">
-                        <img src="/images/ui/buttons/checkmark.png">
-                    </button>
+
+                    ${statusButtonHtml}
                 `;
             }
 
@@ -438,5 +464,110 @@ document.body.addEventListener("click", async (e) => {
     } catch (error) {
         showToast(error.message || "Ошибка назначения/снятия лидера", "error");
         console.error(error.message);
+    }
+});
+
+document.body.addEventListener("click", async (e) => {
+    const button = e.target.closest(".update-hours-button");
+    if (!button) return;
+
+    const participantItem = button.closest(".participant-item");
+    const startInput = participantItem.querySelector(".start-datetime");
+    const endInput = participantItem.querySelector(".end-datetime");
+
+    const newStartTime = startInput.value;
+    const newEndTime = endInput.value;
+
+    const participationId = button.dataset.participationId;
+    const originalStartTime = startInput.defaultValue;
+    const originalEndTime = endInput.defaultValue;
+
+    if (!newStartTime || !newEndTime) {
+        showToast("Заполните время начала и окончания", "error");
+        return;
+    }
+
+    if (newStartTime === originalStartTime && newEndTime === originalEndTime) {
+        showToast('Нечего изменять', "alert");
+        return;
+    }
+
+    try {
+        const response = await fetch(`/api/participations/${participationId}/hours`, {
+            method: 'PATCH',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+                CheckInTime: newStartTime,
+                CheckOutTime: newEndTime
+            })
+        })
+        if (response.ok) {
+            showToast(`Часы успешно отправлены`, "success");
+            await loadParticipants();
+        } else {
+            const error = await response.json();
+            showToast(error.message || "Ошибка", "error");
+            console.error(error.message);
+        }
+    } catch (error) {
+        showToast(error.message || "Ошибка модерирования часов", "error");
+        console.error(error.message);
+    }
+});
+
+document.body.addEventListener("click", async (e) => {
+    const button = e.target.closest(".hours-confirm-button");
+    if (!button) return;
+
+    const participationId = button.dataset.participationId;
+    const currentStatus = button.dataset.currentStatus;
+
+    const isApproved = currentStatus === 'Approved';
+    const action = isApproved ? 'reject' : 'confirm';
+
+    const participantItem = button.closest(".participant-item");
+    const isLeader = participantItem.dataset.isLeader === 'true';
+
+    const isAdmin = window.userRole === 'Administrator';
+    const isCreator = Number(document.getElementById("participantsModal").getAttribute('data-created-by-id')) === Number(window.currentUserId);
+
+    let confirmByLeader = false;
+    let confirmByCoordinator = false;
+
+    if (action === 'confirm') {
+        if (isAdmin) {
+            confirmByLeader = true;
+            confirmByCoordinator = true;
+        } else if (isCreator) {
+            confirmByCoordinator = true;
+        } else if (isLeader) {
+            confirmByLeader = true;
+        }
+
+        if (!confirmByLeader && !confirmByCoordinator) {
+            showToast("У вас нет прав для подтверждения часов", "error");
+            return;
+        }
+    }
+
+    try {
+        const url = `/api/participations/${participationId}/hours/${action}`;
+        const body = action === 'confirm' ? JSON.stringify({ confirmByLeader, confirmByCoordinator }) : null;
+
+        const response = await fetch(url, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: body
+        });
+
+        if (response.ok) {
+            showToast(`Часы ${action === 'confirm' ? 'подтверждены' : 'отклонены'}`, "success");
+            await loadParticipants();
+        } else {
+            const error = await response.json();
+            showToast(error.message || "Ошибка", "error");
+        }
+    } catch (error) {
+        showToast("Ошибка соединения", "error");
     }
 });
