@@ -81,6 +81,7 @@ public class PostgreSqlContainerFixture : IAsyncLifetime
         services.AddScoped<IEventRepository, EventRepository>();
         services.AddScoped<IParticipationRepository, ParticipationRepository>();
         services.AddScoped<ICategoryRepository, CategoryRepository>();
+        services.AddScoped<IAnalyticsRepository, AnalyticsRepository>();
 
         services.AddScoped<IPasswordHasher, PasswordHasher>();
 
