@@ -8,6 +8,7 @@ namespace VolunTrack.Repositories
         Task<Dictionary<string, decimal>> GetUserHoursStatsAsync(int userId); // Status - Hours
         Task<Category?> GetUserFavoriteCategoryAsync(int userId);
         Task<decimal> GetTotalConfirmedHoursAsync(int userId);
+        Task<int> GetUserTotalCompletedEventsAsync(int userId);
 
         // Universal methods
         Task<Dictionary<string, List<Event>>> GetUserEventsStatsAsync(int? userId = null); // Category - Events
@@ -18,5 +19,6 @@ namespace VolunTrack.Repositories
         Task<Dictionary<string, decimal>> GetTotalHoursByCategoryAsync();
         Task<int> GetTotalActiveUsersAsync();
         Task<Dictionary<int, int>> GetUserRegistrationsByMonthAsync(int year);
+        Task<int> GetTotalCompletedEventsAsync();
     }
 }

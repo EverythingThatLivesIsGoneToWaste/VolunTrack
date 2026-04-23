@@ -52,6 +52,15 @@ namespace VolunTrack.Repositories
                 .SumAsync(p => p.TotalHours);
         }
 
+        public async Task<int> GetUserTotalCompletedEventsAsync(int userId)
+        {
+            return await _context.Participations
+                .Where(p => p.UserId == userId && p.Event.Status == EventStatus.Completed && p.Status == ParticipationStatus.Approved)
+                .Select(p => p.EventId)
+                .Distinct()
+                .CountAsync();
+        }
+
         // Universal methods
         public async Task<Dictionary<string, List<Event>>> GetUserEventsStatsAsync(int? userId = null)
         {
@@ -140,6 +149,13 @@ namespace VolunTrack.Repositories
                     Registrations = g.Count()
                 })
                 .ToDictionaryAsync(k => k.Month, v => v.Registrations);
+        }
+
+        public async Task<int> GetTotalCompletedEventsAsync()
+        {
+            return await _context.Events
+                .Where(e => e.Status == EventStatus.Completed)
+                .CountAsync();
         }
     }
 }
