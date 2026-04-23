@@ -75,9 +75,44 @@ namespace VolunTrack.Tests.Fixtures
                     Status = EventStatus.Published,
                     CreatedByUserId = coordinatorId,
                     CreatedAtUtc = DateTime.UtcNow.AddDays(-7)
+                },
+                new()
+                {
+                    Name = "Завершённое событие 1",
+                    Description = "Для аналитики",
+                    Place = "Место 1",
+                    StartDateTime = DateTime.UtcNow.AddMonths(-3),
+                    EndDateTime = DateTime.UtcNow.AddMonths(-3).AddHours(3),
+                    SkillsRequired = "",
+                    Status = EventStatus.Completed,
+                    CreatedByUserId = coordinatorId,
+                    CreatedAtUtc = DateTime.UtcNow.AddMonths(-3)
+                },
+                new()
+                {
+                    Name = "Завершённое событие 2",
+                    Description = "Для аналитики",
+                    Place = "Место 2",
+                    StartDateTime = DateTime.UtcNow.AddMonths(-2),
+                    EndDateTime = DateTime.UtcNow.AddMonths(-2).AddHours(4),
+                    SkillsRequired = "",
+                    Status = EventStatus.Completed,
+                    CreatedByUserId = coordinatorId,
+                    CreatedAtUtc = DateTime.UtcNow.AddMonths(-2)
+                },
+                new()
+                {
+                    Name = "Завершённое событие 3",
+                    Description = "Для аналитики",
+                    Place = "Место 3",
+                    StartDateTime = DateTime.UtcNow.AddMonths(-1),
+                    EndDateTime = DateTime.UtcNow.AddMonths(-1).AddHours(2),
+                    SkillsRequired = "",
+                    Status = EventStatus.Completed,
+                    CreatedByUserId = coordinatorId,
+                    CreatedAtUtc = DateTime.UtcNow.AddMonths(-1)
                 }
             ];
-
 
             await context.Events.AddRangeAsync(TestEvents);
             await context.SaveChangesAsync();
@@ -88,7 +123,12 @@ namespace VolunTrack.Tests.Fixtures
                 new() { EventId = 1, CategoryId = categories[1].Id },
                 new() { EventId = 2, CategoryId = categories[0].Id },
                 new() { EventId = 3, CategoryId = categories[1].Id },
-                new() { EventId = 4, CategoryId = categories[2].Id }
+                new() { EventId = 4, CategoryId = categories[2].Id },
+
+                new() { EventId = 5, CategoryId = categories[0].Id },
+                new() { EventId = 5, CategoryId = categories[1].Id },
+                new() { EventId = 6, CategoryId = categories[1].Id },
+                new() { EventId = 7, CategoryId = categories[2].Id },
             };
 
             await context.EventCategories.AddRangeAsync(eventCategories);

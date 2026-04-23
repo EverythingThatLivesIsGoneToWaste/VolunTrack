@@ -55,33 +55,91 @@ namespace VolunTrack.Repositories
         // Universal methods
         public async Task<Dictionary<string, List<Event>>> GetUserEventsStatsAsync(int? userId = null)
         {
-            throw new NotImplementedException();
+            var query = _context.Participations
+                .Where(p => p.Event.Status == EventStatus.Completed)
+                .AsQueryable();
+
+            if (userId.HasValue)
+                query = query.Where(p => p.UserId == userId.Value);
+
+            var result = await query
+                .SelectMany(p => p.Event.EventCategories.Select(ec => new
+                {
+                    CategoryName = ec.Category.Name,
+                    p.Event
+                }))
+                .Distinct()
+                .GroupBy(x => x.CategoryName)
+                .Select(g => new
+                {
+                    CategoryName = g.Key,
+                    Events = g.Select(x => x.Event).ToList()
+                })
+                .ToDictionaryAsync(k => k.CategoryName, v => v.Events);
+
+            return result;
         }
 
         // Admin methods
         public async Task<Dictionary<Event, int>> GetParticipantsCountByEventsAsync()
         {
-            throw new NotImplementedException();
+            return await _context.Events
+                .Where(e => e.Status == EventStatus.Completed)
+                .Select(e => new
+                {
+                    Event = e,
+                    Participations = e.Participations.Count()
+                })
+                .ToDictionaryAsync(k => k.Event, v => v.Participations);
         }
 
-        public async Task<List<Event>> GetCompletedEventsByMonth()
+        public async Task<Dictionary<int, int>> GetCompletedEventsByMonthAsync(int year)
         {
-            throw new NotImplementedException();
+            return await _context.Events
+                .Where(e => e.Status == EventStatus.Completed && e.EndDateTime.Year == year)
+                .GroupBy(e => e.EndDateTime.Month)
+                .Select(g => new
+                {
+                    Month = g.Key,
+                    Events = g.Count()
+                })
+                .ToDictionaryAsync(k => k.Month, v => v.Events);
         }
 
         public async Task<Dictionary<string, decimal>> GetTotalHoursByCategoryAsync()
         {
-            throw new NotImplementedException();
+            return await _context.Participations
+                .Where(p => p.Event.Status == EventStatus.Completed && p.Status == ParticipationStatus.Approved)
+                .SelectMany(p => p.Event.EventCategories.Select(ec => new
+                {
+                    CategoryName = ec.Category.Name,
+                    p.TotalHours
+                }))
+                .GroupBy(x => x.CategoryName)
+                .Select(g => new
+                {
+                    CategoryName = g.Key,
+                    TotalHours = g.Sum(x => x.TotalHours)
+                })
+                .ToDictionaryAsync(k => k.CategoryName, v => v.TotalHours);
         }
 
         public async Task<int> GetTotalActiveUsersAsync()
         {
-            throw new NotImplementedException();
+            return await _context.Users.Where(u => u.IsActive == true).CountAsync();
         }
 
-        public async Task<Dictionary<string, int>> GetUserRegistrationsByMonthAsync()
+        public async Task<Dictionary<int, int>> GetUserRegistrationsByMonthAsync(int year)
         {
-            throw new NotImplementedException();
+            return await _context.Users
+                .Where(u => u.IsActive && u.CreatedAtUtc.Year == year)
+                .GroupBy(u => u.CreatedAtUtc.Month)
+                .Select(g => new
+                {
+                    Month = g.Key,
+                    Registrations = g.Count()
+                })
+                .ToDictionaryAsync(k => k.Month, v => v.Registrations);
         }
     }
 }
