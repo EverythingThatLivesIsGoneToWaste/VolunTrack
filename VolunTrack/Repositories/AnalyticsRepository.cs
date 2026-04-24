@@ -29,14 +29,16 @@ namespace VolunTrack.Repositories
             return await _context.Participations
                 .Where(p => p.UserId == userId)
                 .SelectMany(p => p.Event.EventCategories.Select(ec => ec.Category))
-                .GroupBy(c => new { c.Id, c.Name, c.ColorRgb })
+                .GroupBy(c => new { c.Id, c.Name, c.Description, c.ColorRgb, c.IsActive })
                 .Select(g => new
                 {
                     Category = new Category
                     {
                         Id = g.Key.Id,
                         Name = g.Key.Name,
-                        ColorRgb = g.Key.ColorRgb
+                        Description = g.Key.Description,
+                        ColorRgb = g.Key.ColorRgb,
+                        IsActive = g.Key.IsActive
                     },
                     Count = g.Count()
                 })
@@ -65,7 +67,8 @@ namespace VolunTrack.Repositories
         public async Task<Dictionary<string, List<Event>>> GetUserEventsStatsAsync(int? userId = null)
         {
             var query = _context.Participations
-                .Where(p => p.Event.Status == EventStatus.Completed)
+                .Where(p => p.Event.Status == EventStatus.Completed 
+                    && p.Status == ParticipationStatus.Approved)
                 .AsQueryable();
 
             if (userId.HasValue)
