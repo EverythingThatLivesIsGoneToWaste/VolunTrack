@@ -160,16 +160,6 @@ async function loadUserEvents(url) {
     }
 }
 
-function formatToLocalDateTime(utcDateString) {
-    const date = new Date(utcDateString);
-    const year = date.getFullYear();
-    const month = String(date.getMonth() + 1).padStart(2, '0');
-    const day = String(date.getDate()).padStart(2, '0');
-    const hours = String(date.getHours()).padStart(2, '0');
-    const minutes = String(date.getMinutes()).padStart(2, '0');
-    return `${year}-${month}-${day}T${hours}:${minutes}`;
-}
-
 // Opening modal
 document.body.addEventListener("click", async (e) => {
     const button = e.target.closest(".record-hours-button");
