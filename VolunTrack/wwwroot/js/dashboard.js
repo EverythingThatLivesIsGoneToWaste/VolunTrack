@@ -307,8 +307,7 @@ async function recordHours() {
         });
 
         if (response.ok) {
-            const leader = await response.json();
-            showToast(`Часы усепшно отправлены на проверку`, "success");
+            showToast(`Часы успешно отправлены на проверку`, "success");
         } else {
             const error = await response.json();
             showToast(error.message || "Ошибка", "error");
