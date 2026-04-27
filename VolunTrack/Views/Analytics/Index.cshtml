@@ -1,0 +1,63 @@
+﻿@using System.Security.Claims
+
+@{
+    ViewData["Title"] = "Аналитика";
+}
+
+@section Styles {
+    <link rel="stylesheet" href="~/css/analytics.css" asp-append-version="true">
+}
+
+<div class="statistics-container">
+    <!-- Shared blocks -->
+    <div class="stats-grid">
+        <div class="stat-card">Часы (подтверждённые): <span id="totalConfirmedHours"></span></div>
+        <div class="stat-card">Завершённых событий: <span id="totalCompletedEvents"></span></div>
+        <div class="stat-card">Любимая категория: <span id="favoriteCategory"></span></div>
+    </div>
+    
+    <div class="charts-row">
+        <div class="chart-container">
+            <h3>Время участия в часах (по статусам)</h3>
+            <canvas id="hoursByStatusChart" width="800" height="450"></canvas>
+        </div>
+        <div class="chart-container">
+            <h3>События по категориям</h3>
+            <canvas id="eventsByCategoryChart"></canvas>
+        </div>
+    </div>
+    
+    <!-- Admin blocks -->
+    <div id="adminSection" style="display: none;">
+        <div class="stat-card">Активных пользователей: <span id="totalUsers"></span></div>
+        <div class="charts-row">
+            <div class="chart-container">
+                <h3>Часы по категориям (все пользователи)</h3>
+                <canvas id="totalHoursByCategoryChart"></canvas>
+            </div>
+            <div class="chart-container">
+                <h3>Регистрации по месяцам</h3>
+                <canvas id="registrationsByMonthChart"></canvas>
+            </div>
+        </div>
+        <div class="charts-row">
+            <div class="chart-container">
+                <h3>Завершённые события по месяцам</h3>
+                <canvas id="eventsByMonthChart"></canvas>
+            </div>
+            <div class="chart-container">
+                <h3>Популярность событий</h3>
+                <canvas id="eventParticipantsChart"></canvas>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    window.userRole = '@User.FindFirstValue(ClaimTypes.Role)';
+</script>
+
+@section Scripts {
+    <script src="~/js/analytics.js" asp-append-version="true"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.5.0/Chart.min.js"></script>
+}
