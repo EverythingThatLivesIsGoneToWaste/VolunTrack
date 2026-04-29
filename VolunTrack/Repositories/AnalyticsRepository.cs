@@ -2,6 +2,7 @@
 using VolunTrack.Data;
 using VolunTrack.Models;
 using VolunTrack.Enums;
+using VolunTrack.DTO;
 
 namespace VolunTrack.Repositories
 {
@@ -118,22 +119,22 @@ namespace VolunTrack.Repositories
                 .ToDictionaryAsync(k => k.Month, v => v.Events);
         }
 
-        public async Task<Dictionary<string, decimal>> GetTotalHoursByCategoryAsync()
+        public async Task<Dictionary<Category, decimal>> GetTotalHoursByCategoryAsync()
         {
             return await _context.Participations
                 .Where(p => p.Event.Status == EventStatus.Completed && p.Status == ParticipationStatus.Approved)
                 .SelectMany(p => p.Event.EventCategories.Select(ec => new
                 {
-                    CategoryName = ec.Category.Name,
+                    ec.Category,
                     p.TotalHours
                 }))
-                .GroupBy(x => x.CategoryName)
+                .GroupBy(x => x.Category)
                 .Select(g => new
                 {
-                    CategoryName = g.Key,
+                    Category = g.Key,
                     TotalHours = g.Sum(x => x.TotalHours)
                 })
-                .ToDictionaryAsync(k => k.CategoryName, v => v.TotalHours);
+                .ToDictionaryAsync(k => k.Category, v => v.TotalHours);
         }
 
         public async Task<int> GetTotalActiveUsersAsync()

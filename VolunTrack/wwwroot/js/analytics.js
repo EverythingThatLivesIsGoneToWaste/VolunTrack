@@ -11,14 +11,14 @@ async function fetchUserStats() {
     return await response.json();
 }
 
-/*async function fetchAdminStats() {
+async function fetchAdminStats() {
     const response = await fetch('/api/analytics/stats/admin');
     if (!response.ok) {
         showToast("Ошибка при получении глобальной статистики", 'error');
         throw new Error('Failed to fetch admin stats'); 
     }
     return await response.json();
-}*/
+}
 
 async function loadStatistics() {
     const isAdmin = window.userRole === 'Administrator';
@@ -40,7 +40,7 @@ async function loadStatistics() {
         renderHoursByStatus(userStats.hoursByStatus);
         renderEventsByCategory(userStats.eventsByCategory);
 
-        /*if (isAdmin) {
+        if (isAdmin) {
             const adminStats = await fetchAdminStats();
 
             document.getElementById('totalUsers').textContent = adminStats.totalUsers;
@@ -50,8 +50,8 @@ async function loadStatistics() {
             renderRegistrationsByMonth(adminStats.registrationsByMonth);
             renderTotalHoursByCategory(adminStats.totalHoursByCategory);
             renderEventsByMonth(adminStats.eventsByMonths);
-            renderEventParticipants(adminStats.eventParticipantsCount);
-        }*/
+            renderEventParticipants(adminStats.eventParticipantsStats);
+        }
     } catch (error) {
         console.error('Error loading statistics:', error);
         showToast('Ошибка загрузки статистики', 'error');
@@ -113,4 +113,129 @@ function renderEventsByCategory(eventsByCategory) {
             }
         }
     });
-} 
+}
+
+function renderRegistrationsByMonth(registrationsByMonth) {
+    const sortedEntries = Object.entries(registrationsByMonth)
+        .sort(([monthA], [monthB]) => parseInt(monthA) - parseInt(monthB));
+    
+    const labels = sortedEntries.map(([month]) => getMonthName(parseInt(month)));
+    const data = sortedEntries.map(([, count]) => count);
+
+    new Chart(document.getElementById("registrationsByMonthChart"), {
+      type: 'bar',
+      data: {
+        labels: labels,
+        datasets: [{ 
+            data: data,
+            label: "Регистрации",
+            fill: false,
+            backgroundColor: "#b31131"
+          }
+        ]
+      },
+      options: {
+        legend: { display: false },
+        responsive: true,
+        title: { 
+            display: false
+        }
+      }
+    });
+}
+
+function getMonthName(monthNumber) {
+    const monthNames = [
+        'Январь', 'Февраль', 'Март', 'Апрель', 'Май', 'Июнь',
+        'Июль', 'Август', 'Сентябрь', 'Октябрь', 'Ноябрь', 'Декабрь'
+    ];
+    return monthNames[monthNumber - 1] || monthNumber;
+}
+
+function renderTotalHoursByCategory(totalHoursByCategory) {
+     if (!totalHoursByCategory || totalHoursByCategory.length === 0) return;
+    
+    const sorted = [...totalHoursByCategory].sort((a, b) => b.totalHours - a.totalHours);
+    
+    const labels = sorted.map(stat => stat.name);
+    const data = sorted.map(stat => { 
+        const value = stat.totalHours;
+        return typeof value === 'number' ? parseFloat(value.toFixed(2)) : value });
+    const colors = sorted.map(stat => `#${stat.colorRgb.toString(16).padStart(6, '0')}`);
+
+    new Chart(document.getElementById("totalHoursByCategoryChart"), {
+      type: 'doughnut',
+        data: {
+            labels: labels,
+            datasets: [{
+                backgroundColor: colors,
+                data: data
+            }]
+        },
+        options: {
+            responsive: true,
+            plugins: {
+                legend: { position: 'bottom' }
+            }
+        }
+    });
+}
+
+function renderEventsByMonth(eventsByMonths) {
+    const sortedEntries = Object.entries(eventsByMonths)
+        .sort(([monthA], [monthB]) => parseInt(monthA) - parseInt(monthB));
+    
+    const labels = sortedEntries.map(([month]) => getMonthName(parseInt(month)));
+    const data = sortedEntries.map(([, count]) => count);
+
+    new Chart(document.getElementById("eventsByMonthChart"), {
+      type: 'bar',
+      data: {
+        labels: labels,
+        datasets: [{ 
+            data: data,
+            label: "События",
+            fill: false,
+            backgroundColor: "#b31131"
+          }
+        ]
+      },
+      options: {
+        legend: { display: false },
+        responsive: true,
+        title: { 
+            display: false
+        }
+      }
+    });
+}
+
+function renderEventParticipants(eventParticipantsStats) {
+    const topByParticipants = [...eventParticipantsStats]
+        .sort((a, b) => b.participantsCount - a.participantsCount)
+        .slice(0, 10);
+    
+    const labels = topByParticipants.map(stat => stat.eventName);
+    const data = topByParticipants.map(stat => stat.participantsCount);
+
+    new Chart(document.getElementById("eventParticipantsChart"), {
+      type: 'bar',
+      data: {
+        labels: labels,
+        datasets: [{ 
+            data: data,
+            label: "Участники",
+            fill: false,
+            backgroundColor: "#1B5886"
+          }
+        ]
+      },
+      options: {
+        legend: { display: false },
+        responsive: true,
+        title: { 
+            display: false
+        }
+      }
+    });
+}

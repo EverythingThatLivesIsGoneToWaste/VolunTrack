@@ -18,13 +18,23 @@ namespace VolunTrack.Services
 
             var eventsStats = await _analyticsRepository.GetUserEventsStatsAsync();
             var eventParticipantsStats = await _analyticsRepository.GetParticipantsCountByEventsAsync();
+            var totalCategoryHoursStats = await _analyticsRepository.GetTotalHoursByCategoryAsync();
 
             return new AdminStatsDto
             {
                 EventsByCategory = eventsStats.ToDictionary(k => k.Key, v => v.Value.Select(e => EventDto.FromEntity(e)).ToList()),
-                EventParticipantsCount = eventParticipantsStats.ToDictionary(k => EventDto.FromEntity(k.Key), v => v.Value),
+                EventParticipantsStats = [.. eventParticipantsStats.Select(kvp => new EventParticipantStatDto
+                {
+                    EventId = kvp.Key.Id,
+                    EventName = kvp.Key.Name,
+                    ParticipantsCount = kvp.Value
+                })],
                 EventsByMonths = await _analyticsRepository.GetCompletedEventsByMonthAsync(currentYear),
-                TotalHoursByCategory = await _analyticsRepository.GetTotalHoursByCategoryAsync(),
+                TotalHoursByCategory = [.. totalCategoryHoursStats.Select(kvp => new TotalCategoryHoursStatDto {
+                    Name = kvp.Key.Name,
+                    ColorRgb = kvp.Key.ColorRgb,
+                    TotalHours = kvp.Value
+                })],
                 TotalUsers = await _analyticsRepository.GetTotalActiveUsersAsync(),
                 RegistrationsByMonth = await _analyticsRepository.GetUserRegistrationsByMonthAsync(currentYear),
                 TotalCompletedEvents = await _analyticsRepository.GetTotalCompletedEventsAsync()

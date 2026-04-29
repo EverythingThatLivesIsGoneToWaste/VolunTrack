@@ -16,7 +16,7 @@ namespace VolunTrack.Repositories
         // Admin methods
         Task<Dictionary<Event, int>> GetParticipantsCountByEventsAsync(); // Event - Participants
         Task<Dictionary<int, int>> GetCompletedEventsByMonthAsync(int year); // Events grouped by months
-        Task<Dictionary<string, decimal>> GetTotalHoursByCategoryAsync();
+        Task<Dictionary<Category, decimal>> GetTotalHoursByCategoryAsync();
         Task<int> GetTotalActiveUsersAsync();
         Task<Dictionary<int, int>> GetUserRegistrationsByMonthAsync(int year);
         Task<int> GetTotalCompletedEventsAsync();
