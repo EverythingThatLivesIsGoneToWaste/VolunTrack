@@ -193,5 +193,21 @@ namespace VolunTrack.Controllers.Api
                 return StatusCode(500, new { message = "Internal server error" });
             }
         }
+
+        [Authorize]
+        [HttpGet("{eventId}/leaders")]
+        public async Task<IActionResult> GetEventLeaders(int eventId)
+        {
+            try
+            {
+                var leadersIds = await _eventRepository.GetEventLeadersIdsAsync(eventId);
+                return Ok(leadersIds);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error getting leaders of event {eventId}", eventId);
+                return StatusCode(500, new { message = "Internal server error" });
+            }
+        }
     }
 }

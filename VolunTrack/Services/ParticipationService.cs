@@ -98,7 +98,7 @@ namespace VolunTrack.Services
             return ParticipationDto.FromEntity(participationEntity);
         }
 
-        public async Task<ParticipationDto> ConfirmHoursAsync(int participationId, ConfirmHoursDto dto, int currentUserId, string currentUserRole)
+        public async Task<ParticipationDto> ConfirmHoursAsync(int participationId, int currentUserId, string currentUserRole)
         {
             var participationEntity = await _participationRepository.GetByIdAsync(participationId)
                 ?? throw new NotFoundException($"Participation {participationId} not found");
@@ -121,18 +121,11 @@ namespace VolunTrack.Services
 
             if (!isAdmin && !isCreator && !isLeader)
                 throw new Exceptions.UnauthorizedAccessException($"No permission to update hours");
-
-            if (dto.ConfirmByLeader && !isAdmin && !isLeader)
-                throw new Exceptions.UnauthorizedAccessException("Only leader can confirm hours");
-
-            if (dto.ConfirmByCoordinator && !isAdmin && !isCreator)
-                throw new Exceptions.UnauthorizedAccessException("Only coordinator or admin can confirm hours");
-
-            if (dto.ConfirmByLeader)
-                participationEntity.IsConfirmedByLeader = true;
-
-            if (dto.ConfirmByCoordinator)
+            
+            if (isAdmin || isCreator)
                 participationEntity.IsConfirmedByCoordinator = true;
+            if (isAdmin || isLeader)
+                participationEntity.IsConfirmedByLeader = true;
 
             if (participationEntity.IsConfirmedByLeader && participationEntity.IsConfirmedByCoordinator)
                 participationEntity.Status = ParticipationStatus.Approved;
@@ -163,9 +156,16 @@ namespace VolunTrack.Services
             if (!isAdmin && !isCreator && !isLeader)
                 throw new Exceptions.UnauthorizedAccessException($"No permission to update hours");
 
-            participationEntity.Status = ParticipationStatus.Rejected;
-            participationEntity.IsConfirmedByLeader = false;
-            participationEntity.IsConfirmedByCoordinator = false;
+            if (isAdmin || isCreator)
+                participationEntity.IsConfirmedByCoordinator = false;
+
+            if (isAdmin || isLeader)
+                participationEntity.IsConfirmedByLeader = false;
+
+            participationEntity.Status = ParticipationStatus.Pending;
+            if (!participationEntity.IsConfirmedByCoordinator && !participationEntity.IsConfirmedByLeader)
+                participationEntity.Status = ParticipationStatus.Rejected;
+
             await _participationRepository.UpdateAsync(participationEntity);
 
             return ParticipationDto.FromEntity(participationEntity);

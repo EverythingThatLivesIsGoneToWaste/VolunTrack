@@ -205,7 +205,7 @@ form h1 {
     object-fit: cover;
 }
 
-.participant-item .hours-confirm-button {
+.participant-item .hours-toggle-button {
     color: white;
     padding: 6px 10px;
     border: 0;

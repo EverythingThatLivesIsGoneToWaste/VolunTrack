@@ -311,12 +311,18 @@ async function loadParticipants() {
             return;
         }
 
+        const leadersResponse = await fetch(`/api/events/${eventId}/leaders`);
+        const leadersIds = await leadersResponse.json();
+
         let leaderAssignmentHtml = '';
         let hoursModifyingHtml = '';
 
         const isAdmin = window.userRole === 'Administrator';
         const isCoordinator = window.userRole === 'EventCoordinator';
         const isCreator = Number(createdById) === Number(window.currentUserId);
+        const isEventLeader = leadersIds.includes(Number(window.currentUserId));
+
+        const canManage = isAdmin || (isCoordinator && isCreator) || isEventLeader;
 
         container.innerHTML = '';
 
@@ -324,16 +330,18 @@ async function loadParticipants() {
             const div = document.createElement('div');
             div.className = 'participant-item';
 
-            if (isAdmin || (isCoordinator && isCreator)) {
-                const isLeader = p.isLeader;
-                leaderAssignmentHtml = `
+            const isParticipantLeader = p.isLeader;
+            if (canManage) {
+                if (isAdmin || (isCoordinator && isCreator)) {
+                    leaderAssignmentHtml = `
                     <button class="assign-leader-button" 
                             data-event-id="${eventId}" 
                             data-user-id="${p.userId}" 
-                            title="${isLeader ? 'Убрать лидера' : 'Назначить лидера'}">
-                        <img src="/images/ui/buttons/${isLeader ? 'leader.png' : 'leader_inactive.png'}">
+                            title="${isParticipantLeader ? 'Убрать лидера' : 'Назначить лидера'}">
+                        <img src="/images/ui/buttons/${isParticipantLeader ? 'leader.png' : 'leader_inactive.png'}">
                     </button>
                 `;
+                }
 
                 const startLocal = formatToLocalDateTime(eventStart);
                 const endLocal = formatToLocalDateTime(eventEnd);
@@ -341,20 +349,40 @@ async function loadParticipants() {
                 const checkInTime = p.checkInTime ? formatToLocalDateTime(p.checkInTime) : '';
                 const checkOutTime = p.checkOutTime ? formatToLocalDateTime(p.checkOutTime) : '';
 
-                const isApproved = p.participationStatus === 'Approved';
-                const isRejected = p.participationStatus === 'Rejected';
+                let statusButtonHtml = '';
 
-                const buttonClass = isApproved ? 'hours-confirm-button approved' : (isRejected ? 'hours-confirm-button rejected' : 'hours-confirm-button');
-                const buttonText = isApproved ? 'Отклонить' : (isRejected ? 'Подтвердить' : 'Подтвердить часы');
+                if (isAdmin) {
+                    const isConfirmed = p.participationStatus === "Approved";
+                        statusButtonHtml = `
+                        <button class="hours-toggle-button ${isConfirmed ? 'confirmed' : ''}" 
+                                data-participation-id="${p.participationId}"
+                                data-confirm="${!isConfirmed}">
+                            ${isConfirmed ? 'Отклонить' : 'Подтвердить'}
+                        </button>
+                    `;
+                }
 
-                const statusButtonHtml = `
-                    <button class="${buttonClass}" 
-                            data-participation-id="${p.participationId}"
-                            data-current-status="${p.participationStatus}"
-                            data-is-leader="${isLeader}">
-                        ${buttonText}
-                    </button>
-                `;
+                if (isCoordinator && isCreator) {
+                    const isConfirmed = p.isConfirmedByCoordinator;
+                    statusButtonHtml = `
+                        <button class="hours-toggle-button ${isConfirmed ? 'confirmed' : ''}" 
+                                data-participation-id="${p.participationId}"
+                                data-confirm="${!isConfirmed}">
+                            ${isConfirmed ? 'Снять подтверждение' : 'Подтвердить'}
+                        </button>
+                    `;
+                }
+
+                if (isEventLeader) {
+                    const isConfirmed = p.isConfirmedByLeader;
+                    statusButtonHtml = `
+                        <button class="hours-toggle-button ${isConfirmed ? 'confirmed' : ''}" 
+                                data-participation-id="${p.participationId}"
+                                data-confirm="${!isConfirmed}">
+                            ${isConfirmed ? 'Снять подтверждение' : 'Подтвердить'}
+                        </button>
+                    `;
+                }
 
                 hoursModifyingHtml = `
                     <div class="input-group-period">
@@ -516,58 +544,32 @@ document.body.addEventListener("click", async (e) => {
 });
 
 document.body.addEventListener("click", async (e) => {
-    const button = e.target.closest(".hours-confirm-button");
+    const button = e.target.closest(".hours-toggle-button");
     if (!button) return;
 
     const participationId = button.dataset.participationId;
-    const currentStatus = button.dataset.currentStatus;
-
-    const isApproved = currentStatus === 'Approved';
-    const action = isApproved ? 'reject' : 'confirm';
-
-    const participantItem = button.closest(".participant-item");
-    const isLeader = participantItem.dataset.isLeader === 'true';
-
-    const isAdmin = window.userRole === 'Administrator';
-    const isCreator = Number(document.getElementById("participantsModal").getAttribute('data-created-by-id')) === Number(window.currentUserId);
-
-    let confirmByLeader = false;
-    let confirmByCoordinator = false;
-
-    if (action === 'confirm') {
-        if (isAdmin) {
-            confirmByLeader = true;
-            confirmByCoordinator = true;
-        } else if (isCreator) {
-            confirmByCoordinator = true;
-        } else if (isLeader) {
-            confirmByLeader = true;
-        }
-
-        if (!confirmByLeader && !confirmByCoordinator) {
-            showToast("У вас нет прав для подтверждения часов", "error");
-            return;
-        }
-    }
+    
+    const confirm = button.dataset.confirm === "true";
 
     try {
-        const url = `/api/participations/${participationId}/hours/${action}`;
-        const body = action === 'confirm' ? JSON.stringify({ confirmByLeader, confirmByCoordinator }) : null;
+        const url = `/api/participations/${participationId}/hours/toggle`;
 
         const response = await fetch(url, {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
-            body: body
+            body: JSON.stringify({ confirm: confirm })
         });
 
         if (response.ok) {
-            showToast(`Часы ${action === 'confirm' ? 'подтверждены' : 'отклонены'}`, "success");
+            const result = await response.text(); 
+            showToast(`Часы ${result === 'confirmed' ? 'подтверждены' : 'отклонены'}`, "success");
             await loadParticipants();
         } else {
             const error = await response.json();
             showToast(error.message || "Ошибка", "error");
         }
     } catch (error) {
+        console.log(error);
         showToast("Ошибка соединения", "error");
     }
 });

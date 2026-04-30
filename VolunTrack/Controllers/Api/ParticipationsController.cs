@@ -99,8 +99,8 @@ namespace VolunTrack.Controllers.Api
         }
 
         [Authorize]
-        [HttpPost("/api/participations/{participationId}/hours/confirm")]
-        public async Task<IActionResult> ConfirmParticipationHours(int participationId, [FromBody] ConfirmHoursDto dto)
+        [HttpPost("/api/participations/{participationId}/hours/toggle")]
+        public async Task<IActionResult> ConfirmParticipationHours(int participationId, [FromBody] ToggleConfirmationDto dto)
         {
             try
             {
@@ -110,8 +110,16 @@ namespace VolunTrack.Controllers.Api
 
                 var userRole = User.FindFirstValue(ClaimTypes.Role)!;
 
-                var result = await _participationService.ConfirmHoursAsync(participationId, dto, claimsUserId, userRole);
-                return Ok(result);
+                if (dto.Confirm)
+                {
+                    await _participationService.ConfirmHoursAsync(participationId, claimsUserId, userRole);
+                }
+                else
+                {
+                    await _participationService.RejectHoursAsync(participationId, claimsUserId, userRole);
+                }
+
+                return Ok(dto.Confirm ? "confirmed" : "rejected");
             }
             catch (NotFoundException ex)
             {
@@ -134,45 +142,7 @@ namespace VolunTrack.Controllers.Api
                 return StatusCode(403, new { message = ex.Message });
             }
             catch (Exception ex) {
-                _logger.LogError(ex, "Error recording participation time");
-                return StatusCode(500, new { message = "Internal server error" });
-            }
-        }
-
-        [Authorize]
-        [HttpPost("/api/participations/{participationId}/hours/reject")]
-        public async Task<IActionResult> RejectHours(int participationId)
-        {
-            try
-            {
-                var claimsUserIdString = User.FindFirstValue(ClaimTypes.NameIdentifier);
-                if (!int.TryParse(claimsUserIdString, out int claimsUserId))
-                    return BadRequest("Invalid user ID in token");
-
-                var userRole = User.FindFirstValue(ClaimTypes.Role)!;
-
-                var result = await _participationService.RejectHoursAsync(participationId, claimsUserId, userRole);
-                return Ok(result);
-            }
-            catch (NotFoundException ex)
-            {
-                return NotFound(new { message = ex.Message });
-            }
-            catch (ArgumentException ex)
-            {
-                return BadRequest(new { message = ex.Message });
-            }
-            catch (TimeNotRecordedException ex)
-            {
-                return Conflict(new { message = ex.Message });
-            }
-            catch (Exceptions.UnauthorizedAccessException ex)
-            {
-                return StatusCode(403, new { message = ex.Message });
-            }
-            catch (Exception ex)
-            {
-                _logger.LogError(ex, "Error recording participation time");
+                _logger.LogError(ex, "Error toggling participation time");
                 return StatusCode(500, new { message = "Internal server error" });
             }
         }
