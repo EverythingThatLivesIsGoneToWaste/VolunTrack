@@ -58,6 +58,13 @@ async function loadStatistics() {
     }
 }
 
+document.body.addEventListener("click", async (e) => {
+    const button = e.target.closest(".reload-stats-button");
+    if (button) {
+        await loadStatistics();
+    }
+});
+
 function renderHoursByStatus(hoursByStatus) {
     const statusOrder = ['Approved', 'Pending', 'Rejected'];
     const colorMap = {
@@ -226,7 +233,7 @@ function renderEventParticipants(eventParticipantsStats) {
             data: data,
             label: "Участники",
             fill: false,
-            backgroundColor: "#1B5886"
+            backgroundColor: ["#003A6B", "#1B5886", "#3776A1", "#5293BB", "#6EB1D6", "#89CFF1"],
           }
         ]
       },

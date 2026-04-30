@@ -10,6 +10,14 @@
 
 <div class="statistics-container">
     <!-- Shared blocks -->
+    <div class="analytics-header">
+        <h3>Общая статистика</h3>
+
+        <button class="reload-stats-button">
+            Перезагрузить
+        </button>
+    </div>
+
     <div class="stats-grid">
         <div class="stat-card">Часы (подтверждённые): <span id="totalConfirmedHours"></span></div>
         <div class="stat-card">Завершённых событий: <span id="totalCompletedEvents"></span></div>
@@ -17,10 +25,11 @@
     </div>
     
     <div class="charts-row">
-        <div class="chart-container">
+        <div class="chart-container doughnut-container">
             <h3>Время участия в часах (по статусам)</h3>
             <canvas id="hoursByStatusChart"></canvas>
         </div>
+
         <div class="chart-container">
             <h3>События по категориям</h3>
             <canvas id="eventsByCategoryChart"></canvas>
@@ -29,25 +38,31 @@
     
     <!-- Admin blocks -->
     <div id="adminSection" style="display: none;">
-        <div class="stat-card">Активных пользователей: <span id="totalUsers"></span></div>
+        <div class="admin-stats-header">
+            <h3>Глобальная статистика (администратор)</h3>
+            <div class="stat-card">Всего активных пользователей: <span id="totalUsers"></span></div>
+        </div>
+        
         <div class="charts-row">
-            <div class="chart-container">
+            <div class="chart-container doughnut-container">
                 <h3>Часы по категориям (все пользователи)</h3>
                 <canvas id="totalHoursByCategoryChart"></canvas>
             </div>
+
             <div class="chart-container">
-                <h3>Регистрации по месяцам</h3>
-                <canvas id="registrationsByMonthChart"></canvas>
+                <h3>Популярность событий (топ-10 по участникам)</h3>
+                <canvas id="eventParticipantsChart"></canvas>
             </div>
         </div>
         <div class="charts-row">
             <div class="chart-container">
+                <h3>Регистрации по месяцам</h3>
+                <canvas id="registrationsByMonthChart"></canvas>
+            </div>
+
+            <div class="chart-container">
                 <h3>Завершённые события по месяцам</h3>
                 <canvas id="eventsByMonthChart"></canvas>
-            </div>
-            <div class="chart-container">
-                <h3>Популярность событий (топ-10 по участникам)</h3>
-                <canvas id="eventParticipantsChart"></canvas>
             </div>
         </div>
     </div>
