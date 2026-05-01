@@ -80,23 +80,23 @@ namespace VolunTrack.Services
             return EventDto.FromEntity(eventEntity);
         }
 
-        public async Task<List<EventDto>> GetEventsAsync(string type, int userId, string userRole)
+        public async Task<List<EventDto>> GetEventsAsync(string type, int userId, string userRole, string? searchTerm = null)
         {
             List<Event> events;
 
             if (type == "upcoming")
             {
-                events = await _eventRepository.GetUpcomingAsync();
+                events = await _eventRepository.GetUpcomingAsync(searchTerm);
             }
             else
             {
                 if (userRole == nameof(UserRole.EventCoordinator))
                 {
-                    events = await _eventRepository.GetByCoordinatorIdAsync(userId);
+                    events = await _eventRepository.GetByCoordinatorIdAsync(userId, searchTerm);
                 }
                 else
                 {
-                    events = await _eventRepository.GetAllAsync();
+                    events = await _eventRepository.GetAllAsync(searchTerm);
                 }
             }
 

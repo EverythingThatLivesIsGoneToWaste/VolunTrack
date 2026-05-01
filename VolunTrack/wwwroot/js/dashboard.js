@@ -317,3 +317,25 @@ async function recordHours() {
         showToast("Ошибка соединения", "error");
     }
 }
+
+// Search handlers
+document.body.addEventListener("click", async (e) => {
+    const button = e.target.closest(".search-button");
+    if (button) {
+        search = document.getElementById("searchInput");
+        if (!search) return;
+
+        await loadEvents(`/api/events/upcoming?search=${encodeURIComponent(search.value.trim())}`);
+    }
+});
+
+document.body.addEventListener("click", async (e) => {
+    const button = e.target.closest(".reset-button");
+    if (button) {
+        search = document.getElementById("searchInput");
+        if (!search || search.value === '') return;
+
+        search.value = '';
+        await loadEvents('/api/events/upcoming');
+    }
+});

@@ -1,39 +1,5 @@
 ﻿.search-section {
-    display: flex;
-    background-color: #eeeeee;
-    gap: 16px;
-    padding: 10px 16px;
-    border-radius: 16px;
     width: fit-content;
-}
-
-.search-input {
-    width: 400px;
-    border: 0;
-    padding-inline: 12px;
-    border-radius: 25px;
-    outline: 0;
-}
-
-.reset-button, .search-button {
-    color: white;
-    font-size: 20px;
-    border: 0;
-    height: 50px;
-    padding: 4px 5px;
-    border-radius: 12px;
-    background-color: rgb(179, 17, 49);
-    transition: all 200ms ease-in-out;
-}
-
-.search-button {
-    padding: 4px 9px;
-}
-
-.reset-button img {
-    height: 90%;
-    object-fit: cover;
-    overflow: hidden;
 }
 
 .last-updated-datetime {

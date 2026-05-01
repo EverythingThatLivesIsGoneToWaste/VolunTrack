@@ -7,7 +7,7 @@ namespace VolunTrack.Services
     {
         Task<EventDto> AddAsync(CreateEventDto model);
         Task<EventDto> UpdateStatusAsync(int eventId, EventStatus newStatus, int userId, string userRole);
-        Task<List<EventDto>> GetEventsAsync(string type, int userId, string userRole);
+        Task<List<EventDto>> GetEventsAsync(string type, int userId, string userRole, string? searchTerm = null);
         Task<List<ParticipantDto>> GetEventParticipantsAsync(int eventId);
 
         Task<List<EventPhotoDto>> GetEventPhotosAsync(int eventId);

@@ -24,25 +24,45 @@ namespace VolunTrack.Repositories
                 .FirstOrDefaultAsync(e => e.Id == id);
         }
 
-        public async Task<List<Event>> GetAllAsync()
+        public async Task<List<Event>> GetAllAsync(string? searchTerm = null)
         {
-            return await _context.Events
+            var query = _context.Events
                 .Include(e => e.EventCategories)
                     .ThenInclude(ec => ec.Category)
                 .Include(e => e.EventPhotos)
                 .Include(e => e.Participations)
-                .ToListAsync();
+                .AsQueryable();
+
+            if (!string.IsNullOrWhiteSpace(searchTerm))
+            {
+                query = query.Where(e =>
+                    EF.Functions.ILike(e.Name, $"%{searchTerm}%") ||
+                    EF.Functions.ILike(e.Description, $"%{searchTerm}%") ||
+                    EF.Functions.ILike(e.Place, $"%{searchTerm}%"));
+            }
+
+            return await query.ToListAsync();
         }
 
-        public async Task<List<Event>> GetUpcomingAsync()
+        public async Task<List<Event>> GetUpcomingAsync(string? searchTerm = null)
         {
-            return await _context.Events
+            var query = _context.Events
                 .Include(e => e.EventCategories)
                     .ThenInclude(ec => ec.Category)
                 .Include(e => e.EventPhotos)
                 .Include(e => e.Participations)
                 .Where(e => e.StartDateTime > DateTime.UtcNow && e.Status == EventStatus.Published)
-                .ToListAsync();
+                .AsQueryable();
+
+            if (!string.IsNullOrWhiteSpace(searchTerm))
+            {
+                query = query.Where(e =>
+                    EF.Functions.ILike(e.Name, $"%{searchTerm}%") ||
+                    EF.Functions.ILike(e.Description, $"%{searchTerm}%") ||
+                    EF.Functions.ILike(e.Place, $"%{searchTerm}%"));
+            }
+
+            return await query.ToListAsync();
         }
 
         public async Task<List<Event>> GetByCategoryIdsAsync(List<int> categoryIds)
@@ -56,13 +76,23 @@ namespace VolunTrack.Repositories
                 .ToListAsync();
         }
 
-        public async Task<List<Event>> GetByCoordinatorIdAsync(int coordinatorId)
+        public async Task<List<Event>> GetByCoordinatorIdAsync(int coordinatorId, string? searchTerm = null)
         {
-            return await _context.Events
+            var query = _context.Events
                 .Include(e => e.Participations)
                 .Include(e => e.EventPhotos)
                 .Include(e => e.Participations)
-                .Where(e => e.CreatedByUserId == coordinatorId).ToListAsync();
+                .Where(e => e.CreatedByUserId == coordinatorId).AsQueryable();
+
+            if (!string.IsNullOrWhiteSpace(searchTerm))
+            {
+                query = query.Where(e =>
+                    EF.Functions.ILike(e.Name, $"%{searchTerm}%") ||
+                    EF.Functions.ILike(e.Description, $"%{searchTerm}%") ||
+                    EF.Functions.ILike(e.Place, $"%{searchTerm}%"));
+            }
+
+            return await query.ToListAsync();
         }
 
         public async Task<List<Event>> GetEventsToUpdateStatusAsync()

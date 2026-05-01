@@ -5,10 +5,10 @@ namespace VolunTrack.Repositories
     public interface IEventRepository
     {
         Task<Event?> GetByIdAsync(int id);
-        Task<List<Event>> GetAllAsync();
-        Task<List<Event>> GetUpcomingAsync();
+        Task<List<Event>> GetAllAsync(string? searchTerm = null);
+        Task<List<Event>> GetUpcomingAsync(string? searchTerm = null);
         Task<List<Event>> GetByCategoryIdsAsync(List<int> categoryIds);
-        Task<List<Event>> GetByCoordinatorIdAsync(int coordinatorId);
+        Task<List<Event>> GetByCoordinatorIdAsync(int coordinatorId, string? searchTerm = null);
         Task<List<Event>> GetEventsToUpdateStatusAsync();
         Task<List<Event>> GetEventsByDateRangeAsync(DateTime start, DateTime end);
         Task<EventPhoto?> GetPhotoByIdAsync(int photoId);

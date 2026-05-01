@@ -29,23 +29,23 @@ namespace VolunTrack.Controllers.Api
 
         [Authorize]
         [HttpGet("upcoming")]
-        public async Task<IActionResult> GetUpcoming()
+        public async Task<IActionResult> GetUpcoming([FromQuery] string? search)
         {
             var userId = int.Parse(User.FindFirstValue(ClaimTypes.NameIdentifier)!);
             var userRole = User.FindFirstValue(ClaimTypes.Role)!;
 
-            var events = await _eventService.GetEventsAsync("upcoming", userId, userRole);
+            var events = await _eventService.GetEventsAsync("upcoming", userId, userRole, search);
             return Ok(events);
         }
 
         [Authorize(Roles = "EventCoordinator,RegionCoordinator,Administrator")]
         [HttpGet("my")]
-        public async Task<IActionResult> GetMyEvents()
+        public async Task<IActionResult> GetMyEvents([FromQuery] string? search)
         {
             var userId = int.Parse(User.FindFirstValue(ClaimTypes.NameIdentifier)!);
             var userRole = User.FindFirstValue(ClaimTypes.Role)!;
 
-            var events = await _eventService.GetEventsAsync("my", userId, userRole);
+            var events = await _eventService.GetEventsAsync("my", userId, userRole, search);
             return Ok(events);
         }
 

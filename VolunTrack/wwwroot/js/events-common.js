@@ -8,9 +8,15 @@
         container.innerHTML = '';
 
         if (events.length == 0) {
+            container.style.fontSize = '28px';
+            container.style.textAlign = 'center';
+            container.style.justifyContent = 'center';
             container.innerHTML = `<p>События не найдены</p>`;
             return;
-        }
+        } 
+        
+        container.style.textAlign = 'start';
+        container.style.justifyContent = 'start';
 
         events.forEach(e => {
             const div = document.createElement('div');

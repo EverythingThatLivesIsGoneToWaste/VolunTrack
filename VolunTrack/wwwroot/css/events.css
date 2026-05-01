@@ -37,6 +37,8 @@
     black 20px,  
     black calc(100% - 30px), 
     transparent 100%);
+
+    min-width: 650px;
 }
 
 .event-item {
@@ -405,4 +407,8 @@
     overflow: hidden;
     height: 100%;
     width: 100%;
+}
+
+.search-section {
+    width: fit-content;
 }
