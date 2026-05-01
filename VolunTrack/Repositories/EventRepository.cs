@@ -73,6 +73,14 @@ namespace VolunTrack.Repositories
                 .ToListAsync();
         }
 
+        public async Task<List<Event>> GetEventsByDateRangeAsync(DateTime start, DateTime end)
+        {
+            return await _context.Events
+                .Where(e => e.StartDateTime >= start && e.StartDateTime < end)
+                .Include(e => e.Participations)
+                .ToListAsync();
+        }
+
         public async Task<EventPhoto?> GetPhotoByIdAsync(int photoId)
         {
             return await _context.EventPhotos.FirstOrDefaultAsync(p => p.Id == photoId);

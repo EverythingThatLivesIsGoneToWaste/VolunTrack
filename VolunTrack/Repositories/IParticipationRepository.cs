@@ -1,4 +1,5 @@
-﻿using VolunTrack.Models;
+﻿using VolunTrack.DTO;
+using VolunTrack.Models;
 
 namespace VolunTrack.Repositories
 {
@@ -10,6 +11,7 @@ namespace VolunTrack.Repositories
         Task<List<Event>> GetUpcomingEventsByUserIdAsync(int userId);
         Task<List<Event>> GetCompletedEventsByUserIdAsync(int userId);
         Task<List<Participation>> GetByEventIdAsync(int eventId);
+        Task<List<ParticipantDto>> GetConfirmedParticipantsByEventIdAsync(int eventId);
 
         Task AddAsync(Participation participation);
         Task UpdateAsync(Participation participation);

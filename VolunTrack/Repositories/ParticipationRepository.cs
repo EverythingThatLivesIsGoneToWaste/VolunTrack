@@ -1,5 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using VolunTrack.Data;
+using VolunTrack.DTO;
 using VolunTrack.Enums;
 using VolunTrack.Models;
 
@@ -36,6 +37,16 @@ namespace VolunTrack.Repositories
                .Include(p => p.User)
                .Where(p => p.EventId == eventId)
                .ToListAsync();
+        }
+
+        public async Task<List<ParticipantDto>> GetConfirmedParticipantsByEventIdAsync(int eventId)
+        {
+            var participations = await _context.Participations
+                .Where(p => p.EventId == eventId && p.Status != ParticipationStatus.Rejected)
+                .Include(p => p.User)
+                .ToListAsync();
+
+            return [..participations.Select(p => ParticipantDto.FromEntity(p, false))];
         }
 
         public async Task AddAsync(Participation participation)

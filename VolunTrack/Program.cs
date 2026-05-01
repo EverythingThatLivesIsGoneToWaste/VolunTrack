@@ -42,6 +42,10 @@ builder.Services.AddDbContext<ApplicationDbContext>(options =>
     }
 });
 
+// EmailSettings configuration
+builder.Services.Configure<EmailSettings>(builder.Configuration.GetSection("EmailSettings"));
+builder.Services.AddScoped<IEmailService, EmailService>();
+
 builder.Services.AddHttpContextAccessor();
 
 // Add services and repositories
@@ -61,6 +65,7 @@ builder.Services.AddScoped<IParticipationService, ParticipationService>();
 builder.Services.AddScoped<ICategoryService, CategoryService>();
 builder.Services.AddScoped<IUserService, UserService>();
 builder.Services.AddScoped<IAnalyticsService, AnalyticsService>();
+builder.Services.AddScoped<IEmailService, EmailService>();
 
 // Authentication setup
 builder.Services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme)
@@ -85,6 +90,14 @@ builder.Services.AddQuartz(q =>
         .ForJob(jobKey)
         .WithIdentity("UpdateEventStatus-trigger")
         .WithCronSchedule("0 * * * * ?"));
+
+    var reminderJobKey = new JobKey("EventReminderJob");
+    q.AddJob<EventReminderJob>(opts => opts.WithIdentity(reminderJobKey));
+
+    q.AddTrigger(opts => opts
+        .ForJob(reminderJobKey)
+        .WithIdentity("EventReminderJob-trigger")
+        .WithCronSchedule("0 0 8 ? * * *"));
 });
 
 builder.Services.AddQuartzHostedService(q => q.WaitForJobsToComplete = true);

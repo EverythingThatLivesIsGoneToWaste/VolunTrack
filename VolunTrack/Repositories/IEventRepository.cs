@@ -10,6 +10,7 @@ namespace VolunTrack.Repositories
         Task<List<Event>> GetByCategoryIdsAsync(List<int> categoryIds);
         Task<List<Event>> GetByCoordinatorIdAsync(int coordinatorId);
         Task<List<Event>> GetEventsToUpdateStatusAsync();
+        Task<List<Event>> GetEventsByDateRangeAsync(DateTime start, DateTime end);
         Task<EventPhoto?> GetPhotoByIdAsync(int photoId);
         Task<Attachment?> GetDocumentByIdAsync(int attachmentId);
 
