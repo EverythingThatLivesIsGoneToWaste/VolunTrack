@@ -480,18 +480,22 @@ namespace VolunTrack.Tests.Integration
             };
             await _participationRepository.AddAsync(participation_3);
 
-            var result = await _analyticsRepository.GetTotalHoursByCategoryAsync();
+            var repositoryResult = await _analyticsRepository.GetTotalHoursByCategoryAsync();
+            var actual = repositoryResult.ToDictionary(
+                item => item.Key.Name,
+                item => item.Value
+            );
 
-            var expectedCategoryCounts = new Dictionary<string, decimal>
+            var expected = new Dictionary<string, decimal>
             {
                 { ecoCategory.Name, 5.5m },
                 { socialCategory.Name, 8.5m },
                 { eventCategory.Name, 6.2m }
             };
 
-            foreach (var kvp in expectedCategoryCounts)
+            foreach (var (name, hours) in expected)
             {
-                Assert.Equal(kvp.Value, result[kvp.Key]);
+                Assert.Equal(hours, actual[name]);
             }
         }
 
