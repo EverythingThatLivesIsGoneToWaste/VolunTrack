@@ -1,5 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using VolunTrack.Data;
+using VolunTrack.DTO;
 using VolunTrack.Enums;
 using VolunTrack.Models;
 
@@ -149,6 +150,50 @@ namespace VolunTrack.Repositories
         {
             return await _context.UserLeaderAssignments
                 .AnyAsync(ula => ula.UserId == userId && ula.EventId == eventId);
+        }
+
+        public async Task<List<UserReportDto>> GetUsersForReportAsync(bool? isActive, DateOnly? fromDate, DateOnly? toDate)
+        {
+            var query = _context.Users.AsQueryable();
+
+            if (isActive.HasValue)
+                query = query.Where(u => u.IsActive == isActive.Value);
+
+            if (fromDate.HasValue)
+            {
+                var fromUtc = fromDate.Value.ToDateTime(TimeOnly.MinValue).ToUniversalTime();
+                query = query.Where(u => u.CreatedAtUtc.Date >= fromUtc);
+            }
+
+            if (toDate.HasValue)
+            {
+                var toUtc = toDate.Value.ToDateTime(TimeOnly.MaxValue).ToUniversalTime();
+                query = query.Where(u => u.CreatedAtUtc.Date <= toUtc);
+            }
+
+            var users = await query
+                .Select(u => new UserReportDto
+                {
+                    Id = u.Id,
+                    Login = u.Login,
+                    FullName = u.FullName,
+                    Phone = u.Phone,
+                    Email = u.Email,
+                    Role = u.Role,
+                    IsActive = u.IsActive,
+                    RegisteredAt = u.CreatedAtUtc,
+                    TotalConfirmedHours = u.Participations
+                    .Where(p => p.Status == ParticipationStatus.Approved)
+                    .Sum(p => p.TotalHours),
+                    CompletedEventsCount = u.Participations
+                    .Where(p => p.Status == ParticipationStatus.Approved)
+                    .Select(p => p.EventId)
+                    .Distinct()
+                    .Count(),
+                })
+                .ToListAsync();
+
+            return users;
         }
     }
 }

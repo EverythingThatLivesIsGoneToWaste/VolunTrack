@@ -1,4 +1,5 @@
-﻿using VolunTrack.Enums;
+﻿using VolunTrack.DTO;
+using VolunTrack.Enums;
 using VolunTrack.Models;
 
 namespace VolunTrack.Repositories
@@ -31,5 +32,7 @@ namespace VolunTrack.Repositories
         Task RemoveAsync(User user);
 
         Task<bool> IsLeaderOfEventAsync(int userId, int eventId);
+
+        Task<List<UserReportDto>> GetUsersForReportAsync(bool? isActive, DateOnly? fromDate, DateOnly? toDate);
     }
 }

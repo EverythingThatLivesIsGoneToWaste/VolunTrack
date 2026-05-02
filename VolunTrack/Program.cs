@@ -1,13 +1,14 @@
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.EntityFrameworkCore;
+using OfficeOpenXml;
+using Quartz;
 using System.Text.Json.Serialization;
 using VolunTrack.Data;
+using VolunTrack.Jobs;
+using VolunTrack.Middlewares;
 using VolunTrack.Models;
 using VolunTrack.Repositories;
 using VolunTrack.Services;
-using VolunTrack.Middlewares;
-using VolunTrack.Jobs;
-using Quartz;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -66,6 +67,7 @@ builder.Services.AddScoped<ICategoryService, CategoryService>();
 builder.Services.AddScoped<IUserService, UserService>();
 builder.Services.AddScoped<IAnalyticsService, AnalyticsService>();
 builder.Services.AddScoped<IEmailService, EmailService>();
+builder.Services.AddScoped<IReportService, ReportService>();
 
 // Authentication setup
 builder.Services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme)
