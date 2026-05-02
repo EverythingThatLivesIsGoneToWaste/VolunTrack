@@ -39,7 +39,7 @@ namespace VolunTrack.Controllers.Api
             }
         }
 
-        [Authorize(Roles = "Administrator")]
+        [Authorize(Roles = "Administrator,RegionCoordinator")]
         [HttpGet("stats/admin")]
         public async Task<IActionResult> GetAdminStatistics()
         {

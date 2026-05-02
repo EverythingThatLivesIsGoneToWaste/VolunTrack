@@ -21,7 +21,7 @@ async function fetchAdminStats() {
 }
 
 async function loadStatistics() {
-    const isAdmin = window.userRole === 'Administrator';
+    const canSeeGlobalStats = window.userRole === 'Administrator' || window.userRole === 'RegionCoordinator';
 
     try {
         const userStats = await fetchUserStats();
@@ -40,7 +40,7 @@ async function loadStatistics() {
         renderHoursByStatus(userStats.hoursByStatus);
         renderEventsByCategory(userStats.eventsByCategory);
 
-        if (isAdmin) {
+        if (canSeeGlobalStats) {
             const adminStats = await fetchAdminStats();
 
             document.getElementById('totalUsers').textContent = adminStats.totalUsers;
