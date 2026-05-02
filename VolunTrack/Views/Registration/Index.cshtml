@@ -10,9 +10,8 @@
 
 @model RegisterDto
 
+<h1>Зарегистрироваться как волонтёр</h1>
 <form id="registerForm" method="post" asp-controller="Registration" asp-action="Index">
-
-    <h1>Зарегистрироваться<br>как волонтёр</h1>
     <div class="input-group">
         <label for="inputLogin">Придумайте логин</label>
         <input type="text" id="inputLogin" asp-for="Login" maxlength="50">
@@ -43,7 +42,7 @@
         <input type="password" id="inputAgainPassword">
     </div>
 
-    <div class="input-group" id="categories-selection">
+    <div class="input-group" id="categories-selection" title="Shift + колесико мыши для выбора">
         <p>Выберите, чем вы интересуетесь/в чем имеете навыки</p>
         <div class="categories-container" id="categories-container">
 
