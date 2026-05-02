@@ -19,8 +19,9 @@ main {
     flex-direction: column;
 }
 
-.events-container {
-    height: 80vh;
+.user-section {
+    max-height: 55vh;
+    min-width: 600px;
 }
 
 .user-info-card, .my-events-history {
@@ -42,6 +43,7 @@ main {
 .my-events-history {
     flex-direction: column;
     gap: 12px;
+    height: 50vh;
 }
 
 .user-info {
@@ -105,6 +107,8 @@ main {
     display: flex;
     flex-direction: column;
     gap: 20px;
+    overflow-x: auto;
+    height: 100%;
 }
 
 .user-event-item {
