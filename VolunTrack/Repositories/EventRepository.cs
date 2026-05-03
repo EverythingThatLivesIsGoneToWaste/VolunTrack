@@ -1,5 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using VolunTrack.Data;
+using VolunTrack.DTO;
 using VolunTrack.Enums;
 using VolunTrack.Models;
 
@@ -229,6 +230,51 @@ namespace VolunTrack.Repositories
                 _context.UserLeaderAssignments.Remove(assignment);
                 await _context.SaveChangesAsync();
             }
+        }
+
+        public async Task<List<EventReportDto>> GetEventsForReportAsync(DateOnly? fromDate, DateOnly? toDate, EventStatus? status)
+        {
+            var query = _context.Events.AsQueryable();
+
+            if (fromDate.HasValue)
+            {
+                var fromUtc = fromDate.Value.ToDateTime(TimeOnly.MinValue).ToUniversalTime();
+                query = query.Where(e => e.StartDateTime >= fromUtc);
+            }
+
+            if (toDate.HasValue)
+            {
+                var toUtc = toDate.Value.ToDateTime(TimeOnly.MaxValue).ToUniversalTime();
+                query = query.Where(e => e.EndDateTime <= toUtc);
+            }
+
+            if (status.HasValue)
+            {
+                query = query.Where(e => e.Status == status);
+            }
+
+            var events = await query
+                .Select(e => new EventReportDto
+                {
+                    Id = e.Id,
+                    Name = e.Name,
+                    Description = e.Description,
+                    Place = e.Place,
+                    StartDateTime = e.StartDateTime,
+                    EndDateTime = e.EndDateTime,
+                    Status = e.Status,
+                    ParticipantsCount = e.Participations
+                        .Count(p => p.Status == ParticipationStatus.Approved),
+                    TotalHours = (decimal)e.EndDateTime.Subtract(e.StartDateTime).TotalHours,
+                    AverageParticipantsHours = e.Participations
+                        .Any(p => p.Status == ParticipationStatus.Approved) ? e.Participations
+                        .Where(p => p.Status == ParticipationStatus.Approved)
+                        .Average(p => p.TotalHours) : 0,
+                    Categories = string.Join(", ", e.EventCategories.Select(c => c.Category.Name))
+                })
+                .ToListAsync();
+
+            return events;
         }
     }
 }

@@ -1,4 +1,7 @@
-﻿using VolunTrack.Models;
+﻿using System.Net.NetworkInformation;
+using VolunTrack.DTO;
+using VolunTrack.Enums;
+using VolunTrack.Models;
 
 namespace VolunTrack.Repositories
 {
@@ -33,5 +36,7 @@ namespace VolunTrack.Repositories
         Task<List<int>> GetEventLeadersIdsAsync(int eventId);
         Task AssignLeaderAsync(UserLeaderAssignment assignment);
         Task RemoveLeaderAsync(int userId, int eventId);
+
+        Task<List<EventReportDto>> GetEventsForReportAsync(DateOnly? fromDate, DateOnly? toDate, EventStatus? status);
     }
 }

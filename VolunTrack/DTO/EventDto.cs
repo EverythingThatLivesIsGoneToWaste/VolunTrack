@@ -56,5 +56,18 @@ namespace VolunTrack.DTO
 
             return dto;
         }
+
+        public static string GetStatusName(EventStatus status)
+        {
+            return status switch
+            {
+                EventStatus.Draft => "Черновик",
+                EventStatus.Published => "Опубликовано",
+                EventStatus.InProgress => "Идет",
+                EventStatus.Completed => "Завершено",
+                EventStatus.Cancelled => "Отменено",
+                _ => "Неизвестно"
+            };
+        }
     }
 }
