@@ -33,5 +33,16 @@ namespace VolunTrack.DTO
                 UserId = participation.UserId,
             };
         }
+
+        public static string GetParticipationStatusName(ParticipationStatus status)
+        {
+            return status switch
+            {
+                ParticipationStatus.Pending => "На проверке",
+                ParticipationStatus.Approved => "Подтверждено",
+                ParticipationStatus.Rejected => "Отклонено",
+                _ => "Неизвестно"
+            };
+        }
     }
 }

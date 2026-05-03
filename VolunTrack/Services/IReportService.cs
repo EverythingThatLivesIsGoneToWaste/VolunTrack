@@ -6,5 +6,6 @@ namespace VolunTrack.Services
     {
         Task<byte[]> GenerateUserReportAsync(bool? isActive, DateOnly? fromDate, DateOnly? toDate);
         Task<byte[]> GenerateEventReportAsync(DateOnly? fromDate, DateOnly? toDate, EventStatus? status);
+        Task<byte[]> GenerateHoursReportAsync(int? eventId, DateOnly? fromDate, DateOnly? toDate, ParticipationStatus? status, bool? moderated);
     }
 }

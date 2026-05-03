@@ -68,6 +68,9 @@ namespace VolunTrack.Controllers.Api
 
                 var userRole = User.FindFirstValue(ClaimTypes.Role)!;
 
+                dto.CheckInTime = dto.CheckInTime.ToUniversalTime();
+                dto.CheckOutTime = dto.CheckOutTime.ToUniversalTime();
+
                 var result = await _participationService.UpdateHoursAsync(participationId, dto, claimsUserId, userRole);
                 return Ok(result);
             }

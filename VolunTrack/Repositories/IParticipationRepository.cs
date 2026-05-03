@@ -1,5 +1,6 @@
 ﻿using VolunTrack.DTO;
 using VolunTrack.Models;
+using VolunTrack.Enums;
 
 namespace VolunTrack.Repositories
 {
@@ -19,5 +20,7 @@ namespace VolunTrack.Repositories
         Task UpdateConfirmationAsync(Participation participation, bool byCoordinator, bool byLeader);
 
         Task<bool> ExistsAsync(int userId, int eventId);
+
+        Task<List<HourReportDto>> GetHoursStatsForReportAsync(int? eventId, DateOnly? fromDate, DateOnly? toDate, ParticipationStatus? status, bool? moderated);
     }
 }

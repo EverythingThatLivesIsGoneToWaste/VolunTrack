@@ -114,5 +114,58 @@ namespace VolunTrack.Repositories
                 .Select(p => p.Event)
                 .ToListAsync();
         }
+
+        public async Task<List<HourReportDto>> GetHoursStatsForReportAsync(int? eventId, DateOnly? fromDate, DateOnly? toDate, ParticipationStatus? status, bool? moderated)
+        {
+            var query = _context.Participations.AsQueryable();
+
+            if (eventId.HasValue)
+            {
+                query = query.Where(p => p.EventId == eventId);
+            }
+            else
+            {
+                if (fromDate.HasValue)
+                {
+                    var fromUtc = fromDate.Value.ToDateTime(TimeOnly.MinValue).ToUniversalTime();
+                    query = query.Where(p => p.Event.StartDateTime >= fromUtc);
+                }
+
+                if (toDate.HasValue)
+                {
+                    var toUtc = toDate.Value.ToDateTime(TimeOnly.MaxValue).ToUniversalTime();
+                    query = query.Where(p => p.Event.EndDateTime <= toUtc);
+                }
+            }
+
+            if (status.HasValue)
+            {
+                query = query.Where(p => p.Status == status);
+            }
+
+            if (moderated.HasValue)
+            {
+                query = query.Where(p => p.HoursModerated == moderated);
+            }
+
+            var hoursStats = await query.Select(p => new HourReportDto
+            {
+                EventId = p.Event.Id,
+                EventName = p.Event.Name,
+                UserId = p.User.Id,
+                Login = p.User.Login,
+                FullName = p.User.FullName,
+                RecordedHours = p.TotalHours,
+                ParticipationStatus = p.Status,
+                ConfirmedByLeader = p.IsConfirmedByLeader,
+                ConfirmedByCoordinator = p.IsConfirmedByCoordinator,
+                Moderated = p.HoursModerated
+            })
+            .OrderBy(x => x.EventId)
+            .ThenBy(x => x.UserId)
+            .ToListAsync();
+
+            return hoursStats;
+        }
     }
 }

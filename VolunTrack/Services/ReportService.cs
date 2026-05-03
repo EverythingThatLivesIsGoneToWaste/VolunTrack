@@ -10,14 +10,17 @@ namespace VolunTrack.Services
     {
         private readonly IUserRepository _userRepository;
         private readonly IEventRepository _eventRepository;
+        private readonly IParticipationRepository _participationRepository;
 
         public ReportService(
             IUserRepository userRepository, 
-            IEventRepository eventRepository)
+            IEventRepository eventRepository,
+            IParticipationRepository participationRepository)
         {
             ExcelPackage.License.SetNonCommercialPersonal("VolunTrack");
             _userRepository = userRepository;
             _eventRepository = eventRepository;
+            _participationRepository = participationRepository;
         }
 
         public async Task<byte[]> GenerateUserReportAsync(bool? isActive, DateOnly? fromDate, DateOnly? toDate)
@@ -111,6 +114,57 @@ namespace VolunTrack.Services
 
             var totalRows = events.Count + 1;
             var totalCols = 11;
+
+            using (var range = worksheet.Cells[1, 1, totalRows, totalCols])
+            {
+                range.Style.Border.Top.Style = ExcelBorderStyle.Thin;
+                range.Style.Border.Bottom.Style = ExcelBorderStyle.Thin;
+                range.Style.Border.Left.Style = ExcelBorderStyle.Thin;
+                range.Style.Border.Right.Style = ExcelBorderStyle.Thin;
+            }
+
+            worksheet.Cells.AutoFitColumns();
+            return await package.GetAsByteArrayAsync();
+        }
+
+        public async Task<byte[]> GenerateHoursReportAsync(int? eventId, DateOnly? fromDate, DateOnly? toDate, ParticipationStatus? status, bool? moderated)
+        {
+            var hoursStats = await _participationRepository.GetHoursStatsForReportAsync(eventId, fromDate, toDate, status, moderated);
+
+            using var package = new ExcelPackage();
+            var worksheet = package.Workbook.Worksheets.Add("HoursStats");
+
+            worksheet.Cells[1, 1].Value = "ID События";
+            worksheet.Cells[1, 2].Value = "Название";
+            worksheet.Cells[1, 3].Value = "ID Пользователя";
+            worksheet.Cells[1, 4].Value = "Логин";
+            worksheet.Cells[1, 5].Value = "ФИО";
+            worksheet.Cells[1, 6].Value = "Записанные часы";
+            worksheet.Cells[1, 7].Value = "Статус посещения";
+            worksheet.Cells[1, 8].Value = "Подтверждено лидером";
+            worksheet.Cells[1, 9].Value = "Подтверждено координатором";
+            worksheet.Cells[1, 10].Value = "Модерировано";
+
+            var headerRange = worksheet.Cells[1, 1, 1, 10];
+            headerRange.Style.Fill.PatternType = ExcelFillStyle.Solid;
+            headerRange.Style.Fill.BackgroundColor.SetColor(System.Drawing.Color.LightGray);
+
+            for (int i = 0; i < hoursStats.Count; i++)
+            {
+                worksheet.Cells[i + 2, 1].Value = hoursStats[i].EventId;
+                worksheet.Cells[i + 2, 2].Value = hoursStats[i].EventName;
+                worksheet.Cells[i + 2, 3].Value = hoursStats[i].UserId;
+                worksheet.Cells[i + 2, 4].Value = hoursStats[i].Login;
+                worksheet.Cells[i + 2, 5].Value = hoursStats[i].FullName;
+                worksheet.Cells[i + 2, 6].Value = Math.Round(hoursStats[i].RecordedHours, 2);
+                worksheet.Cells[i + 2, 7].Value = ParticipationDto.GetParticipationStatusName(hoursStats[i].ParticipationStatus);
+                worksheet.Cells[i + 2, 8].Value = hoursStats[i].ConfirmedByLeader ? "Да" : "Нет";
+                worksheet.Cells[i + 2, 9].Value = hoursStats[i].ConfirmedByCoordinator ? "Да" : "Нет";
+                worksheet.Cells[i + 2, 10].Value = hoursStats[i].Moderated ? "Да" : "Нет";
+            }
+
+            var totalRows = hoursStats.Count + 1;
+            var totalCols = 10;
 
             using (var range = worksheet.Cells[1, 1, totalRows, totalCols])
             {

@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System.Security.Claims;
+using VolunTrack.DTO;
 using VolunTrack.Enums;
 using VolunTrack.Services;
 
@@ -59,6 +60,27 @@ namespace VolunTrack.Controllers.Api
             catch (Exception ex)
             {
                 _logger.LogError(ex, "Error getting{Status}events started from {FromDate} to {ToDate}", $" {status?.ToString().ToLower() ?? ""} ", fromDate, toDate);
+                return StatusCode(500, new { message = "Internal server error" });
+            }
+        }
+
+        [Authorize(Roles = "Administrator,RegionCoordinator")]
+        [HttpGet("/api/reports/hours/export")]
+        public async Task<IActionResult> ExportHoursReport([FromQuery] HoursReportRequestDto dto)
+        {
+            try
+            {
+                var claimsUserIdString = User.FindFirstValue(ClaimTypes.NameIdentifier);
+                if (!int.TryParse(claimsUserIdString, out _))
+                    return BadRequest("Invalid user ID in token");
+
+                var excelBytes = await _reportService.GenerateHoursReportAsync(dto.EventId, dto.FromDate, dto.ToDate, dto.Status, dto.Moderated);
+                return File(excelBytes, "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet", "hours_report.xlsx");
+            }
+            catch (Exception ex)
+            {
+                var eventInfo = dto.EventId == null ? "events" : $"event {dto.EventId}";
+                _logger.LogError(ex, "Error getting hours statistics for {EventInfo} started from {FromDate} to {ToDate}", eventInfo, dto.FromDate, dto.ToDate);
                 return StatusCode(500, new { message = "Internal server error" });
             }
         }
