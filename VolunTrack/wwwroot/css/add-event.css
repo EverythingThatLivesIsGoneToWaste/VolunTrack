@@ -37,14 +37,19 @@ form input {
 
 .input-group-period {
     display: flex;
+    flex-direction: row;
+    padding: 0;
     gap: 20px;
     justify-content: space-between;
+    background-color: inherit;
 }
 
 .date-group {
     display: flex;
+    font-size: 24px;
     flex-direction: column;
-    width: 42%;
+    gap: 6px;
+    width: 48%;
 }
 
 .input-group-period input {
@@ -103,57 +108,6 @@ form input {
     display: flex;
     align-items: center;
     gap: 12px;
-}
-
-/* Custom checkboxes */
-.category-item .checkbox-wrapper {
-    width: 28px;
-    height: 28px;
-    display: inline-block;
-    align-items: center;
-}
-
-.category-item .checkbox-wrapper .round {
-    position: relative;
-}
-
-.category-item .checkbox-wrapper .round label {
-    background-color: #fff;
-    border: 2px solid #000;
-    cursor: pointer;
-    height: 28px;
-    width: 28px;
-    display: block;
-    transition: all 0.2s ease;
-}
-
-.category-item .checkbox-wrapper .round label:after {
-    border: 2px solid #fff;
-    border-top: none;
-    border-right: none;
-    content: "";
-    height: 6px;
-    left: 8px;
-    opacity: 0;
-    position: absolute;
-    top: 9px;
-    transform: rotate(-45deg);
-    width: 12px;
-}
-
-.category-item .checkbox-wrapper .round input[type="checkbox"] {
-    visibility: hidden;
-    display: none;
-    opacity: 0;
-}
-
-.category-item .checkbox-wrapper .round input[type="checkbox"]:checked + label {
-    background-color: #4a90e2;
-    border-color: #4a90e2;
-}
-
-.category-item .checkbox-wrapper .round input[type="checkbox"]:checked + label:after {
-    opacity: 1;
 }
 
 .category-item > label {
