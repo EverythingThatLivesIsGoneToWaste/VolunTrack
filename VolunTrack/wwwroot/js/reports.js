@@ -3,8 +3,6 @@
     if (btn) {
         const container = btn.closest(".generate-group");
 
-        const status = (includeActive && includeBlocked) ? '' : (includeActive ? true : false);
-
         const fromDate = container.querySelector("#inputFromDate").value;
         const toDate = container.querySelector("#inputToDate").value;
 
@@ -20,6 +18,8 @@
             showToast("По крайней мере один флаг должен быть отмечен", "alert");
             return;
         }
+
+        const status = (includeActive && includeBlocked) ? '' : (includeActive ? true : false);
 
         try {
             const baseUrl = '/api/reports/users/export';
