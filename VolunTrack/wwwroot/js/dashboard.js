@@ -99,7 +99,7 @@ async function loadUserEvents(url) {
 
                     hoursDisplayHtml = `
                         <div class="hours-status ${statusClass}" title="${statusText}">
-                            ${e.totalHours?.toFixed(1)} ч
+                            ${e.totalHours?.toFixed(2)} ч
                         </div>
                     `;
                 } else {
