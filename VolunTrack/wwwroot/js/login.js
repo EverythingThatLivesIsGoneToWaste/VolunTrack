@@ -38,6 +38,7 @@ function validateForm(e) {
     if (serverErrorDiv !== null) serverErrorDiv.style.display = "none";
 
     if (errors.length > 0) {
+        showToast("Одно или несколько полей заполнены неверно", "alert", 4000);
         e.preventDefault();
         clientErrorDiv.style.display = "block";
 
