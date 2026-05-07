@@ -30,37 +30,33 @@ namespace VolunTrack.Services
             using var package = new ExcelPackage();
             var worksheet = package.Workbook.Worksheets.Add("Users");
 
-            worksheet.Cells[1, 1].Value = "ID";
-            worksheet.Cells[1, 2].Value = "Логин";
-            worksheet.Cells[1, 3].Value = "ФИО";
-            worksheet.Cells[1, 4].Value = "Телефон";
-            worksheet.Cells[1, 5].Value = "Почта";
-            worksheet.Cells[1, 6].Value = "Роль";
-            worksheet.Cells[1, 7].Value = "Статус";
-            worksheet.Cells[1, 8].Value = "Зарегистрирован";
-            worksheet.Cells[1, 9].Value = "Подтвержденные часы";
-            worksheet.Cells[1, 10].Value = "Завершенные события";
+            worksheet.Cells[1, 1].Value = "ФИО";
+            worksheet.Cells[1, 2].Value = "Телефон";
+            worksheet.Cells[1, 3].Value = "Почта";
+            worksheet.Cells[1, 4].Value = "Роль";
+            worksheet.Cells[1, 5].Value = "Статус";
+            worksheet.Cells[1, 6].Value = "Зарегистрирован";
+            worksheet.Cells[1, 7].Value = "Подтвержденные часы";
+            worksheet.Cells[1, 8].Value = "Завершенные события";
 
-            var headerRange = worksheet.Cells[1, 1, 1, 10];
+            var headerRange = worksheet.Cells[1, 1, 1, 8];
             headerRange.Style.Fill.PatternType = ExcelFillStyle.Solid;
             headerRange.Style.Fill.BackgroundColor.SetColor(System.Drawing.Color.LightGray);
 
             for (int i = 0; i < users.Count; i++)
             {
-                worksheet.Cells[i + 2, 1].Value = users[i].Id;
-                worksheet.Cells[i + 2, 2].Value = users[i].Login;
-                worksheet.Cells[i + 2, 3].Value = users[i].FullName;
-                worksheet.Cells[i + 2, 4].Value = users[i].Phone;
-                worksheet.Cells[i + 2, 5].Value = users[i].Email;
-                worksheet.Cells[i + 2, 6].Value = UserDto.GetRoleName(users[i].Role);
-                worksheet.Cells[i + 2, 7].Value = users[i].IsActive ? "Активен" : "Заблокирован";
-                worksheet.Cells[i + 2, 8].Value = users[i].RegisteredAt.ToString("dd.MM.yyyy HH:mm");
-                worksheet.Cells[i + 2, 9].Value = Math.Round(users[i].TotalConfirmedHours, 2);
-                worksheet.Cells[i + 2, 10].Value = users[i].CompletedEventsCount;
+                worksheet.Cells[i + 2, 1].Value = users[i].FullName;
+                worksheet.Cells[i + 2, 2].Value = users[i].Phone;
+                worksheet.Cells[i + 2, 3].Value = users[i].Email;
+                worksheet.Cells[i + 2, 4].Value = UserDto.GetRoleName(users[i].Role);
+                worksheet.Cells[i + 2, 5].Value = users[i].IsActive ? "Активен" : "Заблокирован";
+                worksheet.Cells[i + 2, 6].Value = users[i].RegisteredAt.ToString("dd.MM.yyyy HH:mm");
+                worksheet.Cells[i + 2, 7].Value = Math.Round(users[i].TotalConfirmedHours, 2);
+                worksheet.Cells[i + 2, 8].Value = users[i].CompletedEventsCount;
             }
 
             var totalRows = users.Count + 1;
-            var totalCols = 10;
+            var totalCols = 8;
 
             using (var range = worksheet.Cells[1, 1, totalRows, totalCols])
             {
@@ -135,17 +131,15 @@ namespace VolunTrack.Services
             var worksheet = package.Workbook.Worksheets.Add("HoursStats");
 
             worksheet.Cells[1, 1].Value = "ID События";
-            worksheet.Cells[1, 2].Value = "Название";
-            worksheet.Cells[1, 3].Value = "ID Пользователя";
-            worksheet.Cells[1, 4].Value = "Логин";
-            worksheet.Cells[1, 5].Value = "ФИО";
-            worksheet.Cells[1, 6].Value = "Записанные часы";
-            worksheet.Cells[1, 7].Value = "Статус посещения";
-            worksheet.Cells[1, 8].Value = "Подтверждено лидером";
-            worksheet.Cells[1, 9].Value = "Подтверждено координатором";
-            worksheet.Cells[1, 10].Value = "Модерировано";
+            worksheet.Cells[1, 2].Value = "Название события";
+            worksheet.Cells[1, 3].Value = "ФИО";
+            worksheet.Cells[1, 4].Value = "Записанные часы";
+            worksheet.Cells[1, 5].Value = "Статус посещения";
+            worksheet.Cells[1, 6].Value = "Подтверждено лидером";
+            worksheet.Cells[1, 7].Value = "Подтверждено координатором";
+            worksheet.Cells[1, 8].Value = "Модерировано";
 
-            var headerRange = worksheet.Cells[1, 1, 1, 10];
+            var headerRange = worksheet.Cells[1, 1, 1, 8];
             headerRange.Style.Fill.PatternType = ExcelFillStyle.Solid;
             headerRange.Style.Fill.BackgroundColor.SetColor(System.Drawing.Color.LightGray);
 
@@ -153,18 +147,16 @@ namespace VolunTrack.Services
             {
                 worksheet.Cells[i + 2, 1].Value = hoursStats[i].EventId;
                 worksheet.Cells[i + 2, 2].Value = hoursStats[i].EventName;
-                worksheet.Cells[i + 2, 3].Value = hoursStats[i].UserId;
-                worksheet.Cells[i + 2, 4].Value = hoursStats[i].Login;
-                worksheet.Cells[i + 2, 5].Value = hoursStats[i].FullName;
-                worksheet.Cells[i + 2, 6].Value = Math.Round(hoursStats[i].RecordedHours, 2);
-                worksheet.Cells[i + 2, 7].Value = ParticipationDto.GetParticipationStatusName(hoursStats[i].ParticipationStatus);
-                worksheet.Cells[i + 2, 8].Value = hoursStats[i].ConfirmedByLeader ? "Да" : "Нет";
-                worksheet.Cells[i + 2, 9].Value = hoursStats[i].ConfirmedByCoordinator ? "Да" : "Нет";
-                worksheet.Cells[i + 2, 10].Value = hoursStats[i].Moderated ? "Да" : "Нет";
+                worksheet.Cells[i + 2, 3].Value = hoursStats[i].FullName;
+                worksheet.Cells[i + 2, 4].Value = Math.Round(hoursStats[i].RecordedHours, 2);
+                worksheet.Cells[i + 2, 5].Value = ParticipationDto.GetParticipationStatusName(hoursStats[i].ParticipationStatus);
+                worksheet.Cells[i + 2, 6].Value = hoursStats[i].ConfirmedByLeader ? "Да" : "Нет";
+                worksheet.Cells[i + 2, 7].Value = hoursStats[i].ConfirmedByCoordinator ? "Да" : "Нет";
+                worksheet.Cells[i + 2, 8].Value = hoursStats[i].Moderated ? "Да" : "Нет";
             }
 
             var totalRows = hoursStats.Count + 1;
-            var totalCols = 10;
+            var totalCols = 8;
 
             using (var range = worksheet.Cells[1, 1, totalRows, totalCols])
             {
