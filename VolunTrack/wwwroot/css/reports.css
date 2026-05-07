@@ -27,6 +27,17 @@
     font-size: 18px;
 }
 
+.generate-group select {
+    width: 150px;
+    border: 0;
+    border-inline-end: 4px solid rgb(179, 17, 49);
+    cursor: pointer;
+}
+
+.generate-group select:focus {
+    outline: none;
+}
+
 .generate-group button {
     font-size: 22px;
     color: white;
