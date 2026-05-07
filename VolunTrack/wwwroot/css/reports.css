@@ -1,4 +1,8 @@
-﻿.report-controls {
+﻿.container {
+    max-width: 1400px;
+}
+
+.report-controls {
     display: flex;
     gap: 20px;
     flex-wrap: wrap;
@@ -7,7 +11,7 @@
 .generate-group {
     padding: 16px 24px;
     background-color: #eeeeee;
-    min-width: 400px;
+    min-width: 420px;
     border-radius: 16px;
     display: flex;
     flex-direction: column;
@@ -19,6 +23,10 @@
     display: flex;
 }
 
+.checkbox-group, .status-group {
+    font-size: 18px;
+}
+
 .generate-group button {
     font-size: 22px;
     color: white;
@@ -27,6 +35,7 @@
     border: 0;
     background-color: rgb(179, 17, 49);
     transition: all 200ms ease-in-out;
+    margin-top: auto;
 }
 
 .generate-group button:hover {

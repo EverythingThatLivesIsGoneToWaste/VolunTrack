@@ -12,22 +12,34 @@
 
         <div class="date-group">
             <label for="inputFromDateTime">Зарегистрированы с:</label>
-            <input type="datetime-local" id="inputFromDateTime" />
+            <input type="date" id="inputFromDate" />
         </div>
 
         <div class="date-group">
             <label for="inputToDateTime">По:</label>
-            <input type="datetime-local" id="inputToDateTime" />
+            <input type="date" id="inputToDate" />
         </div>
 
         <div class="checkbox-group">
-            <label for="user-status">Отображать только активных:</label>
+            <label for="user-status">Включать активных:</label>
             <div class="checkbox-wrapper">
                 <div class="round">
                     <input type="checkbox"
                            name="user-status"
-                           id="is-active">
+                           id="is-active" checked>
                     <label for="is-active"></label>
+                </div>
+            </div>
+        </div>
+
+        <div class="checkbox-group">
+            <label for="user-status">Включать заблокированных:</label>
+            <div class="checkbox-wrapper">
+                <div class="round">
+                    <input type="checkbox"
+                           name="user-status"
+                           id="is-blocked" checked>
+                    <label for="is-blocked"></label>
                 </div>
             </div>
         </div>
@@ -40,12 +52,12 @@
 
         <div class="date-group">
             <label for="inputFromDateTime">Старт событий с:</label>
-            <input type="datetime-local" id="inputFromDateTime" />
+            <input type="date" id="inputFromDate" />
         </div>
 
         <div class="date-group">
             <label for="inputToDateTime">По:</label>
-            <input type="datetime-local" id="inputToDateTime" />
+            <input type="date" id="inputToDate" />
         </div>
         
         <div class="status-group">
@@ -56,6 +68,7 @@
                 <option value="InProgress">Идёт</option>
                 <option value="Completed" selected>Завершено</option>
                 <option value="Cancelled">Отменено</option>
+                <option value="">Не указывать</option>
             </select>
         </div>
 
@@ -67,12 +80,12 @@
 
         <div class="date-group">
             <label for="inputFromDateTime">Старт событий с:</label>
-            <input type="datetime-local" id="inputFromDateTime" />
+            <input type="date" id="inputFromDate" />
         </div>
 
         <div class="date-group">
             <label for="inputToDateTime">По:</label>
-            <input type="datetime-local" id="inputToDateTime" />
+            <input type="date" id="inputToDate" />
         </div>
         
         <div class="status-group">
@@ -81,7 +94,32 @@
                 <option value="Approved">Подтверждено</option>
                 <option value="Pending" selected>На проверке</option>
                 <option value="Rejected">Отклонено</option>
+                <option value="">Не указывать</option>
             </select>
+        </div>
+
+        <div class="checkbox-group">
+            <label for="moderated-status">Включать не отредактированные часы:</label>
+            <div class="checkbox-wrapper">
+                <div class="round">
+                    <input type="checkbox"
+                           name="not-moderated-status"
+                           id="is-not-moderated" checked>
+                    <label for="is-not-moderated"></label>
+                </div>
+            </div>
+        </div>
+
+        <div class="checkbox-group">
+            <label for="moderated-status">Включать отредактированные часы:</label>
+            <div class="checkbox-wrapper">
+                <div class="round">
+                    <input type="checkbox"
+                           name="moderated-status"
+                           id="is-moderated" checked>
+                    <label for="is-moderated"></label>
+                </div>
+            </div>
         </div>
         
         <button class="generate-hours-report-btn">Сгенерировать</button>
