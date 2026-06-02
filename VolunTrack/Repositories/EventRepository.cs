@@ -1,4 +1,5 @@
 ﻿using Microsoft.EntityFrameworkCore;
+using System.Net.NetworkInformation;
 using VolunTrack.Data;
 using VolunTrack.DTO;
 using VolunTrack.Enums;
@@ -36,10 +37,17 @@ namespace VolunTrack.Repositories
 
             if (!string.IsNullOrWhiteSpace(searchTerm))
             {
+                var format = $"%{searchTerm}%";
+
                 query = query.Where(e =>
-                    EF.Functions.ILike(e.Name, $"%{searchTerm}%") ||
-                    EF.Functions.ILike(e.Description, $"%{searchTerm}%") ||
-                    EF.Functions.ILike(e.Place, $"%{searchTerm}%"));
+                    EF.Functions.ILike(e.Name, format) ||
+                    EF.Functions.ILike(e.Description, format) ||
+                    EF.Functions.ILike(e.Place, format) ||
+                    (e.Status == EventStatus.Draft && EF.Functions.ILike("Черновик", format)) ||
+                    (e.Status == EventStatus.Published && EF.Functions.ILike("Опубликовано", format)) ||
+                    (e.Status == EventStatus.InProgress && EF.Functions.ILike("Идет", format)) ||
+                    (e.Status == EventStatus.Completed && EF.Functions.ILike("Завершено", format)) ||
+                    (e.Status == EventStatus.Cancelled && EF.Functions.ILike("Отменено", format)));
             }
 
             return await query.ToListAsync();
