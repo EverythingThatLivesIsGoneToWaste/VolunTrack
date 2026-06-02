@@ -44,10 +44,25 @@ namespace VolunTrack.Controllers.Web
         [HttpPost]
         public async Task<IActionResult> Edit(UserEditDto dto)
         {
-            if (!ModelState.IsValid)
-                return View(dto);
+            var userIdClaim = User.FindFirstValue(ClaimTypes.NameIdentifier);
+            if (string.IsNullOrEmpty(userIdClaim) || !int.TryParse(userIdClaim, out int userId))
+            {
+                return BadRequest("Invalid user ID");
+            }
 
-            var userId = int.Parse(User.FindFirstValue(ClaimTypes.NameIdentifier)!);
+            dto ??= new UserEditDto();
+
+            if (!ModelState.IsValid)
+            {
+                var user = await _userRepository.GetByIdAsync(userId);
+                var viewModel = new ProfileEditViewModel
+                {
+                    EditDto = dto,
+                    CurrentUser = UserDto.FromEntity(user)
+                };
+
+                return View(viewModel);
+            }
 
             var result = await _profileService.UpdateProfileAsync(userId, dto);
 
@@ -58,7 +73,15 @@ namespace VolunTrack.Controllers.Web
             }
 
             ModelState.AddModelError(string.Empty, result.Message);
-            return View(dto);
+
+            var userForError = await _userRepository.GetByIdAsync(userId);
+            var errorViewModel = new ProfileEditViewModel
+            {
+                EditDto = dto,
+                CurrentUser = UserDto.FromEntity(userForError)
+            };
+
+            return View(errorViewModel);
         }
     }
 }
