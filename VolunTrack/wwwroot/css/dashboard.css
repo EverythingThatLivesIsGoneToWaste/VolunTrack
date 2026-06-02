@@ -28,7 +28,6 @@ main {
     display: flex;
     flex-direction: column;
     gap: 20px;
-    align-items: center;
     padding: 20px;
     border-radius: 30px;
     background-color: #eeeeee;
@@ -125,6 +124,7 @@ main {
 .user-event-header {
     display: flex;
     justify-content: space-between;
+    gap: 10px;
 }
 
 .participants-section {

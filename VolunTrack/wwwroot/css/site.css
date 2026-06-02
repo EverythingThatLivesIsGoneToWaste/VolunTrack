@@ -126,6 +126,7 @@ form h1 {
 .modal-header {
     display: flex;
     justify-content: space-between;
+    gap: 40px;
 }
 
 .close-modal-button img {
