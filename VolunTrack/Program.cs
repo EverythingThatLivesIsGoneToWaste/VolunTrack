@@ -1,6 +1,14 @@
+using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.EntityFrameworkCore;
+using OfficeOpenXml;
+using Quartz;
+using System.Text.Json.Serialization;
 using VolunTrack.Data;
+using VolunTrack.Jobs;
+using VolunTrack.Middlewares;
 using VolunTrack.Models;
+using VolunTrack.Repositories;
+using VolunTrack.Services;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -35,7 +43,84 @@ builder.Services.AddDbContext<ApplicationDbContext>(options =>
     }
 });
 
+// EmailSettings configuration
+builder.Services.Configure<EmailSettings>(builder.Configuration.GetSection("EmailSettings"));
+builder.Services.AddScoped<IEmailService, EmailService>();
+
+builder.Services.AddHttpContextAccessor();
+
+// Add services and repositories
+builder.Services.AddScoped<IUserRepository, UserRepository>();
+builder.Services.AddScoped<ICategoryRepository, CategoryRepository>();
+builder.Services.AddScoped<IEventRepository, EventRepository>();
+builder.Services.AddScoped<IParticipationRepository, ParticipationRepository>();
+builder.Services.AddScoped<IAnalyticsRepository, AnalyticsRepository>();
+
+builder.Services.AddScoped<IPasswordHasher, PasswordHasher>();
+
+builder.Services.AddScoped<IRegistrationService, RegistrationService>();
+builder.Services.AddScoped<ILoginService, LoginService>();
+builder.Services.AddScoped<IProfileService, ProfileService>();
+builder.Services.AddScoped<IEventService, EventService>();
+builder.Services.AddScoped<IParticipationService, ParticipationService>();
+builder.Services.AddScoped<ICategoryService, CategoryService>();
+builder.Services.AddScoped<IUserService, UserService>();
+builder.Services.AddScoped<IAnalyticsService, AnalyticsService>();
+builder.Services.AddScoped<IEmailService, EmailService>();
+builder.Services.AddScoped<IReportService, ReportService>();
+
+// Authentication setup
+builder.Services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme)
+    .AddCookie(options => options.LoginPath = "/Login");
+builder.Services.AddAuthorization();
+
+// Setup enum to string json converter
+builder.Services.AddControllers()
+    .AddJsonOptions(options =>
+    {
+        options.JsonSerializerOptions.Converters.Add(new JsonStringEnumConverter());
+    });
+
+// Configure background jobs using Quartz
+builder.Services.AddQuartz(q =>
+{
+    var jobKey = new JobKey("UpdateEventStatusJob");
+
+    q.AddJob<UpdateEventStatusJob>(opts => opts.WithIdentity(jobKey));
+
+    q.AddTrigger(opts => opts
+        .ForJob(jobKey)
+        .WithIdentity("UpdateEventStatus-trigger")
+        .WithCronSchedule("0 * * * * ?"));
+
+    var reminderJobKey = new JobKey("EventReminderJob");
+    q.AddJob<EventReminderJob>(opts => opts.WithIdentity(reminderJobKey));
+
+    q.AddTrigger(opts => opts
+        .ForJob(reminderJobKey)
+        .WithIdentity("EventReminderJob-trigger")
+        .WithCronSchedule("0 0 8 ? * * *"));
+});
+
+builder.Services.AddQuartzHostedService(q => q.WaitForJobsToComplete = true);
+
 var app = builder.Build();
+
+try
+{
+    using var scope = app.Services.CreateScope();
+    await DbSeeder.SeedAsync(scope.ServiceProvider, app.Configuration);
+}
+catch (Exception ex)
+{
+    var logger = app.Services.GetRequiredService<ILogger<Program>>();
+    logger.LogError(ex, "An error occurred while seeding the database.");
+
+    if (app.Environment.IsDevelopment())
+    {
+        throw;
+    }
+}
 
 // Configure the HTTP request pipeline.
 if (!app.Environment.IsDevelopment())
@@ -48,7 +133,10 @@ if (!app.Environment.IsDevelopment())
 app.UseHttpsRedirection();
 app.UseRouting();
 
+app.UseAuthentication();
 app.UseAuthorization();
+app.UseMiddleware<UserStatusMiddleware>();
+app.UseMiddleware<ValidationExceptionMiddleware>();
 
 app.MapStaticAssets();
 

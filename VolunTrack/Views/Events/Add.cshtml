@@ -1,0 +1,64 @@
+﻿@using VolunTrack.DTO;
+
+@{
+    ViewData["Title"] = "Событие";
+}
+
+@section Styles {
+    <link rel="stylesheet" href="~/css/add-event.css" asp-append-version="true">
+}
+
+@model CreateEventDto
+
+<form id="createEventForm" method="post" asp-controller="Events" asp-action="Add">
+    <h1>Создать новое событие</h1>
+
+    <div class="input-group">
+        <label for="inputName">Как оно будет называться?</label>
+        <input type="text" id="inputName" asp-for="Name" maxlength="80">
+    </div>
+
+    <div class="input-group">
+        <label for="inputDescription">Кратко опишите его</label>
+        <input type="text" id="inputDescription" asp-for="Description" maxlength="200">
+    </div>
+
+    <div class="input-group">
+        <label for="inputPlace">Опишите место проведения (адрес)</label>
+        <input type="text" id="inputPlace" asp-for="Place" maxlength="200">
+    </div>
+
+    <div class="input-group-period">
+        <div class="date-group">
+            <label for="inputStartDateTime">Начало</label>
+            <input type="datetime-local" id="inputStartDateTime" asp-for="StartDateTime" />
+        </div>
+                        
+        <div class="date-group">
+            <label for="inputEndDateTime">Окончание</label>
+            <input type="datetime-local" id="inputEndDateTime" asp-for="EndDateTime" />
+        </div>
+    </div>
+
+    <div class="input-group">
+        <label for="inputSkills">Опционально опишите необходимые навыки</label>
+        <input type="text" id="inputSkills" asp-for="SkillsRequired" maxlength="150">
+    </div>
+
+    <div class="input-group" id="categories-selection">
+        <p>Выберите характерные категории</p>
+        <div class="categories-container" id="categories-container">
+
+        </div>
+    </div>
+
+    <button type="submit" id="CreateEventButton" class="submit-button">Подтвердить</button>
+</form>
+
+<div id="serverErrorSummary" asp-validation-summary="ModelOnly" class="text-danger"></div>
+
+<div id="clientErrorSummary" class="text-danger" style="display: none"></div>
+
+@section Scripts {
+    <script src="~/js/add-event.js" asp-append-version="true"></script>
+}

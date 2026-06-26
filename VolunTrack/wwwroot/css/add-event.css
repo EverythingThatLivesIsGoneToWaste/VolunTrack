@@ -1,0 +1,118 @@
+﻿.container-main {
+    flex: 1 0 auto;
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+}
+
+main {
+    flex: 1 0 auto;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    margin: 0;
+    padding: 20px 0;
+}
+
+.text-danger {
+    color: rgb(179, 17, 49);
+    font-size: 20px;
+}
+
+main form {
+    justify-content: center;
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+    font-size: 24px;
+    padding: 20px;
+    max-width: 560px;
+    min-width: 500px;
+}
+
+form input {
+    font-size: 24px;
+}
+
+.input-group-period {
+    display: flex;
+    flex-direction: row;
+    padding: 0;
+    gap: 20px;
+    justify-content: space-between;
+    background-color: inherit;
+}
+
+.date-group {
+    display: flex;
+    font-size: 24px;
+    flex-direction: column;
+    gap: 6px;
+    width: 48%;
+}
+
+.input-group-period input {
+    border: 2px solid rgb(118, 118, 118)
+}
+
+.input-group {
+    display: flex;
+    flex-wrap: nowrap;
+    flex-direction: column;
+    justify-content: space-between;
+    gap: 6px;
+}
+
+.input-group.number {
+    flex-direction: row;
+    gap: 20px;
+    align-items: center;
+}
+
+.input-group.number input {
+    width: 180px;
+    height: fit-content;
+}
+
+.submit-button {
+    font-size: 26px;
+    color: white;
+    padding: 20px 40px;
+    border-radius: 20px;
+    border: 0;
+    background-color: rgb(179, 17, 49);
+    transition: all 200ms ease-in-out;
+}
+
+.submit-button:hover {
+    background-color: rgb(140, 17, 49);
+}
+
+.category-item input[type="checkbox"] {
+    width: 30px;
+    height: 30px;
+    border-radius: 15px;
+}
+
+.categories-container {
+    mask-image: linear-gradient(to right, transparent, black 10px, black 90%, transparent);
+    -webkit-mask-image: linear-gradient(to right, transparent, black 10px, black 90%, transparent);
+}
+
+.categories-container::-webkit-scrollbar {
+    display: none;
+}
+
+.category-item {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.category-item > label {
+    padding: 4px 16px;
+    color: #333;
+    font-weight: 500;
+    font-size: 20px;
+}

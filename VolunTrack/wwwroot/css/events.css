@@ -1,0 +1,414 @@
+﻿.btn-create-event {
+    font-size: 24px;
+    color: white;
+    padding: 10px 30px;
+    border-radius: 16px;
+    border: 0;
+    background-color: rgb(179, 17, 49);
+    transition: all 200ms ease-in-out;
+    text-decoration: none;
+}
+
+.btn-create-event:hover {
+    background-color: rgb(140, 17, 49);
+}
+
+.last-updated-datetime {
+    margin-bottom: 1rem;
+}
+
+.events-container {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+    padding-top: 10px;
+    padding-inline-end: 30px;
+    overflow: hidden;
+    overflow-y: auto;
+    height: 67vh;
+
+    mask-image: linear-gradient(to bottom, 
+    transparent 0%, 
+    black 20px, 
+    black calc(100% - 30px), 
+    transparent 100%);
+    -webkit-mask-image: linear-gradient(to bottom, 
+    transparent 0%, 
+    black 20px,  
+    black calc(100% - 30px), 
+    transparent 100%);
+
+    min-width: 650px;
+}
+
+.event-item {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    font-size: 20px;
+    background-color: #eeeeee;
+    border-radius: 30px;
+    padding: 20px;
+    transition: all 200ms ease-in-out;
+}
+
+.events-header-top {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.event-header {
+    display: flex;
+    justify-content: space-between;
+    gap: 20px;
+}
+
+.header-controls {
+    display: inherit;
+    gap: 15px;
+    align-items: baseline;
+}
+
+.status-select-section {
+    display: flex;
+    gap: 15px;
+    align-items: center;
+}
+
+.assign-leader-button {
+    border: 0;
+    width: 50px;
+    height: 50px;
+    padding: 4px 5px;
+    border-radius: 12px;
+    background-color: rgb(179, 17, 49);
+    transition: all 200ms ease-in-out;
+}
+
+.assign-leader-button:hover {
+    background-color: rgb(140, 17, 49);
+}
+
+.assign-leader-button img {
+    height: 100%;
+    object-fit: cover;
+    overflow: hidden;
+}
+
+.template-button {
+    border: 0;
+    width: 50px;
+    height: 50px;
+    padding: 4px 5px;
+    border-radius: 12px;
+    background-color: rgb(179, 17, 49);
+    transition: all 200ms ease-in-out;
+    align-self: flex-start;
+}
+
+.template-button:hover {
+    background-color: rgb(140, 17, 49);
+}
+
+.template-button img {
+    height: 100%;
+    object-fit: cover;
+    overflow: hidden;
+}
+
+.event-header h3, .event-item p {
+    margin: 0;
+}
+
+.event-status-select {
+    width: min-content;
+    border: 0;
+    border-inline-end: 2px solid rgb(179, 17, 49);
+    cursor: pointer;
+}
+
+.event-status-select:focus {
+    outline: none;
+}
+
+.event-status-select option:hover {
+    background-color: lightgray;
+    border: 0;
+}
+
+.confirm-button {
+    height: 50px;
+    width: 50px;
+    border: 0;
+    padding: 8px 5px;
+    border-radius: 12px;
+    background-color: rgb(179, 17, 49);
+    transition: all 200ms ease-in-out;
+}
+
+.confirm-button:hover {
+    background-color: rgb(140, 17, 49);
+}
+
+.confirm-button img {
+    width: 90%;
+    height: 90%;
+    object-fit: cover;
+    overflow: hidden;
+}
+
+.event-details, .event-description {
+    background-color: white;
+    border-radius: 16px;
+    padding: 10px;
+}
+
+.event-categories {
+    display: flex;
+    gap: 20px;
+}
+
+.category-badge {
+    padding: 4px 16px;
+    color: #333;
+    font-weight: 500;
+    font-size: 20px;
+}
+
+.join-button {
+    font-size: 22px;
+    color: white;
+    padding: 6px 20px;
+    border-radius: 16px;
+    border: 0;
+    background-color: rgb(179, 17, 49);
+    transition: all 200ms ease-in-out;
+}
+
+.join-button:hover {
+    background-color: rgb(140, 17, 49);
+}
+
+.participants-button img {
+    height: 100%;
+    object-fit: cover;
+    overflow: hidden;
+}
+
+.participants-button {
+    border: 0;
+    width: 50px;
+    height: 50px;
+    padding: 4px 5px;
+    border-radius: 12px;
+    background-color: rgb(179, 17, 49);
+    transition: all 200ms ease-in-out;
+}
+
+.participants-button:hover {
+    background-color: rgb(140, 17, 49);
+}
+
+.event-footer {
+    display: flex;
+    align-items: center;
+    gap: 20px;
+}
+
+.footer-controls {
+    display: flex;
+    gap: 15px;
+    margin-left: auto;
+}
+
+.event-closed {
+    align-self: center;
+}
+
+/*Event media*/
+.event-media-section {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    max-height: 0;
+    opacity: 0;
+    overflow: hidden;
+    transition: max-height 0.3s ease, opacity 0.5s ease, margin 0.5s ease;
+}
+
+.event-media-section.show {
+    max-height: 1000px;
+    opacity: 1;
+}
+
+.media-controls-section {
+    gap: 15px;
+    margin-left: auto;
+    display: flex;
+}
+
+.media-counters {
+    display: inherit;
+    gap: 12px;
+    padding: 5px 12px;
+    border-radius: 16px;
+    background-color: rgb(158, 158, 158);
+}
+
+.event-photos-count, .event-documents-count {
+    align-items: center;
+    display: flex;
+    gap: 4px;
+    width: 50px;
+    height: 50px;
+}
+
+.event-photos-count img, .event-documents-count img {
+    object-fit: contain;
+    overflow: hidden;
+    height: 100%;
+    width: 100%;
+}
+
+.photos-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(100px, 1fr));
+    gap: 10px;
+    margin: 10px 0;
+}
+
+.photos-grid.empty {
+    display: block;
+}
+
+.event-photo-thumb {
+    width: 100%;
+    height: 120px;
+    object-fit: cover;
+    border-radius: 8px;
+}
+
+.photo-item {
+    position: relative;
+}
+
+.delete-photo-btn {
+    position: absolute;
+    top: 5px;
+    right: 5px;
+    width: 40px;
+    height: 40px;
+    background: rgba(0,0,0,0.6);
+    color: white;
+    border: none;
+    border-radius: 50%;
+    cursor: pointer;
+}
+
+.delete-photo-btn img {
+    object-fit: contain;
+    overflow: hidden;
+    height: 100%;
+    width: 100%;
+}
+
+.upload-photo-btn, .upload-doc-btn {
+    font-size: 22px;
+    color: white;
+    padding: 6px 12px;
+    border-radius: 12px;
+    border: 0;
+    background-color: rgb(179, 17, 49);
+    transition: all 200ms ease-in-out;
+}
+
+.upload-photo-btn:hover, upload-doc-btn:hover {
+    background-color: rgb(140, 17, 49);
+}
+
+.toggle-media-btn {
+    font-size: 22px;
+    color: white;
+    padding: 3px 12px;
+    border-radius: 16px;
+    border: 0;
+    background-color: rgb(179, 17, 49);
+    transition: all 200ms ease-in-out;
+}
+
+.toggle-media-btn:hover {
+    background-color: rgb(140, 17, 49);
+}
+
+.document-info {
+    display: flex;
+    flex-direction: column;
+}
+
+.documents-list {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    padding-block: 10px;
+    padding-inline-end: 10px;
+    margin-bottom: 10px;
+    max-height: 310px;
+
+    overflow: hidden;
+    overflow-y: auto;
+
+    mask-image: linear-gradient(to bottom, 
+    transparent 0%, 
+    black 10px, 
+    black calc(100% - 30px), 
+    transparent 100%);
+    -webkit-mask-image: linear-gradient(to bottom, 
+    transparent 0%, 
+    black 10px, 
+    black calc(100% - 30px), 
+    transparent 100%);
+}
+
+.documents-list.empty {
+    mask-image: none;
+    -webkit-mask-image: none;
+    margin-bottom: 0;
+}
+
+.document-item {
+    background-color: #e0e0e0;
+    border-radius: 30px;
+    padding: 10px 20px;
+}
+
+.document-actions {
+    display: flex;
+    justify-content: space-between;
+    align-items: end;
+}
+
+.delete-doc-btn {
+    width: 50px;
+    height: 50px;
+    border: 0;
+    padding: 8px 5px;
+    border-radius: 12px;
+    background-color: rgb(179, 17, 49);
+    transition: all 200ms ease-in-out;
+}
+
+.delete-doc-btn:hover {
+    background-color: rgb(140, 17, 49);
+}
+
+.delete-doc-btn img {
+    object-fit: contain;
+    overflow: hidden;
+    height: 100%;
+    width: 100%;
+}
+
+.search-section {
+    width: fit-content;
+}

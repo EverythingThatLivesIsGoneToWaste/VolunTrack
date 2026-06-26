@@ -45,3 +45,7 @@ appsettings.Production.json
 appsettings.Development.json
 */appsettings.Production.json
 */appsettings.Development.json
+
+#User data
+**/wwwroot/uploads/
+!**/wwwroot/uploads/.gitkeep

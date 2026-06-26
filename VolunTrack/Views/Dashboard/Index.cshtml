@@ -1,0 +1,82 @@
+﻿@using System.Security.Claims
+@using VolunTrack.DTO;
+
+@{
+    ViewData["Title"] = "Главная";
+}
+
+@section Styles {
+    <link rel="stylesheet" href="~/css/dashboard.css" asp-append-version="true">
+    <link rel="stylesheet" href="~/css/events.css" asp-append-version="true">
+}
+
+<div class="dashboard-grid">
+    <div class="user-section">
+        <div class="user-info-card">
+            <div class="user-header">
+                <img src="@UserDto.GetAvatarByRole(Model.CurrentUser.Role)"
+                        alt="Avatar"
+                        class="user-avatar" />
+                <div class="user-info">
+                    <h1>@Model.CurrentUser.FullName</h1>
+                    <p class="user-email">@Model.CurrentUser.Email</p>
+                    <p class="user-role">Роль: @UserDto.GetRoleName(Model.CurrentUser.Role)</p>
+
+                    @if (Model.CurrentUser.Categories.Count != 0)
+                    {
+                        <div class="user-categories">
+                            <p>Мои категории:</p>
+                            <div class="user-categories-list">
+                                @foreach (var cat in Model.CurrentUser.Categories)
+                                {
+                                    <span class="category-badge" style="background-color: #@(cat.ColorRgb.ToString("X6"))40;
+                                    border-left: 3px solid #@(cat.ColorRgb.ToString("X6"))"
+                                    title="@cat.Name"></span>
+                                }
+                            </div>
+                        </div>
+                    }
+                </div>
+            </div>
+            <div class="profile-buttons">
+                <a asp-controller="Categories" asp-action="Index">Управление категориями</a>
+                <a asp-controller="Profile" asp-action="Edit">Редактировать профиль</a>
+            </div>
+        </div>
+        <div class="my-events-history">
+            <div class="events-history-header">
+                <h2>История</h2>
+                <div class="toggle-switch">
+                    <div class="toggle-option active" data-type="upcoming">Предстоящие</div>
+                    <div class="toggle-option" data-type="completed">Завершённые</div>
+                    <div class="toggle-slider"></div>
+                </div>
+            </div>
+            <div class="events-history-container" id="events-history-container"></div>
+        </div>
+    </div>
+    <div style="border-left: 2px solid;"></div>
+    <div class="events-section">
+        <div class="events-header">
+            <h1>Предстоящие события</h1>
+                <p>Обновлено: <span class="last-updated-datetime" id="last-updated-datetime"></span></p>
+        </div>
+        <div class="search-section">
+            <input type="text" id="searchInput" placeholder="Поиск по названию, описанию, месту..." class="search-input">
+            <button id="resetButton" class="reset-button"><img src="/images/ui/buttons/eraser.png" /></button>
+            <button id="searchButton" class="search-button">🔍 Найти</button>
+        </div>
+        <div class="events-container" id="events-container"></div>
+    </div>
+</div>
+
+<script>
+    window.currentUserId = '@User.FindFirstValue(ClaimTypes.NameIdentifier)';
+    window.userRole = '@User.FindFirstValue(ClaimTypes.Role)';
+</script>
+
+@section Scripts {
+    <script src="~/js/dashboard.js" asp-append-version="true"></script>
+    <script src="~/js/event-media.js" asp-append-version="true"></script>
+    <script src="~/js/events-common.js" asp-append-version="true"></script>
+}

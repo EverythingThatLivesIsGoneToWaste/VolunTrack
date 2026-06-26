@@ -1,0 +1,54 @@
+﻿.container {
+    max-width: 1400px;
+}
+
+.report-controls {
+    display: flex;
+    gap: 20px;
+    flex-wrap: wrap;
+}
+
+.generate-group {
+    padding: 16px 24px;
+    background-color: #eeeeee;
+    min-width: 420px;
+    border-radius: 16px;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.status-group, .checkbox-group {
+    justify-content: space-between;
+    display: flex;
+}
+
+.checkbox-group, .status-group {
+    font-size: 18px;
+}
+
+.generate-group select {
+    width: 150px;
+    border: 0;
+    border-inline-end: 4px solid rgb(179, 17, 49);
+    cursor: pointer;
+}
+
+.generate-group select:focus {
+    outline: none;
+}
+
+.generate-group button {
+    font-size: 22px;
+    color: white;
+    padding: 8px 12px;
+    border-radius: 12px;
+    border: 0;
+    background-color: rgb(179, 17, 49);
+    transition: all 200ms ease-in-out;
+    margin-top: auto;
+}
+
+.generate-group button:hover {
+    background-color: rgb(140, 17, 49);
+}

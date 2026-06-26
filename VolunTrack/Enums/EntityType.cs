@@ -4,6 +4,7 @@
     {
         Event = 0,
         Volunteer = 1,
-        Participation = 2
+        Participation = 2,
+        Report = 3
     }
 }

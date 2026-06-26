@@ -1,0 +1,188 @@
+﻿.btn-create-category {
+    font-size: 24px;
+    color: white;
+    padding: 10px 30px;
+    border-radius: 16px;
+    border: 0;
+    background-color: rgb(179, 17, 49);
+    transition: all 200ms ease-in-out;
+    text-decoration: none;
+}
+
+.btn-create-category:hover {
+    background-color: rgb(140, 17, 49);
+}
+
+.last-updated-datetime {
+    margin-bottom: 1rem;
+}
+
+.categories-cards-container {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+    padding-top: 10px;
+    overflow: hidden;
+    overflow-y: auto;
+    height: 70vh;
+
+    mask-image: linear-gradient(to bottom, 
+    transparent 0%, 
+    black 20px, 
+    black calc(100% - 30px), 
+    transparent 100%);
+    -webkit-mask-image: linear-gradient(to bottom, 
+    transparent 0%, 
+    black 20px, 
+    black calc(100% - 30px), 
+    transparent 100%);
+
+     transition: padding-inline-end 0.3s ease;
+}
+
+.category-card {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    font-size: 20px;
+    background-color: #eeeeee;
+    border-radius: 0 26px 26px 0;
+    padding: 20px;
+    transition: all 200ms ease-in-out;
+}
+
+.categories-header-top {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.header-top-section  {
+    display: flex;
+    justify-content: space-between;
+    
+}
+
+.header-top-section .toggle-user-category-button {
+    color: white;
+    padding: 6px 10px;
+    border: 0;
+    border-radius: 12px;
+    background-color: rgb(158, 158, 158);
+    transition: all 200ms ease-in-out;
+}
+
+.category-card-actions {
+    display: flex;
+    gap: 10px;
+}
+
+.category-card-actions button {
+    border: 0;
+}
+
+.category-card-actions button {
+    color: white;
+    padding: 3px 9px;
+    border-radius: 12px;
+        
+    background-color: rgb(179, 17, 49);
+    transition: all 200ms ease-in-out;
+}
+
+.category-card-actions button:hover {
+    background-color: rgb(140, 17, 49);
+}
+
+.edit-button, .delete-button {
+    width: 50px;
+    height: 50px;
+}
+
+.edit-button img, .delete-button img {
+    object-fit: contain;
+    overflow: hidden;
+    height: 100%;
+    width: 100%;
+}
+
+.category-description {
+    background-color: white;
+    border-radius: 16px;
+    padding: 10px;
+    margin: 0;
+}
+
+.edit-fields {
+    max-height: 0;
+    overflow: hidden;
+    opacity: 0;
+    display: flex;
+    gap: 20px;
+    align-items: end;
+    transition: max-height 0.3s ease, opacity 0.5s ease;
+}
+
+.edit-fields.show {
+    opacity: 1;
+    max-height: 200px;
+}
+
+.text-fields-section {
+    display: flex;
+    gap: 12px;
+    margin-left: 20px;
+    flex-direction: column;
+    width: 80%;
+}
+
+.text-fields-section input, textarea {
+    border: 0;
+    outline: 0;
+    border-radius: 16px;
+    padding: 10px;
+}
+
+.edit-description {
+    max-height: 200px;
+    min-height: fit-content;
+}
+
+.edit-fields .color-input-wrapper {
+    display: flex;
+    border-left: 3px solid #000000;
+    border-radius: 0 16px 16px 0 !important;
+    overflow: hidden;
+    width: 60px;
+    height: 40px;
+    justify-content: center;
+}
+
+.edit-color {
+    min-width: 100px;
+    border: 0;
+    padding: 0;
+    height: 50px;
+    cursor: pointer;
+
+    align-self: center;
+}
+
+.buttons-section {
+    margin-left: auto;
+    display: flex;
+    gap: 10px;
+}
+
+.edit-fields button {
+    color: white;
+    padding: 6px 10px;
+    border: 0;
+    border-radius: 12px;
+    background-color: rgb(179, 17, 49);
+    transition: all 200ms ease-in-out;
+}
+
+.edit-fields button:hover {
+    background-color: rgb(140, 17, 49);
+}

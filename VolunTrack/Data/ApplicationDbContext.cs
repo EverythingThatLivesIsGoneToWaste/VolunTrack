@@ -126,7 +126,7 @@ namespace VolunTrack.Data
             {
                 entity.HasKey(e => e.Id);
 
-                entity.Property(e => e.Description).IsRequired().HasMaxLength(200);
+                entity.Property(e => e.Description).IsRequired(false).HasMaxLength(200);
 
                 entity.Property(e => e.EntityType).IsRequired().HasConversion<string>();
 

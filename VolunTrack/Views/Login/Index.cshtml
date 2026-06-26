@@ -1,0 +1,52 @@
+﻿﻿@using VolunTrack.DTO
+
+@{
+    ViewData["Title"] = "Login";
+}
+
+@section Styles {
+    <link rel="stylesheet" href="~/css/login.css" asp-append-version="true">
+}
+
+@model LoginDto
+
+<form id="loginForm" method="post" asp-controller="Login" asp-action="Index">
+
+    <h1>Войти</h1>
+    <div class="input-group">
+        <label for="inputLogin">Ваш логин</label>
+        <input type="text" id="inputLogin" name="Login" maxlength="50">
+    </div>
+
+    <div class="input-group">
+        <label for="inputPassword">Ваш пароль</label>
+        <input type="password" id="inputPassword" name="Password">
+    </div>
+
+    <button type="submit" id="signInButton" class="submit-button">Вход</button>
+</form>
+
+<div id="serverErrorSummary" asp-validation-summary="ModelOnly" class="text-danger"></div>
+
+<div id="clientErrorSummary" class="text-danger" style="display: none"></div>
+
+@if (TempData["LogoutReason"] != null)
+{
+    <div id="autoToast" class="toast-message warning">
+        @TempData["LogoutReason"]
+    </div>
+}
+
+<script>
+    document.addEventListener("DOMContentLoaded", function() {
+        const toast = document.getElementById("autoToast");
+        if (toast) {
+            showToast(toast.textContent, "alert", 5000);
+            toast.remove();
+        }
+    });
+</script>
+
+@section Scripts {
+    <script src="~/js/login.js" asp-append-version="true"></script>
+}

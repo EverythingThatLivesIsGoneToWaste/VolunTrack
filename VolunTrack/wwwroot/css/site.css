@@ -29,3 +29,299 @@ body {
 .form-floating > .form-control-plaintext:focus::placeholder, .form-floating > .form-control:focus::placeholder {
   text-align: start;
 }
+
+* {
+    box-sizing: border-box;
+}
+
+form h1 {
+    text-align: center;
+    margin: 0;
+}
+
+.categories-container {
+    display: flex;
+    align-self: center;
+    gap: 12px;
+    padding-inline: 10px;
+    max-width: 100%;
+    overflow: hidden;
+    overflow-x: auto;
+    scrollbar-width: none;
+    -ms-overflow-style: none;
+    scroll-behavior: smooth;
+}
+
+.toast {
+    display: block;
+    position: fixed;
+    bottom: 20px;
+    right: 20px;
+    padding: 12px 24px;
+    border: 0;
+    border-radius: 8px;
+    color: white;
+    font-size: 16px;
+    z-index: 1000;
+    animation: slideIn 0.3s ease;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.5);
+    pointer-events: none;
+}
+
+.toast-success {
+    background-color: #4caf50;
+}
+
+.toast-alert {
+    background-color: #eac54b;
+}
+
+.toast-error {
+    background-color: #f44336;
+}
+
+@keyframes slideIn {
+    from {
+        transform: translateX(100%);
+        opacity: 0;
+    }
+
+    to {
+        transform: translateX(0);
+        opacity: 1;
+    }
+}
+
+/*Modal*/
+.modal {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0,0,0,0.5);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 1000;
+}
+
+.modal-content {
+    background: white;
+    border-radius: 30px;
+    max-width: fit-content;
+    min-width: fit-content;
+    width: 90%;
+    max-height: 80vh;
+    overflow-y: auto;
+}
+
+.close-modal {
+    cursor: pointer;
+    font-size: 24px;
+    justify-self: flex-start;
+    margin-bottom: auto;
+}
+
+.modal-header {
+    display: flex;
+    justify-content: space-between;
+    gap: 40px;
+}
+
+.close-modal-button img {
+    height: 90%;
+    object-fit: cover;
+    overflow: hidden;
+}
+
+.close-modal-button {
+    border: 0;
+    width: 50px;
+    height: 50px;
+    padding: 4px 5px;
+    border-radius: 12px;
+    background-color: rgb(179, 17, 49);
+    transition: all 200ms ease-in-out;
+}
+
+.close-modal-button:hover {
+    background-color: rgb(140, 17, 49);
+}
+
+.modal-body {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+/*Modal for event participants*/
+.participant-item {
+    display: flex;
+    gap: 20px;
+    align-items: center;
+    padding: 20px;
+    border-radius: 30px;
+    background-color: #eeeeee;
+}
+
+.participant-avatar {
+    height: 100px;
+    width: 100px;
+    object-fit: cover;
+    border-radius: 50%;
+    border: 2px solid #888;
+}
+
+.assign-leader-button {
+    margin-left: auto;
+}
+
+.input-group-period {
+    padding: 6px 12px;
+    background-color: #e0e0e0;
+    border-radius: 12px;
+}
+
+.date-group {
+    gap: 12px;
+}
+
+.assign-leader-button, .update-hours-button {
+    border: 0;
+    width: 50px;
+    height: 50px;
+    padding: 5px;
+    border-radius: 12px;
+    background-color: rgb(179, 17, 49);
+    transition: all 200ms ease-in-out;
+}
+
+.assign-leader-button:hover, .update-hours-button:hover {
+    background-color: rgb(140, 17, 49);
+}
+
+.participant-item button img {
+    height: 100%;
+    object-fit: cover;
+}
+
+.participant-item .hours-toggle-button {
+    color: white;
+    padding: 6px 10px;
+    border: 0;
+    border-radius: 12px;
+    background-color: rgb(158, 158, 158);
+    transition: all 200ms ease-in-out;
+}
+
+/*Modal for event time management*/
+.input-group-period {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+.date-group {
+    display: flex;
+    justify-content: space-between;
+    font-size: 18px;
+}
+
+/*Styles for all search inputs*/
+.search-section {
+    display: flex;
+    background-color: #eeeeee;
+    gap: 16px;
+    padding: 10px 16px;
+    border-radius: 16px;
+    margin-inline-end: 30px;
+}
+
+.search-input {
+    width: 400px;
+    border: 0;
+    padding-inline: 12px;
+    border-radius: 25px;
+    outline: 0;
+    font-size: 20px;
+}
+
+.reset-button, .search-button {
+    color: white;
+    font-size: 20px;
+    border: 0;
+    height: 50px;
+    padding: 4px 5px;
+    border-radius: 12px;
+    background-color: rgb(179, 17, 49);
+    transition: all 200ms ease-in-out;
+}
+
+.search-button {
+    padding: 4px 9px;
+    min-width: fit-content;
+}
+
+.reset-button img {
+    height: 90%;
+    object-fit: cover;
+    overflow: hidden;
+}
+
+/* Custom checkboxes */
+.checkbox-wrapper {
+    width: 28px;
+    height: 28px;
+    display: inline-block;
+    align-items: center;
+}
+
+.checkbox-wrapper .round {
+    position: relative;
+}
+
+.checkbox-wrapper .round label {
+    background-color: #fff;
+    border: 1px solid #000;
+    cursor: pointer;
+    height: 28px;
+    width: 28px;
+    display: block;
+    transition: all 0.2s ease;
+}
+
+.checkbox-wrapper .round label:after {
+    border: 2px solid #fff;
+    border-top: none;
+    border-right: none;
+    content: "";
+    height: 6px;
+    left: 8px;
+    opacity: 0;
+    position: absolute;
+    top: 9px;
+    transform: rotate(-45deg);
+    width: 12px;
+}
+
+.checkbox-wrapper .round input[type="checkbox"] {
+    visibility: hidden;
+    display: none;
+    opacity: 0;
+}
+
+.checkbox-wrapper .round input[type="checkbox"]:checked + label {
+    background-color: #4a90e2;
+    border-color: #4a90e2;
+}
+
+.checkbox-wrapper .round input[type="checkbox"]:checked + label:after {
+    opacity: 1;
+}
+
+.checkbox-wrapper label {
+    color: #333;
+    font-weight: 500;
+    font-size: 20px;
+}

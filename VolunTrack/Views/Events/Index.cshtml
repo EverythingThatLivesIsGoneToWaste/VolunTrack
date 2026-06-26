@@ -1,0 +1,47 @@
+﻿@using System.Security.Claims
+
+@{
+    ViewData["Title"] = "Список событий";
+}
+
+@section Styles {
+    <link rel="stylesheet" href="~/css/events.css" asp-append-version="true">
+}
+
+<div class="events-header">
+    <div class="events-header-top">
+            @if (User.IsInRole("EventCoordinator"))
+            {
+                <h1>Мои события</h1>
+            }
+            else if (User.IsInRole("RegionCoordinator") || User.IsInRole("Administrator"))
+            {
+                <h1>Все события</h1>
+            }
+
+        @if (User.IsInRole("EventCoordinator") || User.IsInRole("Administrator"))
+        {
+            <a asp-action="Add" class="btn-create-event">Создать событие</a>
+        }
+    </div>
+
+    <div class="last-updated-datetime">Обновлено: <span id="last-updated-datetime"></span></div>
+</div>
+<div class="search-section">
+    <input type="text" id="searchInput" placeholder="Поиск по названию, описанию, месту..." class="search-input">
+    <button id="resetButton" class="reset-button"><img src="/images/ui/buttons/eraser.png" /></button>
+    <button id="searchButton" class="search-button">🔍 Найти</button>
+</div>
+
+<div class="events-container" id="events-container"></div>
+
+<script>
+    window.currentUserId = '@User.FindFirstValue(ClaimTypes.NameIdentifier)';
+    window.userRole = '@User.FindFirstValue(ClaimTypes.Role)';
+</script>
+
+@section Scripts {
+    <script src="~/js/events.js" asp-append-version="true"></script>
+    <script src="~/js/event-media.js" asp-append-version="true"></script>
+    <script src="~/js/events-common.js" asp-append-version="true"></script>
+}
